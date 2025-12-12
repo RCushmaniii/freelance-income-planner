@@ -1,6 +1,7 @@
 'use client'
 
 import { useIncomePlannerStore } from '@/lib/store'
+import { useTranslation } from '@/lib/i18n/translations'
 import toast from 'react-hot-toast'
 
 export default function InputPanel() {
@@ -18,6 +19,7 @@ export default function InputPanel() {
     setCurrency,
     setLanguage,
   } = useIncomePlannerStore()
+  const t = useTranslation(language)
 
   const handleInputChange = (
     value: string,
@@ -32,26 +34,26 @@ export default function InputPanel() {
 
   const handleCurrencyChange = (newCurrency: 'MXN' | 'USD') => {
     setCurrency(newCurrency)
-    toast.success(`Currency set to ${newCurrency}`)
+    toast.success(`${t.toast.currencyChanged} ${newCurrency}`)
   }
 
   const handleLanguageChange = (newLanguage: 'en' | 'es') => {
     setLanguage(newLanguage)
-    const msg = newLanguage === 'en' ? 'Language set to English' : 'Idioma cambiado a español'
+    const msg = newLanguage === 'en' ? t.toast.languageChanged : t.toast.languageChangedEs
     toast.success(msg)
   }
 
   return (
     <div className="bg-background border border-muted-strong/20 rounded-xl p-6 md:p-8">
       <h2 className="font-heading text-2xl font-bold mb-6">
-        <span className="text-accent">Your</span> Inputs
+        {t.inputs.title}
       </h2>
 
       <div className="space-y-6">
         {/* Hourly Rate */}
         <div>
           <label htmlFor="hourlyRate" className="block text-sm font-medium mb-2">
-            Hourly Rate
+            {t.inputs.hourlyRate}
           </label>
           <div className="relative">
             <input
@@ -66,13 +68,13 @@ export default function InputPanel() {
               {currency}
             </span>
           </div>
-          <p className="text-xs text-muted-strong mt-1">Range: 50 - 5000</p>
+          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 50 - 5000</p>
         </div>
 
         {/* Hours Per Week */}
         <div>
           <label htmlFor="hoursPerWeek" className="block text-sm font-medium mb-2">
-            Billable Hours per Week
+            {t.inputs.hoursPerWeek}
           </label>
           <input
             type="number"
@@ -82,13 +84,13 @@ export default function InputPanel() {
             className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
             placeholder="40"
           />
-          <p className="text-xs text-muted-strong mt-1">Range: 0 - 60</p>
+          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 0 - 60</p>
         </div>
 
         {/* Vacation Weeks */}
         <div>
           <label htmlFor="vacationWeeks" className="block text-sm font-medium mb-2">
-            Vacation Weeks per Year
+            {t.inputs.vacationWeeks}
           </label>
           <input
             type="number"
@@ -98,13 +100,13 @@ export default function InputPanel() {
             className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
             placeholder="2"
           />
-          <p className="text-xs text-muted-strong mt-1">Range: 0 - 12</p>
+          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 0 - 12</p>
         </div>
 
         {/* Tax Rate */}
         <div>
           <label htmlFor="taxRate" className="block text-sm font-medium mb-2">
-            Tax Rate (%)
+            {t.inputs.taxRate}
           </label>
           <input
             type="number"
@@ -114,12 +116,12 @@ export default function InputPanel() {
             className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
             placeholder="25"
           />
-          <p className="text-xs text-muted-strong mt-1">Range: 0 - 50%</p>
+          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 0 - 50%</p>
         </div>
 
         {/* Currency Toggle */}
         <div>
-          <label className="block text-sm font-medium mb-2">Currency</label>
+          <label className="block text-sm font-medium mb-2">{t.inputs.currency}</label>
           <div className="flex gap-2">
             <button
               onClick={() => handleCurrencyChange('MXN')}
@@ -146,7 +148,7 @@ export default function InputPanel() {
 
         {/* Language Toggle */}
         <div>
-          <label className="block text-sm font-medium mb-2">Language</label>
+          <label className="block text-sm font-medium mb-2">{t.inputs.language}</label>
           <div className="flex gap-2">
             <button
               onClick={() => handleLanguageChange('en')}

@@ -1,10 +1,12 @@
 'use client'
 
 import { useIncomePlannerStore } from '@/lib/store'
+import { useTranslation } from '@/lib/i18n/translations'
 import { calculateIncome } from '@/lib/calculations'
 
 export default function ForecastInsights() {
-  const { scenarios, taxRate, currency } = useIncomePlannerStore()
+  const { scenarios, taxRate, currency, language } = useIncomePlannerStore()
+  const t = useTranslation(language)
 
   // Calculate income for each scenario
   const pessimisticResult = calculateIncome({
@@ -45,7 +47,7 @@ export default function ForecastInsights() {
   // 1. Realistic annual income
   insights.push({
     icon: '💡',
-    text: `Your realistic annual income: ${formatCurrency(realisticResult.annualNet)}`,
+    text: `${t.insights.realisticIncome} ${formatCurrency(realisticResult.annualNet)}`,
   })
 
   // 2. Income range
@@ -53,34 +55,34 @@ export default function ForecastInsights() {
   const spread = (optimisticResult.annualNet / pessimisticResult.annualNet).toFixed(1)
   insights.push({
     icon: '📊',
-    text: `Income range: ${formatCurrency(pessimisticResult.annualNet)} - ${formatCurrency(optimisticResult.annualNet)} (${spread}x spread)`,
+    text: `${t.insights.incomeRange} ${formatCurrency(pessimisticResult.annualNet)} - ${formatCurrency(optimisticResult.annualNet)} (${spread}x ${t.insights.spread})`,
   })
 
   // 3. Capacity warning for optimistic
   if (scenarios.optimistic.hoursPerWeek >= 45) {
     insights.push({
       icon: '⚠️',
-      text: `Optimistic scenario requires ${scenarios.optimistic.hoursPerWeek} hrs/week - near max capacity. Consider raising rates instead.`,
+      text: t.insights.capacityWarning.replace('{hours}', scenarios.optimistic.hoursPerWeek.toString()),
     })
   }
 
   // 4. Pessimistic floor
   insights.push({
     icon: '✅',
-    text: `Even in pessimistic case, you earn ${formatCurrency(pessimisticResult.annualNet)} - that's your income floor.`,
+    text: t.insights.pessimisticFloor.replace('{amount}', formatCurrency(pessimisticResult.annualNet)),
   })
 
   // 5. Rate impact
   const rateIncrease = realisticResult.annualNet * 0.1
   insights.push({
     icon: '💰',
-    text: `A 10% rate increase would add ${formatCurrency(rateIncrease)} to your annual income.`,
+    text: t.insights.rateIncrease.replace('{amount}', formatCurrency(rateIncrease)),
   })
 
   return (
     <div className="bg-background border border-muted-strong/20 rounded-xl p-8">
       <h2 className="font-heading text-2xl font-bold mb-6">
-        <span className="text-accent">Key</span> Insights
+        {t.insights.title}
       </h2>
 
       <div className="space-y-4">

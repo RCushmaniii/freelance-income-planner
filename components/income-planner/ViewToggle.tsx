@@ -1,9 +1,11 @@
 'use client'
 
 import { useIncomePlannerStore } from '@/lib/store'
+import { useTranslation } from '@/lib/i18n/translations'
 
 export default function ViewToggle() {
-  const { viewMode, setViewMode } = useIncomePlannerStore()
+  const { viewMode, setViewMode, language } = useIncomePlannerStore()
+  const t = useTranslation(language)
 
   return (
     <div className="flex justify-center mb-8">
@@ -16,7 +18,7 @@ export default function ViewToggle() {
               : 'text-muted hover:text-foreground'
           }`}
         >
-          Snapshot
+          {t.viewToggle.snapshot}
         </button>
         <button
           onClick={() => setViewMode('forecast')}
@@ -26,7 +28,7 @@ export default function ViewToggle() {
               : 'text-muted hover:text-foreground'
           }`}
         >
-          Forecast
+          {t.viewToggle.forecast}
         </button>
       </div>
     </div>

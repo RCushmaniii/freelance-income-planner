@@ -1,6 +1,7 @@
 'use client'
 
 import { useIncomePlannerStore } from '@/lib/store'
+import { useTranslation } from '@/lib/i18n/translations'
 import { generateMonthlyProjection, generateSeasonalProjection } from '@/lib/chartData'
 import {
   LineChart,
@@ -15,7 +16,8 @@ import {
 import { useState } from 'react'
 
 export default function MonthlyProjectionChart() {
-  const { scenarios, taxRate, currency } = useIncomePlannerStore()
+  const { scenarios, taxRate, currency, language } = useIncomePlannerStore()
+  const t = useTranslation(language)
   const [seasonalPattern, setSeasonalPattern] = useState<'steady' | 'q4-heavy' | 'summer-slow'>('steady')
 
   const data = generateSeasonalProjection(
@@ -48,7 +50,7 @@ export default function MonthlyProjectionChart() {
     <div className="bg-background border border-muted-strong/20 rounded-xl p-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="font-heading text-2xl font-bold mb-4 md:mb-0">
-          <span className="text-accent">Monthly</span> Income Projection
+          {t.chart.title}
         </h2>
 
         {/* Seasonal Pattern Toggle */}
@@ -61,7 +63,7 @@ export default function MonthlyProjectionChart() {
                 : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground'
             }`}
           >
-            Steady
+            {t.chart.steady}
           </button>
           <button
             onClick={() => setSeasonalPattern('q4-heavy')}
@@ -71,7 +73,7 @@ export default function MonthlyProjectionChart() {
                 : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground'
             }`}
           >
-            Q4 Heavy
+            {t.chart.q4Heavy}
           </button>
           <button
             onClick={() => setSeasonalPattern('summer-slow')}
@@ -81,7 +83,7 @@ export default function MonthlyProjectionChart() {
                 : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground'
             }`}
           >
-            Summer Slow
+            {t.chart.summerSlow}
           </button>
         </div>
       </div>
@@ -152,21 +154,9 @@ export default function MonthlyProjectionChart() {
       {/* Pattern Description */}
       <div className="mt-6 p-4 bg-accent/5 border border-accent/20 rounded-lg">
         <p className="text-xs text-muted">
-          {seasonalPattern === 'steady' && (
-            <>
-              <span className="font-semibold text-foreground">Steady:</span> Consistent income throughout the year with no seasonal variation.
-            </>
-          )}
-          {seasonalPattern === 'q4-heavy' && (
-            <>
-              <span className="font-semibold text-foreground">Q4 Heavy:</span> Higher income in Q4 (Oct-Dec) due to year-end projects and budget spending. Common for consultants and B2B services.
-            </>
-          )}
-          {seasonalPattern === 'summer-slow' && (
-            <>
-              <span className="font-semibold text-foreground">Summer Slow:</span> Reduced income in summer months (Jun-Aug) when clients take vacations. Common for many service businesses.
-            </>
-          )}
+          {seasonalPattern === 'steady' && t.chart.steadyDesc}
+          {seasonalPattern === 'q4-heavy' && t.chart.q4HeavyDesc}
+          {seasonalPattern === 'summer-slow' && t.chart.summerSlowDesc}
         </p>
       </div>
     </div>

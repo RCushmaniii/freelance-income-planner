@@ -1,6 +1,7 @@
 'use client'
 
 import { create } from 'zustand'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { validateAndClampConfig, IncomeConfig } from './calculations'
 
 export type Currency = 'MXN' | 'USD'
@@ -65,7 +66,8 @@ const DEFAULT_CONFIG: IncomeConfig = {
  * All numeric inputs are validated and clamped on set.
  */
 export const useIncomePlannerStore = create<IncomePlannerState>()(
-  (set, get) => ({
+  persist(
+    (set, get) => ({
     // Initial state
     viewMode: 'snapshot',
     hourlyRate: DEFAULT_CONFIG.hourlyRate,
@@ -172,5 +174,20 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         taxRate: state.taxRate,
       }
     },
-  })
+    }),
+    {
+      name: 'income-planner-storage',
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        hourlyRate: state.hourlyRate,
+        hoursPerWeek: state.hoursPerWeek,
+        vacationWeeks: state.vacationWeeks,
+        taxRate: state.taxRate,
+        currency: state.currency,
+        language: state.language,
+        scenarios: state.scenarios,
+        viewMode: state.viewMode,
+      }),
+    }
+  )
 )

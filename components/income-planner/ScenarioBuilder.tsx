@@ -1,9 +1,11 @@
 'use client'
 
 import { useIncomePlannerStore } from '@/lib/store'
+import { useTranslation } from '@/lib/i18n/translations'
 
 export default function ScenarioBuilder() {
-  const { scenarios, taxRate, setScenario } = useIncomePlannerStore()
+  const { scenarios, taxRate, setScenario, language } = useIncomePlannerStore()
+  const t = useTranslation(language)
 
   const handleScenarioChange = (
     scenario: 'pessimistic' | 'realistic' | 'optimistic',
@@ -19,20 +21,20 @@ export default function ScenarioBuilder() {
   const scenarioData = [
     {
       key: 'pessimistic' as const,
-      label: 'Pessimistic',
-      description: 'Conservative estimate',
+      label: t.scenarios.pessimistic,
+      description: t.scenarios.pessimisticDesc,
       color: 'text-red-400',
     },
     {
       key: 'realistic' as const,
-      label: 'Realistic',
-      description: 'Most likely outcome',
+      label: t.scenarios.realistic,
+      description: t.scenarios.realisticDesc,
       color: 'text-blue-400',
     },
     {
       key: 'optimistic' as const,
-      label: 'Optimistic',
-      description: 'Stretch goal',
+      label: t.scenarios.optimistic,
+      description: t.scenarios.optimisticDesc,
       color: 'text-green-400',
     },
   ]
@@ -40,7 +42,7 @@ export default function ScenarioBuilder() {
   return (
     <div>
       <h2 className="font-heading text-2xl font-bold mb-6 text-center">
-        <span className="text-accent">Scenario</span> Builder
+        {t.scenarios.title}
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -58,7 +60,7 @@ export default function ScenarioBuilder() {
               {/* Hourly Rate */}
               <div>
                 <label className="block text-xs font-medium mb-1 text-muted-strong">
-                  Hourly Rate
+                  {t.inputs.hourlyRate}
                 </label>
                 <input
                   type="number"
@@ -73,7 +75,7 @@ export default function ScenarioBuilder() {
               {/* Hours Per Week */}
               <div>
                 <label className="block text-xs font-medium mb-1 text-muted-strong">
-                  Hours/Week
+                  {t.inputs.hoursPerWeek}
                 </label>
                 <input
                   type="number"
@@ -88,7 +90,7 @@ export default function ScenarioBuilder() {
               {/* Vacation Weeks */}
               <div>
                 <label className="block text-xs font-medium mb-1 text-muted-strong">
-                  Vacation Weeks
+                  {t.inputs.vacationWeeks}
                 </label>
                 <input
                   type="number"
@@ -107,7 +109,7 @@ export default function ScenarioBuilder() {
       {/* Shared Tax Rate */}
       <div className="mt-6 max-w-xs mx-auto">
         <label className="block text-sm font-medium mb-2 text-center">
-          Tax Rate (shared across all scenarios)
+          {t.scenarios.sharedTaxRate}
         </label>
         <div className="text-center">
           <span className="text-2xl font-bold text-accent">{taxRate}%</span>

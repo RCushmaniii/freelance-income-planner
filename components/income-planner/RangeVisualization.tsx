@@ -1,10 +1,12 @@
 'use client'
 
 import { useIncomePlannerStore } from '@/lib/store'
+import { useTranslation } from '@/lib/i18n/translations'
 import { calculateIncome } from '@/lib/calculations'
 
 export default function RangeVisualization() {
-  const { scenarios, taxRate, currency } = useIncomePlannerStore()
+  const { scenarios, taxRate, currency, language } = useIncomePlannerStore()
+  const t = useTranslation(language)
 
   // Calculate income for each scenario
   const pessimisticResult = calculateIncome({
@@ -51,7 +53,7 @@ export default function RangeVisualization() {
   return (
     <div className="bg-background border border-muted-strong/20 rounded-xl p-8">
       <h2 className="font-heading text-2xl font-bold mb-6 text-center">
-        <span className="text-accent">Annual Income</span> Range
+        {t.range.title}
       </h2>
 
       {/* Range Bar */}
@@ -77,19 +79,19 @@ export default function RangeVisualization() {
         {/* Labels */}
         <div className="grid grid-cols-3 gap-4 mt-4">
           <div className="text-center">
-            <p className="text-xs text-muted mb-1">Pessimistic</p>
+            <p className="text-xs text-muted mb-1">{t.scenarios.pessimistic}</p>
             <p className="font-heading text-lg font-bold text-red-400">
               {formatCurrency(minIncome)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-muted mb-1">Realistic</p>
+            <p className="text-xs text-muted mb-1">{t.scenarios.realistic}</p>
             <p className="font-heading text-lg font-bold text-blue-400">
               {formatCurrency(midIncome)}
             </p>
           </div>
           <div className="text-center">
-            <p className="text-xs text-muted mb-1">Optimistic</p>
+            <p className="text-xs text-muted mb-1">{t.scenarios.optimistic}</p>
             <p className="font-heading text-lg font-bold text-green-400">
               {formatCurrency(maxIncome)}
             </p>
@@ -100,11 +102,11 @@ export default function RangeVisualization() {
       {/* Summary Stats */}
       <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
         <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 text-center">
-          <p className="text-xs text-muted mb-1">Income Spread</p>
+          <p className="text-xs text-muted mb-1">{t.range.incomeSpread}</p>
           <p className="font-heading text-2xl font-bold text-accent">{spread}x</p>
         </div>
         <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 text-center">
-          <p className="text-xs text-muted mb-1">Range</p>
+          <p className="text-xs text-muted mb-1">{t.range.range}</p>
           <p className="font-heading text-lg font-bold">
             {formatCurrency(maxIncome - minIncome)}
           </p>
