@@ -1,97 +1,260 @@
 # CushLabs Income Planner
 
-A beautiful, bilingual income planning tool built with Next.js, TypeScript, and Tailwind CSS.
+**A beautiful, bilingual income planning tool for freelancers and consultants.**
 
-## 🚀 Getting Started
+Built with Next.js, TypeScript, and Tailwind CSS by [CushLabs.ai](https://cushlabs.ai)
+
+---
+
+## ✨ Features
+
+- **Snapshot Mode** - Single-scenario calculator with real-time income calculations
+- **Forecast Mode** - Three-scenario planning (Pessimistic/Realistic/Optimistic)
+- **Monthly Projections** - Interactive charts with seasonal pattern modeling
+- **Full Localization** - Complete EN/ES translation system
+- **State Persistence** - localStorage saves your scenarios automatically
+- **Responsive Design** - Works beautifully on mobile and desktop
+
+---
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js 20.x or higher
-- npm
+- npm or pnpm
 
 ### Installation
 
-1. Install dependencies:
 ```bash
+# Clone the repository
+git clone https://github.com/RCushmaniii/ai-income-generator.git
+cd ai-income-generator
+
+# Install dependencies
 npm install
-```
 
-2. Create environment file:
-```bash
+# Create environment file
 cp .env.sample .env.local
-```
 
-3. Start the development server:
-```bash
+# Start development server
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:3000`
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 📦 Scripts
+---
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
+## 📦 Available Scripts
+
+```bash
+npm run dev      # Start development server
+npm run build    # Build for production
+npm start        # Start production server
+npm run lint     # Run ESLint
+npm run format   # Format code with Prettier
+```
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Utility-first CSS framework
-- **React Hot Toast** - Toast notifications
-- **Space Grotesk & Source Serif 4** - Custom fonts
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript 5.5+
+- **Styling:** Tailwind CSS 3.4+
+- **State:** Zustand 4.4+ with persist middleware
+- **Charts:** Recharts 2.10+
+- **Notifications:** react-hot-toast 2.4+
+
+---
 
 ## 📁 Project Structure
 
 ```
 ai-income-generator/
-├── app/
-│   ├── layout.tsx       # Root layout with fonts and providers
-│   ├── page.tsx         # Home page
-│   ├── providers.tsx    # Global providers (toast, error boundary)
-│   └── globals.css      # Global styles with Tailwind directives
-├── components/
-│   ├── Header.tsx       # Site header
-│   └── ErrorBoundary.tsx # Error boundary component
-├── lib/                 # Utility functions (to be added)
-├── prd.md              # Product Requirements Document
-├── next.config.js      # Next.js configuration
-├── tailwind.config.js  # Tailwind CSS with CushLabs design tokens
-├── tsconfig.json       # TypeScript configuration
-└── package.json        # Project dependencies
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Homepage
+│   └── income-planner/    # Income planner page
+├── components/             # React components
+│   ├── Header.tsx         # Global header
+│   ├── ErrorBoundary.tsx  # Error handling
+│   └── income-planner/    # Feature components
+├── lib/                    # Utilities & logic
+│   ├── calculations.ts    # Pure calculation functions
+│   ├── chartData.ts       # Chart data generators
+│   ├── store.ts           # Zustand state management
+│   └── i18n/              # Translations (EN/ES)
+├── docs/                   # Documentation
+│   ├── PRD.md             # Product requirements (moved to root)
+│   ├── PREDEPLOY_AUDIT.md # Deployment checklist
+│   ├── brand.md           # Brand guidelines
+│   ├── design.md          # Design system
+│   └── future-features.md # Roadmap
+└── .windsurf/rules/        # Coding standards
 ```
+
+---
+
+## 📚 Documentation
+
+### Core Documents
+
+- **[PRD.md](./PRD.md)** - Complete product requirements and specifications
+- **[docs/PREDEPLOY_AUDIT.md](./docs/PREDEPLOY_AUDIT.md)** - Pre-deployment checklist
+- **[LICENSE](./LICENSE)** - Educational License v1.0
+
+### Design & Development
+
+- **[docs/brand.md](./docs/brand.md)** - Brand guidelines and messaging
+- **[docs/design.md](./docs/design.md)** - Complete design system
+- **[docs/future-features.md](./docs/future-features.md)** - Roadmap and planned features
+
+### Coding Standards
+
+See `.windsurf/rules/` for detailed coding standards including:
+
+- SRP (Single Responsibility Principle)
+- DRY (Don't Repeat Yourself)
+- Error handling guidelines
+- State management patterns
+- And more...
+
+---
 
 ## 🎨 Design System
 
-### CushLabs Brand Colors
+### Colors
 
-- **Background**: `#000000` (black)
-- **Foreground**: `#FFFFFF` (white)
-- **Accent**: `#FF6A3D` (orange)
-- **Muted**: `#AAAAAA` (light gray)
-- **Muted Strong**: `#888888` (medium gray)
+```css
+--background: #000000 /* Black */ --foreground: #ffffff /* White */
+  --accent: #ff6a3d /* Orange */ --muted: #aaaaaa /* Light gray */
+  --muted-strong: #888888 /* Medium gray */;
+```
 
 ### Typography
 
-- **Headings**: Space Grotesk
-- **Body**: Source Serif 4
+- **Headings:** Space Grotesk (600-700 weight)
+- **Body:** Source Serif 4 (300-400 weight)
 
-## 📝 Development Phases
+---
 
-See `prd.md` for the complete product requirements and phased implementation plan.
+## 🌍 Localization
 
-**Current Status**: Phase 1 Complete ✅
-- Next.js 14 with App Router
-- TypeScript configured
-- Tailwind with CushLabs design tokens
-- Error boundary and toast system
-- Custom fonts loaded
+The app supports English and Spanish with full translation coverage:
 
-**Next**: Phase 2 - Build static UI for income planner
+- All UI text localized
+- Language-aware currency formatting (MXN/USD)
+- Toast notifications in both languages
+- Instant switching without page reload
+
+Translation files: `lib/i18n/translations.ts`
+
+---
+
+## 💾 State Management
+
+**Zustand** with localStorage persistence:
+
+- User inputs automatically saved
+- Scenario configurations persisted
+- Language/currency preferences stored
+- State restored on page reload
+
+**What's persisted:**
+
+- Hourly rate, hours/week, vacation weeks, tax rate
+- All three forecast scenarios
+- View mode (Snapshot/Forecast)
+- Currency preference (MXN/USD)
+- Language preference (EN/ES)
+
+---
+
+## 📊 Implementation Status
+
+### ✅ Completed Phases
+
+- **Phase 1:** Architecture & Setup
+- **Phase 2:** Layout & Design
+- **Phase 3:** Calculator Logic
+- **Phase 3B:** Forecasting Feature
+- **Phase 3C:** Advanced Charts
+- **Phase 4:** Localization & Persistence
+
+### 🔄 Next Phase
+
+- **Phase 5:** Analytics & Monitoring (Planned)
+
+See [docs/future-features.md](./docs/future-features.md) for the complete roadmap.
+
+---
+
+## 🚢 Deployment
+
+### Build for Production
+
+```bash
+npm run build
+npm start
+```
+
+### Recommended Platform
+
+**Vercel** (optimized for Next.js)
+
+Alternative platforms: Netlify, AWS Amplify, Cloudflare Pages
+
+### Environment Variables
+
+See `.env.sample` for configuration options.
+
+---
 
 ## 📝 License
 
-MIT
+**CushLabs Income Planner Educational License v1.0**
+
+- ✅ Personal, academic, non-commercial use
+- ✅ Modification and redistribution (with attribution)
+- ❌ Commercial use without permission
+- ❌ Trademark use
+
+See [LICENSE](./LICENSE) for full terms.
+
+---
+
+## 🤝 Contributing
+
+This is a portfolio project by Robert Cushman / CushLabs.ai.
+
+**For suggestions or feedback:**
+
+- Email: robert@cushlabs.ai
+- GitHub: Open an issue
+- Website: https://cushlabs.ai
+
+---
+
+## 👤 Author
+
+**Robert Cushman**  
+Solo AI Engineer & Full-Stack Developer  
+[CushLabs.ai](https://cushlabs.ai)
+
+---
+
+## 🙏 Acknowledgments
+
+Built with modern web technologies and best practices:
+
+- Next.js team for the amazing framework
+- Vercel for hosting and deployment tools
+- Tailwind CSS for the utility-first approach
+- Open source community for excellent libraries
+
+---
+
+**Last Updated:** December 11, 2025  
+**Version:** 1.0  
+**Status:** Production Ready

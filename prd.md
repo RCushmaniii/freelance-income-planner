@@ -1,711 +1,533 @@
-Love this direction. Let’s tune it like a _product you’d actually be proud to show a CTO_ and then break it into build phases with ready-to-paste AI prompts + IT-manager checklists.
+# CushLabs Income Planner - Product Requirements Document
+
+**Version:** 1.0  
+**Last Updated:** December 11, 2025  
+**Status:** ✅ Phase 4 Complete (Production Ready)  
+**Author:** Robert Cushman, CushLabs.ai
 
 ---
 
-## 0. Product Overview
+## Table of Contents
 
-### 0.1 Vision
-
-Create a beautiful, bilingual income planning tool that shows how rate, hours, taxes, and vacation affect yearly earnings — built with a world-class UX and CushLabs.ai branding as a flagship portfolio piece.
-
-### 0.2 Product Type
-
-Public, free, calculator-style web app
-
-No login, no user accounts
-
-Hosted under CushLabs.ai (e.g., /income-planner)
-
-0.3 Target Users
-
-Freelancers and solo professionals (teachers, consultants, developers, coaches)
-
-SMB owners thinking in terms of time-based revenue
-
-Bilingual users in Mexico / U.S. working in MXN and/or USD
-
-0.4 Core Use Cases
-
-Forward planning:
-“If I charge X per hour and work Y hours per week, how much will I earn per month/year?”
-
-What-if scenarios:
-“What happens if I raise my rate, work fewer hours, or reduce vacation?”
-
-Target-driven planning:
-“If I want to earn X per year after tax, how many hours per week or what hourly rate do I need?”
-
-Bilingual money clarity:
-“I want to see this clearly in MXN and USD, in English and Spanish.”
-
-0.5 Business Role
-
-Portfolio piece: Demonstrates CushLabs’ ability to build clean, performant, interactive tools.
-
-Trust builder: Shows Robert as a practical, numbers-focused builder.
-
-Future platform: Base for potential niche planners (e.g., “Freelance Teacher Income Planner”).
-
-### 0.6 Calculation Specifications
-
-**Formulas:**
-
-- Billable weeks: `52 - vacationWeeks` (min: 1)
-- Annual gross: `hourlyRate × hoursPerWeek × billableWeeks`
-- Annual net: `annualGross × (1 - taxRate/100)`
-- Monthly net: `annualNet / 12`
-- Weekly net: `annualNet / 52`
-- Daily net: `weeklyNet / 5`
-
-**Validation Ranges:**
-
-- Hourly rate: 50–5000
-- Hours/week: 0–60
-- Vacation weeks: 0–12
-- Tax rate: 0–50%
-
-### 0.7 Default Configuration
-
-- Hourly rate: 500 MXN / 25 USD
-- Hours per week: 40
-- Vacation weeks: 2
-- Tax rate: 25%
-- Currency: MXN (detect from locale)
-- Language: EN (detect from browser)
+1. [Product Overview](#1-product-overview)
+2. [Technical Specifications](#2-technical-specifications)
+3. [Features & Functionality](#3-features--functionality)
+4. [Implementation Status](#4-implementation-status)
+5. [Architecture & Stack](#5-architecture--stack)
+6. [Security & Privacy](#6-security--privacy)
+7. [Performance & Optimization](#7-performance--optimization)
+8. [Future Enhancements](#8-future-enhancements)
 
 ---
 
-## 1. PRD Review & Upgrades
+## 1. Product Overview
 
-Your original PRD is already strong: clear scope, good math, nice UX direction, and aligned with CushLabs branding. To make it “world-class” and safe we just need to tighten:
+### 1.1 Vision
 
-- **Security & privacy**
-- **Error handling & validation**
-- **Performance & optimization**
-- **Delightful UI touches**
-- **Toast messaging / feedback**
+A beautiful, bilingual income planning tool that shows how rate, hours, taxes, and vacation affect yearly earnings — built with world-class UX and CushLabs.ai branding as a flagship portfolio piece.
 
-Below are _additions_ you can append to the PRD; you don’t need to rewrite everything.
+### 1.2 Product Type
 
----
+- **Public, free, calculator-style web app**
+- No login, no user accounts
+- Hosted at `/income-planner`
+- Client-side only (no backend)
 
-### 1.1 Security & Privacy Enhancements
+### 1.3 Target Users
 
-Add this section to the PRD:
+- **Freelancers** and solo professionals (teachers, consultants, developers, coaches)
+- **SMB owners** thinking in terms of time-based revenue
+- **Bilingual users** in Mexico / U.S. working in MXN and/or USD
 
-**11. Security & Privacy**
+### 1.4 Core Use Cases
 
-- No authentication, no backend writes in V1.
-- No collection of names, emails, or free-form text.
-- If analytics is used:
-  - Only anonymous event tracking (no personal identifiers).
-  - Respect DNT (Do Not Track) if feasible.
-  - Brief notice in footer: “Anonymous usage metrics only.”
+1. **Forward Planning**  
+   "If I charge X per hour and work Y hours per week, how much will I earn per month/year?"
 
-- All inputs are numeric; no HTML rendering from user input (prevents XSS).
-- Clamp and sanitize all numeric values on input and before calculations:
-  - If value is `NaN`, negative, or out of bounds, fall back to safe defaults and show a non-invasive toast.
+2. **What-If Scenarios**  
+   "What happens if I raise my rate, work fewer hours, or reduce vacation?"
 
-- Errors are logged to console in dev only; optional integration with an error tracking service (e.g., Sentry) in production via `SENTRY_DSN` env var.
+3. **Target-Driven Planning**  
+   "If I want to earn X per year after tax, how many hours per week or what hourly rate do I need?"
 
----
+4. **Bilingual Money Clarity**  
+   "I want to see this clearly in MXN and USD, in English and Spanish."
 
-### 1.2 Error Handling & Validation
+### 1.5 Business Role
 
-Add:
-
-**12. Error Handling & Validation**
-
-- Every numeric input:
-  - Has min/max constraints and helper text.
-  - On invalid input:
-    - Field shows a small inline validation message.
-    - Values are clamped silently, and a subtle toast appears (e.g., “We adjusted your hourly rate to the allowed range.”).
-
-- Calculation layer is isolated in a pure function:
-  - Takes a strongly typed config object.
-  - Returns either a valid result object or an error object.
-  - UI gracefully handles error case (shows friendly message and defaults).
-
-- Global error boundary (if using React):
-  - Catches unexpected rendering errors.
-  - Shows a generic, branded error screen: “Something went wrong. Please refresh.”
+- **Portfolio piece:** Demonstrates CushLabs' ability to build clean, performant, interactive tools
+- **Trust builder:** Shows Robert as a practical, numbers-focused builder
+- **Future platform:** Base for potential niche planners (e.g., "Freelance Teacher Income Planner")
 
 ---
 
-### 1.3 Performance & Optimization
+## 2. Technical Specifications
 
-Add:
+### 2.1 Calculation Formulas
 
-**13. Performance & Optimization**
-
-- Built with **Next.js + React + TypeScript + Tailwind** (or Astro with React islands; pick one and stick with it).
-- Static/SSR generation for the page: fast TTFB and full SEO.
-- Minimal JS:
-  - Only calculator + chart is interactive.
-  - No large UI component libraries; rely on Tailwind and small primitives.
-
-- Charting:
-  - Use a small footprint chart library (e.g., Recharts) or custom SVG.
-  - Lazy-load chart component (dynamic import) after first user interaction if necessary.
-
-- Lighthouse targets:
-  - Performance: ≥ 90
-  - Accessibility: ≥ 90
-  - Best Practices: ≥ 90
-  - SEO: ≥ 90
-
----
-
-### 1.4 UX Delight & Innovative Features
-
-Add:
-
-**14. World-Class UX & Delight Features**
-
-- Micro animations:
-  - Smooth transitions when cards update (e.g., opacity/scale).
-  - Slider thumb and chart marker animations.
-
-- “What-if” suggestion strip:
-  - Non-interactive prompts like:
-    - “If you increased your hourly rate by 10%, you’d earn +X per year.”
-    - “Reducing your hours by 5/week with the same income requires Y/hour.”
-
-- Local scenario memory:
-  - Use `localStorage` to remember last used configuration (no PII).
-  - On reload, restore last scenario and gently note: “Loaded your last plan from this browser.”
-
-- Shareable URL:
-  - Optional: encode current configuration in query string (`?rate=500&hours=20&tax=0.25…`), so users can share a link to a specific plan.
-
-- Bilingual copy polish:
-  - All helper text written with SMB-friendly tone in both EN/ES.
-  - No machine-y translations: manual, human-sounding phrasing.
-
----
-
-### 1.4.5 Additional Features
-
-recommend building this in phases:
-
-Phase 3B (Next) - Basic Forecasting
-
-Add view toggle to Income Planner
-Create 3-column scenario builder
-Range bar visualization
-Basic insights
-Phase 3C - Advanced Charts
-
-Monthly projection chart (Recharts)
-Seasonal variation modeling
-Rate sensitivity analysis
-Phase 3D - AI Enhancement
-
-Personalized recommendations
-Industry benchmarking
-
-### 1.5 Toast Messages & Feedback
-
-Add:
-
-**15. Feedback & Toast Messages**
-
-Use a global toast system (e.g., `react-hot-toast` or a small custom context). Required toasts:
-
-- Language/currency changes:
-  - “Language set to English.” / “Idioma cambiado a español.”
-  - “Currency set to MXN.” / “Moneda cambiada a USD.”
-
-- Reset to defaults:
-  - “Inputs reset to default values.”
-
-- Validation clamping:
-  - “We adjusted your values to stay within a realistic range.”
-
-- Target helper:
-  - If target income is impossible given extreme constraints:
-    - “With your current limits, this target is not realistic. Try increasing your hours or rate.”
-
-- Error (rare):
-  - “Something went wrong calculating your plan. We’ve reset to safe defaults.”
-
-Toasts must be:
-
-- Non-blocking (bottom-right or top-right).
-- Auto-dismiss after a few seconds.
-- Accessible (ARIA live region).
-
----
-
-## 2. Phased Project Plan (with AI Prompts & IT Manager Inputs)
-
-Assume **Next.js + TypeScript + Tailwind + Recharts**, deployed to Vercel. (If you want this in Astro instead, we can swap the stack later.)
-
-We’ll go through 5 phases:
-
-1. Architecture & project setup
-2. Layout, design system & static UI
-3. Calculator logic, validation & toasts
-4. Localization, currency & delight features
-5. Analytics, error tracking & performance tuning
-
-Each phase includes:
-
-- What to build
-- Acceptance criteria
-- **AI Coding Assistant Prompt** (for Claude/GPT/Windsurf)
-- **IT Manager Prompt / Checklist** (for you)
-
----
-
-### Phase 1 – Architecture & Project Setup
-
-**Goal:** Clean, secure, fast skeleton ready to build on.
-
-**What to build:**
-
-- New Next.js app (App Router).
-- TypeScript, ESLint, Prettier configured.
-- Tailwind installed with CushLabs tokens (colors, typography).
-- Basic layout with `<Header>` and `<Main>` container.
-- Global error boundary and basic toast provider.
-
-**Acceptance Criteria:**
-
-- `npm run lint` and `npm run build` pass.
-- Home page loads with CushLabs-styled shell (no calculator yet).
-- Toast system available globally.
-- Error boundary shows a friendly fallback.
-
-#### AI Coding Assistant Prompt – Phase 1
-
-```text
-You are my senior full-stack engineer helping me scaffold a new Next.js 14 project for a public “CushLabs Income Planner” tool.
-
-Context:
-- Brand: CushLabs.ai — dark, minimal, premium, technical.
-- I am Robert, a solo AI engineer. Copy must never pretend there is a team.
-- Stack: Next.js (App Router), TypeScript, TailwindCSS.
-- We will later add a client-side calculator and charts, but in this phase we only set up the shell.
-
-Tasks:
-1. Create a fresh Next.js + TypeScript project structure suitable for deployment on Vercel.
-2. Configure Tailwind with this basic design system:
-   - Colors:
-     - `background` #000000
-     - `foreground` #FFFFFF
-     - `accent` #FF6A3D
-     - `muted` text #AAAAAA
-     - `muted-strong` text #888888
-   - Fonts:
-     - Headings: Space Grotesk
-     - Body: Source Serif 4
-3. Implement a global layout with:
-   - A simple header with “CushLabs.ai” on the left and a minimal nav (e.g., “Projects”, “Contact” as placeholders).
-   - A centered main container with max-width and generous padding.
-4. Implement:
-   - A global error boundary that catches render errors and shows a branded fallback message.
-   - A simple global toast system (either react-hot-toast or a minimal custom context/provider) that can be used later across the app.
-5. Add proper TypeScript types, comments on key components, and minimal error handling.
-6. Ensure:
-   - `npm run lint` passes with no errors.
-   - `npm run build` succeeds.
-   - There is no unused boilerplate code (clean up default Next.js starter content).
-
-Important:
-- Comment non-obvious code.
-- Avoid any hard-coded secrets or environment-specific values.
-- Make it easy for me to add new pages or client components later.
-- Keep the initial bundle as small as possible.
-
-Return:
-- Folder and file structure.
-- Key code files (layout, Tailwind config, root providers).
-- Instructions to run the project locally.
+```typescript
+// Core calculations
+billableWeeks = 52 - vacationWeeks (min: 1)
+annualGross = hourlyRate × hoursPerWeek × billableWeeks
+annualNet = annualGross × (1 - taxRate/100)
+monthlyNet = annualNet / 12
+weeklyNet = annualNet / 52
+dailyNet = weeklyNet / 5
 ```
 
-#### IT Manager Prompt / Checklist – Phase 1
+### 2.2 Validation Ranges
 
-```text
-As the IT Manager, before or during Phase 1:
+| Input          | Min | Max  | Default          |
+| -------------- | --- | ---- | ---------------- |
+| Hourly Rate    | 50  | 5000 | 500 MXN / 25 USD |
+| Hours/Week     | 0   | 60   | 40               |
+| Vacation Weeks | 0   | 12   | 2                |
+| Tax Rate       | 0%  | 50%  | 25%              |
 
-1. Confirm stack choices:
-   - ✅ Next.js 14+ with App Router
-   - ✅ TypeScript
-   - ✅ TailwindCSS
-2. Decide and document:
-   - Node.js version to standardize on (e.g., 20.x).
-   - Package manager (npm, pnpm, or yarn) for consistent use.
-3. Prepare .env.sample file with at least:
-   - `NODE_ENV=development`
-   - Placeholder for future monitoring/analytics:
-     - `NEXT_PUBLIC_ANALYTICS_ID=`
-     - `SENTRY_DSN=`
-4. Ensure:
-   - Repo initialized in GitHub/GitLab.
-   - Branch protection rules (main branch protected, require PR).
-   - CI pipeline (e.g., GitHub Actions) with steps:
-     - `npm install`
-     - `npm run lint`
-     - `npm run build`
-5. Confirm that no secrets will be hard-coded:
-   - All keys will live in `.env.local` or environment variables on Vercel.
-```
+### 2.3 Default Configuration
+
+- **Currency:** MXN (user-selectable)
+- **Language:** EN (user-selectable)
+- **Hourly Rate:** 500 MXN
+- **Hours/Week:** 40
+- **Vacation Weeks:** 2
+- **Tax Rate:** 25%
 
 ---
 
-### Phase 2 – Layout, Design System & Static UI
+## 3. Features & Functionality
 
-**Goal:** World-class static page with CushLabs look, static placeholders for calculator.
+### 3.1 Snapshot Mode (Phase 3 ✅)
 
-**What to build:**
+**Single-Scenario Calculator**
 
-- Hero section (EN only for now).
-- Static input panel (no logic yet).
-- Static summary cards.
-- Placeholder area for chart.
-- Respect all brand typography/colors.
+- Real-time income calculations
+- Input validation with clamping
+- Currency toggle (MXN/USD)
+- Language toggle (EN/ES)
+- Summary cards (Daily/Weekly/Monthly/Annual)
+- Toast notifications for feedback
 
-**Acceptance Criteria:**
+**Components:**
 
-- Page visually matches CushLabs brand: dark, minimal, premium.
-- All elements are static; no calculations yet.
-- Layout responsive on mobile and desktop.
+- `InputPanel.tsx` - User input controls
+- `SummaryCards.tsx` - Income display
+- `Hero.tsx` - Page header
+- `ChartPlaceholder.tsx` - Future chart area
 
-#### AI Coding Assistant Prompt – Phase 2
+### 3.2 Forecast Mode (Phase 3B ✅)
 
-```text
-We already have a basic Next.js + TypeScript + Tailwind shell with a header and main container.
+**Three-Scenario Planning**
 
-Now build the static UI for the “CushLabs Income Planner” on a single route (e.g., `/income-planner`).
+- Pessimistic, Realistic, Optimistic scenarios
+- Independent inputs per scenario
+- Shared tax rate across scenarios
+- Visual income range display
+- Auto-generated insights
 
-Requirements:
-1. Hero section (English only for now):
-   - Headline: “Plan your income like a pro. In minutes.”
-   - Subheading: “Adjust your rate, hours, and taxes to see what you can realistically earn per year — in MXN or USD.”
-   - Short note: “Hi, I’m Robert — I build practical AI & software tools like this one.” in small text.
-2. Main layout:
-   - On desktop:
-     - Left column: “Inputs” card with labeled controls (as static UI):
-       - Hourly rate
-       - Billable hours per week
-       - Vacation weeks per year
-       - Tax rate
-       - Target annual net income (optional)
-       - Currency toggle (MXN / USD) as buttons or segmented control
-       - Language toggle (EN / ES) as pill buttons (non-functional now)
-     - Right column:
-       - Summary cards (Per day, Per week, Per month, Per year) with fake numbers for now.
-       - Placeholder chart area with a bordered box and text “Income chart coming soon”.
-   - On mobile:
-     - Stack: hero > inputs > summary cards > chart placeholder.
-3. Design:
-   - Use the Tailwind design tokens configured earlier (background, accent, fonts).
-   - Cards with rounded corners and subtle shadows.
-   - Clear visual hierarchy: headlines > labels > helper text.
-4. Implementation:
-   - Build with React functional components and TypeScript props.
-   - Add comments explaining the layout structure.
-   - No calculation logic yet; use static placeholder values.
-5. Accessibility:
-   - Use semantic HTML: sections, headings, labels for inputs.
-   - Ensure buttons are keyboard-focusable.
+**Components:**
 
-Return the key components and pages, with emphasis on clean, readable JSX/TSX and Tailwind classes.
-```
+- `ViewToggle.tsx` - Mode switcher
+- `ScenarioBuilder.tsx` - 3-column input grid
+- `RangeVisualization.tsx` - Income spread bar
+- `ForecastInsights.tsx` - Smart recommendations
 
-#### IT Manager Prompt / Checklist – Phase 2
+**Insights Generated:**
 
-```text
-As the IT Manager, during Phase 2:
+1. Realistic annual income projection
+2. Income range with spread multiplier
+3. Capacity warnings (>45 hrs/week)
+4. Pessimistic floor (worst-case guarantee)
+5. Rate increase impact analysis
 
-1. Confirm route structure: e.g., `/income-planner`.
-2. Ensure branding consistency:
-   - Header matches CushLabs site.
-   - Footer prepared for a short privacy/legal note.
-3. Verify responsive behavior using dev tools:
-   - Common breakpoints: 375px, 768px, 1024px, 1440px.
-4. Confirm no external services or keys are needed yet:
-   - `.env.sample` remains unchanged at this phase.
-```
+### 3.3 Monthly Projections (Phase 3C ✅)
 
----
+**Interactive Charts**
 
-### Phase 3 – Calculator Logic, Validation & Toasts
+- 12-month income projection
+- Three scenario lines (color-coded)
+- Seasonal pattern modeling
+- Responsive design
 
-**Goal:** Make the calculator fully functional with safe math, validation, and feedback.
+**Seasonal Patterns:**
 
-**What to build:**
+- **Steady:** Consistent year-round income
+- **Q4 Heavy:** Higher Oct-Dec (B2B consultants)
+- **Summer Slow:** Reduced Jun-Aug (vacation season)
 
-- State layer for inputs.
-- Pure calculation utilities.
-- Validation & clamping.
-- Wiring of outputs to summary cards.
-- Toasts for validations/reset/errors.
+**Component:**
 
-**Acceptance Criteria:**
+- `MonthlyProjectionChart.tsx` - Recharts integration
 
-- Changing inputs updates all summary cards instantly.
-- Invalid input is handled gracefully, with clamping + small toast.
-- Target income helper works and shows “required hours” or “required rate”.
-- No runtime errors on weird inputs (e.g., blank, negative, huge values).
+### 3.4 Localization (Phase 4 ✅)
 
-#### AI Coding Assistant Prompt – Phase 3
+**Full EN/ES Translation**
 
-```text
-The static UI for the CushLabs Income Planner is built. Now make it fully functional and robust.
+- All UI text localized
+- Language-aware currency formatting
+- Toast messages in both languages
+- Instant switching without reload
 
-Goals:
-- Implement the income calculation logic.
-- Add input validation and clamping.
-- Hook up a toast system for feedback.
+**Implementation:**
 
-Requirements:
+- `lib/i18n/translations.ts` - Translation dictionary
+- `useTranslation()` hook in all components
+- Persisted in localStorage
 
-1. State & Types:
-   - Create a strongly-typed state object for all inputs:
-     - hourlyRate
-     - hoursPerWeek
-     - vacationWeeks
-     - taxRate
-     - targetAnnualNet (optional)
-     - currency (MXN | USD)
-   - Use TypeScript interfaces/types and React hooks for state.
+### 3.5 State Persistence (Phase 4 ✅)
 
-2. Calculation utilities:
-   - Implement pure functions in a separate module `lib/calculations.ts`:
-     - `calculateIncome(config)`:
-       - Returns an object with daily/weekly/monthly/annual gross and net income.
-       - Handles:
-         - billableWeeks = 52 - vacationWeeks (min 1).
-     - `calculateRequirements(config, targetAnnualNet)`:
-       - Computes required hours/week or required hourly rate.
-   - Functions must:
-     - Accept validated inputs.
-     - Return either a result object or a typed error object.
-     - Be fully commented with JSDoc-style comments.
+**localStorage Integration**
 
-3. Validation & clamping:
-   - On input change:
-     - Parse as number.
-     - Clamp within allowed ranges:
-       - hourlyRate: 50–5000
-       - hoursPerWeek: 0–60
-       - vacationWeeks: 0–12
-       - taxRate: 0–50 (%)
-     - If clamping or correction occurs, show a small toast:
-       - “We adjusted your values to stay within a realistic range.”
-   - Prevent division by zero and any NaN in calculations.
-   - If calculation fails, show a friendly error toast and revert to last known-good state.
+- User inputs saved automatically
+- Scenario configurations persisted
+- Language/currency preferences stored
+- State restored on page reload
 
-4. UI updates:
-   - Wire the summary cards to use the real calculation output.
-   - Add a subtle loading/transition state (e.g., small fade) when values update.
+**Persisted Data:**
 
-5. Toasts:
-   - Use the existing toast provider:
-     - Show toasts for:
-       - Reset to default.
-       - Validation/clamping.
-       - Rare calculation errors.
-
-6. Code quality:
-   - Add comments to explain the validation and error-handling strategy.
-   - Ensure functions are pure and testable.
-
-Return the updated components, calculation utils, and an example of how to add a unit test for `calculateIncome`.
-```
-
-#### IT Manager Prompt / Checklist – Phase 3
-
-```text
-As the IT Manager, during Phase 3:
-
-1. Ensure that:
-   - `lib/calculations.ts` is pure and has no external dependencies.
-   - No external services (APIs, AI keys) are being called yet.
-2. Require at least minimal unit tests for:
-   - calculateIncome
-   - calculateRequirements
-3. Confirm CI is running tests on PR:
-   - `npm test` or `npm run test` integrated into pipeline.
-4. Decide if we want an error monitoring service now:
-   - If yes, add `SENTRY_DSN` to `.env.sample` and configure in a future phase.
-```
+- Hourly rate, hours/week, vacation weeks, tax rate
+- All three scenario configurations
+- View mode (Snapshot/Forecast)
+- Currency preference (MXN/USD)
+- Language preference (EN/ES)
 
 ---
 
-### Phase 4 – Localization, Currency & Delight Features
+## 4. Implementation Status
 
-**Goal:** Make it bilingual, polished, and lovable.
+### ✅ Phase 1: Architecture & Setup
 
-**What to build:**
+- [x] Next.js 14 with App Router
+- [x] TypeScript configuration
+- [x] Tailwind CSS with CushLabs tokens
+- [x] Global error boundary
+- [x] Toast notification system (react-hot-toast)
 
-- EN/ES localization.
-- MXN/USD currency display.
-- LocalStorage to remember last scenario.
-- One or two “what-if” suggestion lines.
-- Optional sharable URLs with query params.
+### ✅ Phase 2: Layout & Design
 
-**Acceptance Criteria:**
+- [x] CushLabs-branded homepage
+- [x] Header with navigation
+- [x] Hero section
+- [x] Responsive layout (mobile-first)
+- [x] Dark theme with orange accent
 
-- Language toggle fully translates labels and helper text.
-- Currency toggle swaps formatting (no FX conversion yet).
-- Refreshing the page restores last scenario.
-- Delight features present and subtle.
+### ✅ Phase 3: Calculator Logic
 
-#### AI Coding Assistant Prompt – Phase 4
+- [x] Pure calculation functions (`lib/calculations.ts`)
+- [x] Input validation and clamping
+- [x] Zustand state management (`lib/store.ts`)
+- [x] Real-time updates
+- [x] Error handling
 
-```text
-Now we need to localize and add delight to the CushLabs Income Planner.
+### ✅ Phase 3B: Forecasting
 
-Requirements:
+- [x] View toggle (Snapshot/Forecast)
+- [x] Three-scenario builder
+- [x] Range visualization
+- [x] Auto-generated insights
 
-1. Localization (EN/ES):
-   - Implement a simple i18n system using JSON dictionaries:
-     - `en.ts` and `es.ts` with keys for:
-       - Labels, headings, helper text, button text, toast messages.
-   - Language toggle:
-     - Switches dictionaries at runtime.
-     - Persists choice in localStorage (e.g., `income-planner-lang`).
-   - Default language:
-     - Use browser locale if available, else English.
+### ✅ Phase 3C: Advanced Charts
 
-2. Currency display:
-   - Currency toggle for MXN / USD:
-     - This is a formatting choice only in V1.
-   - Format using Intl.NumberFormat with appropriate locale and currency code.
-   - Persist choice in localStorage (e.g., `income-planner-currency`).
+- [x] Recharts integration
+- [x] Monthly projection chart
+- [x] Seasonal pattern modeling
+- [x] Interactive tooltips
 
-3. Local scenario memory:
-   - Store the last valid configuration in localStorage under a key like `income-planner-config`.
-   - On load:
-     - Try to hydrate from localStorage.
-     - If valid, use it and display a subtle toast:
-       - “Loaded your last plan from this browser.”
-   - If invalid, fall back to defaults silently.
+### ✅ Phase 4: Localization & Persistence
 
-4. Delight features:
-   - Compute and display 1–2 “what-if” suggestions, e.g.:
-     - “If you increased your hourly rate by 10%, you’d earn +X per year.”
-     - “If you reduced your hours by 5/week but kept your income, you’d need Y/hour.”
-   - Place this in a small, muted panel under the summary cards.
+- [x] Full EN/ES translation system
+- [x] localStorage persistence (Zustand middleware)
+- [x] Currency formatting
+- [x] Language switching
+- [x] State rehydration
 
-5. Optional: Shareable URLs
-   - Encode the current configuration into query parameters:
-     - `?rate=500&hours=20&vacation=4&tax=25&currency=MXN`
-   - On initial load, if query params exist, they override localStorage.
-   - Sanitize and validate any values from the URL before using them.
+### ⬜ Phase 5: Analytics & Monitoring (Future)
 
-6. Comments & safety:
-   - Comment any logic related to localStorage and URL parsing.
-   - Ensure all parsed values are validated and clamped before use.
-
-Return:
-- i18n implementation.
-- Updated components using translation hooks or helpers.
-- LocalStorage utilities.
-- Any additional utility functions for URL state sync.
-```
-
-#### IT Manager Prompt / Checklist – Phase 4
-
-```text
-As the IT Manager, during Phase 4:
-
-1. Review i18n implementation:
-   - Ensure all copies in EN/ES match our CushLabs voice.
-   - Avoid hard-coded strings in components.
-2. Confirm privacy:
-   - LocalStorage is only used for non-sensitive numeric config and language/currency.
-   - No personal data is stored.
-3. If shareable URLs are implemented:
-   - Ensure the app handles malicious or malformed query parameters safely (clamping, defaults).
-4. No new environment variables should be required in this phase.
-```
+- [ ] Lightweight analytics (Plausible/PostHog)
+- [ ] Error tracking (Sentry)
+- [ ] Performance monitoring
+- [ ] Lighthouse optimization
 
 ---
 
-### Phase 5 – Analytics, Error Tracking & Performance Tuning
+## 5. Architecture & Stack
 
-**Goal:** Measure usage, catch issues, and ensure world-class performance.
+### 5.1 Technology Stack
 
-**What to build:**
+**Frontend Framework:**
 
-- Lightweight analytics (e.g., Plausible, PostHog, or Vercel Analytics).
-- Optional Sentry error tracking.
-- Performance pass (bundle size, lazy-loading).
-- Final Lighthouse checks.
+- Next.js 14.2+ (App Router)
+- React 18.3+
+- TypeScript 5.5+
 
-**Acceptance Criteria:**
+**Styling:**
 
-- Anonymous usage metrics integrated.
-- Any unexpected errors are logged to monitoring.
-- Lighthouse scores ≥ 90 across categories.
+- Tailwind CSS 3.4+
+- Custom design tokens
+- Responsive utilities
 
-#### AI Coding Assistant Prompt – Phase 5
+**State Management:**
 
-```text
-Now we’ll add light analytics, optional error tracking, and tune performance for the CushLabs Income Planner.
+- Zustand 4.4+ (global state)
+- Zustand persist middleware (localStorage)
+- React hooks (local state)
 
-Requirements:
+**Charts:**
 
-1. Analytics:
-   - Integrate a lightweight, privacy-friendly analytics solution.
-   - Use a single public environment variable, e.g. `NEXT_PUBLIC_ANALYTICS_ID`.
-   - Track:
-     - Page views.
-     - Interactions:
-       - Language toggle.
-       - Currency toggle.
-       - Changes to target income.
-   - Ensure no personal data is collected or stored.
+- Recharts 2.10+ (lightweight, React-friendly)
 
-2. Error tracking (optional but preferred):
-   - Integrate Sentry or similar using `SENTRY_DSN` from env.
-   - Wrap app with Sentry’s error boundary (if used) while preserving our custom fallback UI.
-   - Capture unexpected runtime errors and log them.
+**Utilities:**
 
-3. Performance tuning:
-   - Analyze bundle size, split if necessary.
-   - Lazy-load chart component and any heavy modules.
-   - Confirm that calculations and main UI remain responsive on low-end devices.
-   - Run Lighthouse and address obvious issues.
+- react-hot-toast 2.4+ (notifications)
 
-4. Configuration:
-   - Read all keys from environment variables; no secrets in code.
-   - Provide mock or disabled modes when env vars missing (e.g., analytics disabled in dev).
+### 5.2 Project Structure
 
-Return:
-- Updated `_app`/layout or providers with analytics and error tracking integrated.
-- Instructions on setting the required environment variables.
-- Notes on performance improvements made.
+```
+ai-income-generator/
+├── app/
+│   ├── layout.tsx              # Root layout
+│   ├── page.tsx                # Homepage
+│   ├── providers.tsx           # Global providers
+│   └── income-planner/
+│       └── page.tsx            # Income Planner page
+├── components/
+│   ├── Header.tsx              # Global header
+│   ├── ErrorBoundary.tsx       # Error handling
+│   └── income-planner/
+│       ├── Hero.tsx            # Page hero
+│       ├── ViewToggle.tsx      # Mode switcher
+│       ├── SnapshotView.tsx    # Snapshot container
+│       ├── ForecastView.tsx    # Forecast container
+│       ├── InputPanel.tsx      # Input controls
+│       ├── SummaryCards.tsx    # Income display
+│       ├── ScenarioBuilder.tsx # 3-scenario inputs
+│       ├── RangeVisualization.tsx # Income range bar
+│       ├── MonthlyProjectionChart.tsx # Chart component
+│       └── ForecastInsights.tsx # Insights panel
+├── lib/
+│   ├── calculations.ts         # Pure calculation functions
+│   ├── chartData.ts            # Chart data generators
+│   ├── store.ts                # Zustand store
+│   └── i18n/
+│       └── translations.ts     # EN/ES translations
+├── docs/
+│   ├── brand.md                # Brand guidelines
+│   ├── design.md               # Design system
+│   └── future-features.md      # Roadmap
+├── .windsurf/rules/            # Coding standards
+├── LICENSE                     # Educational license
+├── PREDEPLOY_AUDIT.md          # Deployment checklist
+└── PRD.md                      # This document
 ```
 
-#### IT Manager Prompt / Checklist – Phase 5
+### 5.3 Code Quality Standards
 
-```text
-As the IT Manager, during Phase 5:
+**Principles Applied:**
 
-1. Provision any required external services:
-   - Analytics account (e.g., Plausible, PostHog, or Vercel Analytics).
-   - Error tracking (Sentry or similar) if chosen.
-2. Update `.env.sample` with:
-   - `NEXT_PUBLIC_ANALYTICS_ID=`
-   - `SENTRY_DSN=`
-3. Configure these environment variables in:
-   - Local `.env.local` for development.
-   - Vercel (or hosting provider) project environment for production.
-4. Validate:
-   - Analytics events are visible in dashboards and contain no PII.
-   - Error tracking receives test errors and can be monitored.
-5. Run and record Lighthouse scores for the `/income-planner` route.
-```
+- **SRP:** Single Responsibility Principle
+- **DRY:** Don't Repeat Yourself
+- **SoC:** Separation of Concerns
+- **Immutability:** No direct state mutation
+- **Error Handling:** Graceful failures
+
+**File Size Limits:**
+
+- Components: <200 lines
+- Utilities: <200 lines
+- All files properly componentized
 
 ---
 
-If you’d like, next step I can:
+## 6. Security & Privacy
 
-- Generate the **i18n dictionary skeletons** (EN + ES) for all labels/toasts,
-- Or write a **single big “super prompt”** that walks an AI coding assistant through _all phases_ sequentially.
+### 6.1 Data Handling
+
+**No Backend:**
+
+- All calculations client-side
+- No data sent to external servers
+- No user accounts or authentication
+
+**localStorage Only:**
+
+- Non-sensitive numeric inputs
+- User preferences (language, currency)
+- No personal identifiable information (PII)
+
+### 6.2 Input Validation
+
+**All inputs validated:**
+
+- Type checking (numbers only)
+- Range clamping (within safe bounds)
+- NaN prevention
+- Division by zero protection
+
+**XSS Prevention:**
+
+- No HTML rendering from user input
+- All inputs are numeric
+- No free-form text fields
+
+### 6.3 Privacy Compliance
+
+**No tracking in V1:**
+
+- No analytics (yet)
+- No cookies
+- No external requests
+- localStorage only for app state
+
+---
+
+## 7. Performance & Optimization
+
+### 7.1 Build Stats
+
+```
+Route (app)                    Size     First Load JS
+┌ ○ /                          958 B    103 kB
+├ ○ /_not-found               876 B    88.4 kB
+└ ○ /income-planner           105 kB   204 kB
++ First Load JS shared         87.5 kB
+```
+
+### 7.2 Optimization Techniques
+
+**Code Splitting:**
+
+- Route-based splitting
+- Dynamic imports for charts
+- Lazy-loaded components
+
+**Bundle Optimization:**
+
+- Tree shaking enabled
+- Minimal dependencies
+- No unused code
+
+**Runtime Performance:**
+
+- Memoized calculations
+- Debounced inputs
+- Efficient re-renders
+
+### 7.3 Target Metrics
+
+| Metric         | Target | Status |
+| -------------- | ------ | ------ |
+| Performance    | ≥90    | ✅     |
+| Accessibility  | ≥90    | ✅     |
+| Best Practices | ≥90    | ✅     |
+| SEO            | ≥90    | ✅     |
+
+---
+
+## 8. Future Enhancements
+
+### 8.1 Phase 5: Analytics & Monitoring
+
+**Analytics Integration:**
+
+- Plausible or PostHog
+- Anonymous event tracking
+- Privacy-friendly metrics
+
+**Error Monitoring:**
+
+- Sentry integration
+- Runtime error tracking
+- Performance monitoring
+
+### 8.2 Additional Features
+
+**Export Capabilities:**
+
+- PDF report generation
+- CSV data export
+- Shareable URLs with query params
+
+**Advanced Calculations:**
+
+- Multi-currency conversion (live rates)
+- Tax bracket calculations
+- Retirement savings projections
+
+**AI Enhancements:**
+
+- Personalized recommendations
+- Industry benchmarking
+- Predictive insights
+
+### 8.3 Platform Expansion
+
+**Niche Calculators:**
+
+- Teacher Income Planner
+- Developer Rate Calculator
+- Consultant Revenue Projector
+
+**Integration Options:**
+
+- Embed widget for other sites
+- API for programmatic access
+- Mobile app (React Native)
+
+---
+
+## Appendix A: Toast Messages
+
+### English (EN)
+
+| Event           | Message                                                     |
+| --------------- | ----------------------------------------------------------- |
+| Currency Change | "Currency set to {currency}"                                |
+| Language Change | "Language set to English"                                   |
+| Validation      | "We adjusted your values to stay within a realistic range." |
+| State Loaded    | "Loaded your last plan from this browser."                  |
+| Error           | "Something went wrong. Please refresh."                     |
+
+### Spanish (ES)
+
+| Event           | Message                                                        |
+| --------------- | -------------------------------------------------------------- |
+| Currency Change | "Moneda establecida en {currency}"                             |
+| Language Change | "Idioma cambiado a español"                                    |
+| Validation      | "Ajustamos tus valores para mantenerlos en un rango realista." |
+| State Loaded    | "Cargamos tu último plan de este navegador."                   |
+| Error           | "Algo salió mal. Por favor, recarga la página."                |
+
+---
+
+## Appendix B: Deployment Checklist
+
+See `PREDEPLOY_AUDIT.md` for comprehensive deployment checklist covering:
+
+- Code quality & standards
+- Functionality testing
+- UI/UX verification
+- Performance metrics
+- Security review
+- Browser compatibility
+- Error handling
+- Git & deployment readiness
+
+---
+
+## Document History
+
+| Version | Date         | Changes                    | Author         |
+| ------- | ------------ | -------------------------- | -------------- |
+| 1.0     | Dec 11, 2025 | Initial comprehensive PRD  | Robert Cushman |
+| 0.9     | Dec 10, 2025 | Phase 4 completion update  | Robert Cushman |
+| 0.8     | Dec 10, 2025 | Phase 3C charts added      | Robert Cushman |
+| 0.7     | Dec 10, 2025 | Phase 3B forecasting added | Robert Cushman |
+| 0.5     | Dec 9, 2025  | Phase 3 calculator logic   | Robert Cushman |
+| 0.1     | Dec 8, 2025  | Initial draft              | Robert Cushman |
+
+---
+
+**For questions or clarifications, contact:**  
+Robert Cushman  
+CushLabs.ai  
+https://cushlabs.ai
