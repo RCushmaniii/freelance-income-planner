@@ -40,6 +40,16 @@ AI consulting and modern software development studio targeting SMBs. Positioned 
 | White           | `#FFFFFF` | 255, 255, 255 | Primary text, headlines   |
 | Orange (Accent) | `#FF6A3D` | 255, 106, 61  | CTAs, highlights, accents |
 
+### Chart Palette (Forecast + Range)
+
+The chart series colors are implemented as CSS variables in `app/globals.css` so they stay consistent across light/dark mode:
+
+| Token                 | Purpose               |
+| --------------------- | --------------------- |
+| `--chart-pessimistic` | Conservative scenario |
+| `--chart-realistic`   | Most-likely scenario  |
+| `--chart-optimistic`  | Best-case scenario    |
+
 ### Secondary / UI Colors
 
 | Name     | Hex       | Usage                       |
@@ -241,195 +251,20 @@ All sizes use `clamp()` for smooth scaling between mobile (320px) and desktop (1
 
 ---
 
-## 10. Technical SEO Implementation
+## 10. Technical SEO Implementation (Current)
 
-### Meta Tags Summary
+This app relies on Next.js metadata rather than manual `<meta>` tags inside components.
 
-| Tag         | Content                                                                                                                                   | Length       |
-| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| Title       | `CushLabs.ai \| AI Integration & Software Development`                                                                                    | 55 chars ✅  |
-| Description | `AI consulting and modern software development for SMBs. Production-ready chatbots, automation, and custom applications. Launching soon.` | 155 chars ✅ |
+### Metadata sources
 
-### Heading Structure
+- `app/layout.tsx` exports `metadata` (site-wide defaults).
+- `app/income-planner/page.tsx` exports page-level `metadata` for the tool.
+- `app/docs/[slug]/page.tsx` uses `generateMetadata()` from the markdown frontmatter.
 
-```
-H1: "AI Integration & Modern Software Development for SMBs" (single H1 ✅)
-  └─ H2: "What Makes Me Different"
-      └─ H3: Feature titles (4 cards)
-```
+### Notes
 
-### Page Sections
-
-1. **Hero** — Headline, subheadline, countdown timer
-2. **About** — Brief professional summary
-3. **Personal Intro** — Extended bio with Steve Jobs quote
-4. **Why Work With Me** — 4 feature cards in 2×2 grid
-5. **Contact** — Email CTA
-6. **Footer** — Copyright
-
-### Open Graph Tags (Social Sharing)
-
-```html
-<meta property="og:type" content="website" />
-<meta property="og:url" content="https://cushlabs.ai/" />
-<meta
-  property="og:title"
-  content="CushLabs.ai | AI Integration & Software Development"
-/>
-<meta
-  property="og:description"
-  content="AI consulting and modern software development..."
-/>
-<meta property="og:image" content="https://cushlabs.ai/og-image.jpg" />
-<meta property="og:image:width" content="1200" />
-<meta property="og:image:height" content="630" />
-<meta property="og:locale" content="en_US" />
-<meta property="og:locale:alternate" content="es_MX" />
-```
-
-**Required:** Create `og-image.jpg` at 1200×630px for social sharing previews.
-
-### Twitter Card Tags
-
-```html
-<meta name="twitter:card" content="summary_large_image" />
-<meta
-  name="twitter:title"
-  content="CushLabs.ai | AI Integration & Software Development"
-/>
-<meta
-  name="twitter:description"
-  content="AI consulting and modern software development..."
-/>
-<meta name="twitter:image" content="https://cushlabs.ai/og-image.jpg" />
-```
-
-### Hreflang (Bilingual SEO)
-
-```html
-<link rel="alternate" hreflang="en" href="https://cushlabs.ai/" />
-<link rel="alternate" hreflang="es" href="https://cushlabs.ai/?lang=es" />
-<link rel="alternate" hreflang="x-default" href="https://cushlabs.ai/" />
-```
-
-Tells search engines the page is available in both English and Spanish, helping serve the right version in localized search results.
-
-### Canonical URL
-
-```html
-<link rel="canonical" href="https://cushlabs.ai/" />
-```
-
-**Action Required:** Update to actual production URL before deployment.
-
-### Robots Directives
-
-```html
-<meta name="robots" content="index, follow" />
-<meta
-  name="googlebot"
-  content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
-/>
-```
-
-- `index, follow`: Allow crawling and indexing
-- `max-snippet:-1`: No limit on text snippet length
-- `max-image-preview:large`: Allow large image previews
-- `max-video-preview:-1`: No limit on video previews
-
-### Structured Data (JSON-LD)
-
-**Organization Schema:**
-
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "CushLabs.ai",
-  "url": "https://cushlabs.ai",
-  "logo": "https://cushlabs.ai/logo.png",
-  "description": "AI consulting and modern software development...",
-  "email": "info@cushlabs.ai",
-  "foundingDate": "2025",
-  "areaServed": ["US", "MX"],
-  "knowsLanguage": ["en", "es"]
-}
-```
-
-**WebPage Schema:**
-
-```json
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "CushLabs.ai - Coming Soon",
-  "description": "...",
-  "url": "https://cushlabs.ai",
-  "inLanguage": ["en", "es"]
-}
-```
-
-### Image SEO
-
-| Image           | Alt Text             | Status                       |
-| --------------- | -------------------- | ---------------------------- |
-| English flag    | `alt="English"`      | ✅                           |
-| Spanish flag    | `alt="Español"`      | ✅                           |
-| Decorative SVGs | `aria-hidden="true"` | ✅ (excluded from a11y tree) |
-
-### SEO Checklist
-
-| Item                           | Status | Notes                  |
-| ------------------------------ | ------ | ---------------------- |
-| Meta title 50-60 chars         | ✅     | 55 characters          |
-| Meta description 150-160 chars | ✅     | 155 characters         |
-| Single H1 tag                  | ✅     | In hero section        |
-| Heading hierarchy (H1→H2→H3)   | ✅     | Proper nesting         |
-| Canonical URL                  | ⚠️     | Update before deploy   |
-| Open Graph tags                | ✅     | Full set included      |
-| Twitter Card tags              | ✅     | Large image card       |
-| Hreflang tags                  | ✅     | EN, ES, x-default      |
-| Structured data                | ✅     | Organization + WebPage |
-| Alt text on images             | ✅     | All images covered     |
-| robots meta                    | ✅     | index, follow          |
-| Mobile-friendly                | ✅     | Responsive design      |
-| HTTPS ready                    | ⚠️     | Ensure SSL on hosting  |
-| Page speed                     | ✅     | <30KB, minimal JS      |
-
-### Pre-Launch SEO Tasks
-
-1. **Update Canonical URL** — Replace `https://cushlabs.ai/` with actual domain
-2. **Create OG Image** — 1200×630px branded image for social sharing
-3. **Create Logo File** — `logo.png` for structured data
-4. **Submit to Google Search Console** — After deployment
-5. **Create robots.txt** — Basic allow-all file
-6. **Create sitemap.xml** — Single-page sitemap
-
-### Sample robots.txt
-
-```
-User-agent: *
-Allow: /
-
-Sitemap: https://cushlabs.ai/sitemap.xml
-```
-
-### Sample sitemap.xml
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <url>
-    <loc>https://cushlabs.ai/</loc>
-    <xhtml:link rel="alternate" hreflang="en" href="https://cushlabs.ai/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://cushlabs.ai/?lang=es"/>
-    <lastmod>2025-01-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
-```
+- Open Graph / Twitter metadata is currently minimal; if we want richer share cards, add `openGraph` + `twitter` fields in `app/layout.tsx` and use a real production URL.
+- The docs system already supports per-doc titles and descriptions via frontmatter.
 
 ---
 
@@ -437,9 +272,9 @@ Sitemap: https://cushlabs.ai/sitemap.xml
 
 - `README.md` (root) — Setup and overview
 - `PRD.md` (root) — Product requirements
-- `docs/brand.md` — Brand strategy
-- `docs/design.md` — Design system
-- `docs/future-features.md` — Roadmap
+- `docs/BRAND.md` — Brand strategy
+- `docs/DESIGN.md` — Design system
+- `docs/ROADMAP.md` — Roadmap
 - `docs/PREDEPLOY_AUDIT.md` — Deployment checklist
 
 ---
@@ -453,6 +288,7 @@ Sitemap: https://cushlabs.ai/sitemap.xml
 | 1.1.1   | 2025-01 | Browser language auto-detection                                                          |
 | 1.2.0   | 2025-01 | Technical SEO overhaul: meta tags, Open Graph, Twitter Cards, hreflang, structured data  |
 | 1.3.0   | 2025-01 | Solo brand copy update, personal intro section with Steve Jobs quote, enhanced hero glow |
+| 1.4.0   | 2025-12 | Pastel chart palette, Lucide icons, goal progress insights, FX proxy route               |
 
 ---
 

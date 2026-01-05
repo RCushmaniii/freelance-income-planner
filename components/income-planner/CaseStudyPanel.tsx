@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
+import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
 
 type SectionKey = 'problem' | 'design' | 'stack' | 'privacy'
 
@@ -37,7 +39,7 @@ export default function CaseStudyPanel() {
   ]
 
   return (
-    <div className="bg-background border border-muted-strong/20 rounded-xl p-8">
+    <Card className="p-8">
       <div className="mb-6">
         <h2 className="font-heading text-2xl font-bold">{t.caseStudy.title}</h2>
         <p className="text-sm text-muted mt-2">{t.caseStudy.builtBy}</p>
@@ -52,10 +54,11 @@ export default function CaseStudyPanel() {
               key={section.key}
               className="border border-muted-strong/20 rounded-lg overflow-hidden"
             >
-              <button
+              <Button
                 type="button"
                 onClick={() => setOpen(isOpen ? null : section.key)}
-                className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-accent/5 transition-colors"
+                variant="ghost"
+                className="w-full flex items-center justify-between gap-4 px-4 py-3 text-left hover:bg-accent/5 transition-colors h-auto rounded-none"
                 aria-expanded={isOpen}
               >
                 <span className="font-heading text-sm font-semibold">{section.title}</span>
@@ -64,7 +67,7 @@ export default function CaseStudyPanel() {
                     isOpen ? 'rotate-180' : ''
                   }`}
                 />
-              </button>
+              </Button>
 
               {isOpen && (
                 <div className="px-4 pb-4 text-sm text-muted leading-relaxed">
@@ -75,6 +78,6 @@ export default function CaseStudyPanel() {
           )
         })}
       </div>
-    </div>
+    </Card>
   )
 }

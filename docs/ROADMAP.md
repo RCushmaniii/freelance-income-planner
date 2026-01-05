@@ -7,12 +7,25 @@ order: 20
 
 # Future Features & Roadmap
 
-**Last Updated:** December 11, 2025  
-**Status:** Planning Phase
+**Last Updated:** December 18, 2025  
+**Status:** Active Development
 
 ---
 
-## Phase 5: Analytics & Monitoring (Next)
+## Next: Sharing & Portfolio Polish
+
+### Shareable URLs (Deep Linking)
+
+- Encode state in query parameters
+- Optional “Copy Link” button
+
+### Copy Summary
+
+- One-click copy of Snapshot + Forecast summary (Notion/Slack-friendly)
+
+---
+
+## Phase 5: Analytics & Monitoring
 
 ### Analytics Integration
 
@@ -42,11 +55,10 @@ order: 20
 - Monthly projections data
 - Formatted for Excel/Google Sheets
 
-### Shareable URLs
+### Social preview cards (optional)
 
-- Encode state in query parameters
-- Social media preview cards
-- Short URL generation (optional)
+- Add richer Open Graph/Twitter metadata (site + /income-planner)
+- Optional generated OG image
 
 ---
 
@@ -54,13 +66,13 @@ order: 20
 
 ### Multi-Currency Conversion
 
-- Live FX rates from API
-- Historical rate tracking
-- Multiple currency support
+- Live FX rates via `/api/fx` (already implemented for MXN/USD)
+- Add auto-refresh + “last updated” UI
+- Expand beyond MXN/USD (requires conversion table or base normalization)
 
 ### Tax Bracket Calculations
 
-- Progressive tax brackets
+- Progressive tax brackets (Smart Tax mode is the current approximation)
 - Country-specific tax rules
 - Deduction calculations
 
@@ -121,10 +133,10 @@ order: 20
 
 ### High Priority (Next 3 Months)
 
-1. ✅ Phase 4: Localization & Persistence (COMPLETE)
-2. 🔄 Phase 5: Analytics & Monitoring
-3. 📋 PDF Export
-4. 🔗 Shareable URLs
+1. 🔗 Shareable URLs (Deep Linking)
+2. 📋 Copy Summary
+3. 🔄 Analytics & Monitoring
+4. 📋 PDF Export
 
 ### Medium Priority (3-6 Months)
 
@@ -144,15 +156,16 @@ order: 20
 
 ## Changelog
 
-| Date         | Feature               | Status      |
-| ------------ | --------------------- | ----------- |
-| Dec 11, 2025 | Phase 4: Localization | ✅ Complete |
-| Dec 10, 2025 | Phase 3C: Charts      | ✅ Complete |
-| Dec 10, 2025 | Phase 3B: Forecasting | ✅ Complete |
-| Dec 9, 2025  | Phase 3: Calculator   | ✅ Complete |
-| Dec 8, 2025  | Phase 2: UI/UX        | ✅ Complete |
-| Dec 7, 2025  | Phase 1: Setup        | ✅ Complete |
+| Date         | Feature                                    | Status      |
+| ------------ | ------------------------------------------ | ----------- |
+| Dec 18, 2025 | Goal progress + FX proxy + runway insights | ✅ Complete |
+| Dec 11, 2025 | Localization                               | ✅ Complete |
+| Dec 10, 2025 | Phase 3C: Charts                           | ✅ Complete |
+| Dec 10, 2025 | Phase 3B: Forecasting                      | ✅ Complete |
+| Dec 9, 2025  | Phase 3: Calculator                        | ✅ Complete |
+| Dec 8, 2025  | Phase 2: UI/UX                             | ✅ Complete |
+| Dec 7, 2025  | Phase 1: Setup                             | ✅ Complete |
 
 ---
 
-**For detailed specifications, see [PRD.md](../PRD.md)**
+**For detailed specifications, see [PRD.md](./PRD.md)**

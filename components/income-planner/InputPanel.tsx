@@ -4,13 +4,22 @@ import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
 import { fetchFxQuote } from '@/lib/fx'
 import toast from 'react-hot-toast'
+import { Card } from '@/components/ui/Card'
+import { Input } from '@/components/ui/Input'
+import { Label } from '@/components/ui/Label'
+import { Button } from '@/components/ui/Button'
 
 export default function InputPanel() {
   const {
     hourlyRate,
     hoursPerWeek,
+    unbillableHoursPerWeek,
     vacationWeeks,
+    monthlyBusinessExpenses,
+    monthlyPersonalNeed,
+    currentSavings,
     taxRate,
+    taxMode,
     targetAnnualNet,
     currency,
     language,
@@ -19,8 +28,13 @@ export default function InputPanel() {
     fxStatus,
     setHourlyRate,
     setHoursPerWeek,
+    setUnbillableHoursPerWeek,
     setVacationWeeks,
+    setMonthlyBusinessExpenses,
+    setMonthlyPersonalNeed,
+    setCurrentSavings,
     setTaxRate,
+    setTaxMode,
     setTargetAnnualNet,
     setCurrency,
     switchCurrency,
@@ -35,6 +49,22 @@ export default function InputPanel() {
     setter: (val: number) => void
   ) => {
     const num = parseFloat(value)
+    if (!isNaN(num)) {
+      setter(num)
+    }
+  }
+
+  const handleNullableChange = (
+    value: string,
+    setter: (val: number | null) => void
+  ) => {
+    const trimmed = value.trim()
+    if (trimmed.length === 0) {
+      setter(null)
+      return
+    }
+
+    const num = parseFloat(trimmed)
     if (!isNaN(num)) {
       setter(num)
     }
@@ -95,7 +125,7 @@ export default function InputPanel() {
   }
 
   return (
-    <div className="bg-background border border-muted-strong/20 rounded-xl p-6 md:p-8">
+    <Card>
       <h2 className="font-heading text-2xl font-bold mb-6">
         {t.inputs.title}
       </h2>
@@ -103,148 +133,190 @@ export default function InputPanel() {
       <div className="space-y-6">
         {/* Hourly Rate */}
         <div>
-          <label htmlFor="hourlyRate" className="block text-sm font-medium mb-2">
-            {t.inputs.hourlyRate}
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              id="hourlyRate"
-              value={hourlyRate}
-              onChange={(e) => handleInputChange(e.target.value, setHourlyRate)}
-              className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-              placeholder="500"
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted text-sm">
-              {currency}
-            </span>
-          </div>
-          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 50 - 5000</p>
+          <Input
+            id="hourlyRate"
+            label={t.inputs.hourlyRate}
+            type="number"
+            value={hourlyRate}
+            onChange={(e) => handleInputChange(e.target.value, setHourlyRate)}
+            placeholder="500"
+            rightElement={currency}
+            helperText={`${t.inputs.rangeLabel}: 50 - 5000`}
+          />
         </div>
 
         {/* Hours Per Week */}
         <div>
-          <label htmlFor="hoursPerWeek" className="block text-sm font-medium mb-2">
-            {t.inputs.hoursPerWeek}
-          </label>
-          <input
-            type="number"
+          <Input
             id="hoursPerWeek"
+            label={t.inputs.hoursPerWeek}
+            type="number"
             value={hoursPerWeek}
             onChange={(e) => handleInputChange(e.target.value, setHoursPerWeek)}
-            className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
             placeholder="40"
+            helperText={`${t.inputs.rangeLabel}: 0 - 60`}
           />
-          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 0 - 60</p>
+        </div>
+
+        <div>
+          <Input
+            id="unbillableHoursPerWeek"
+            label={t.inputs.unbillableHoursPerWeek}
+            type="number"
+            value={unbillableHoursPerWeek}
+            onChange={(e) => handleInputChange(e.target.value, setUnbillableHoursPerWeek)}
+            placeholder="10"
+            helperText={`${t.inputs.rangeLabel}: 0 - 40`}
+          />
         </div>
 
         {/* Vacation Weeks */}
         <div>
-          <label htmlFor="vacationWeeks" className="block text-sm font-medium mb-2">
-            {t.inputs.vacationWeeks}
-          </label>
-          <input
-            type="number"
+          <Input
             id="vacationWeeks"
+            label={t.inputs.vacationWeeks}
+            type="number"
             value={vacationWeeks}
             onChange={(e) => handleInputChange(e.target.value, setVacationWeeks)}
-            className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
             placeholder="2"
+            helperText={`${t.inputs.rangeLabel}: 0 - 12`}
           />
-          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 0 - 12</p>
+        </div>
+
+        <div>
+          <Input
+            id="monthlyBusinessExpenses"
+            label={t.inputs.monthlyBusinessExpenses}
+            type="number"
+            value={monthlyBusinessExpenses}
+            onChange={(e) => handleInputChange(e.target.value, setMonthlyBusinessExpenses)}
+            placeholder="0"
+            rightElement={currency}
+          />
+        </div>
+
+        <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 space-y-4">
+          <div>
+            <Input
+              id="monthlyPersonalNeed"
+              label={t.inputs.monthlyPersonalNeed}
+              type="number"
+              value={monthlyPersonalNeed ?? ''}
+              onChange={(e) => handleNullableChange(e.target.value, setMonthlyPersonalNeed)}
+              placeholder=""
+              rightElement={currency}
+            />
+          </div>
+
+          <div>
+            <Input
+              id="currentSavings"
+              label={t.inputs.currentSavings}
+              type="number"
+              value={currentSavings ?? ''}
+              onChange={(e) => handleNullableChange(e.target.value, setCurrentSavings)}
+              placeholder=""
+              rightElement={currency}
+            />
+          </div>
         </div>
 
         {/* Tax Rate */}
         <div>
-          <label htmlFor="taxRate" className="block text-sm font-medium mb-2">
-            {t.inputs.taxRate}
-          </label>
-          <input
-            type="number"
-            id="taxRate"
-            value={taxRate}
-            onChange={(e) => handleInputChange(e.target.value, setTaxRate)}
-            className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-            placeholder="25"
-          />
-          <p className="text-xs text-muted-strong mt-1">{t.inputs.rangeLabel}: 0 - 50%</p>
+          <Label className="block mb-2">{t.inputs.taxMode}</Label>
+
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              onClick={() => setTaxMode('simple')}
+              variant={taxMode === 'simple' ? 'primary' : 'outline'}
+              className="flex-1"
+            >
+              {t.inputs.taxModeSimple}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setTaxMode('smart')}
+              variant={taxMode === 'smart' ? 'primary' : 'outline'}
+              className="flex-1"
+            >
+              {t.inputs.taxModeSmart}
+            </Button>
+          </div>
+
+          {taxMode === 'simple' ? (
+            <div className="mt-4">
+              <Input
+                id="taxRate"
+                label={t.inputs.taxRate}
+                type="number"
+                value={taxRate}
+                onChange={(e) => handleInputChange(e.target.value, setTaxRate)}
+                placeholder="25"
+                helperText={`${t.inputs.rangeLabel}: 0 - 50%`}
+              />
+            </div>
+          ) : (
+            <p className="text-xs text-muted-strong mt-2">{t.inputs.taxModeHelp}</p>
+          )}
         </div>
 
         {/* Target Annual Net */}
         <div>
-          <label htmlFor="targetAnnualNet" className="block text-sm font-medium mb-2">
-            {t.inputs.targetAnnualNet} <span className="text-muted-strong">{t.inputs.targetOptional}</span>
-          </label>
-          <div className="relative">
-            <input
-              type="number"
-              id="targetAnnualNet"
-              value={targetAnnualNet ?? ''}
-              onChange={(e) => handleTargetChange(e.target.value)}
-              className="w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
-              placeholder="100000"
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted text-sm">
-              {currency}
-            </span>
-          </div>
-          <p className="text-xs text-muted-strong mt-1">{t.inputs.targetPlaceholder}</p>
+          <Input
+            id="targetAnnualNet"
+            label={t.inputs.targetAnnualNet}
+            type="number"
+            value={targetAnnualNet ?? ''}
+            onChange={(e) => handleTargetChange(e.target.value)}
+            placeholder="100000"
+            rightElement={currency}
+            helperText={t.inputs.targetPlaceholder}
+          />
         </div>
 
         {/* Currency Toggle */}
         <div>
-          <label className="block text-sm font-medium mb-2">{t.inputs.currency}</label>
+          <Label className="block mb-2">{t.inputs.currency}</Label>
           <div className="flex gap-2">
-            <button
+            <Button
               onClick={() => handleCurrencyChange('MXN')}
-              className={`flex-1 font-semibold py-3 px-4 rounded-lg transition-all ${
-                currency === 'MXN'
-                  ? 'bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20'
-                  : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground hover:border-accent/50'
-              }`}
+              variant={currency === 'MXN' ? 'primary' : 'outline'}
+              className="flex-1"
             >
               MXN
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => handleCurrencyChange('USD')}
-              className={`flex-1 font-semibold py-3 px-4 rounded-lg transition-all ${
-                currency === 'USD'
-                  ? 'bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20'
-                  : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground hover:border-accent/50'
-              }`}
+              variant={currency === 'USD' ? 'primary' : 'outline'}
+              className="flex-1"
             >
               USD
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Language Toggle */}
         <div>
-          <label className="block text-sm font-medium mb-2">{t.inputs.language}</label>
+          <Label className="block mb-2">{t.inputs.language}</Label>
           <div className="flex gap-2">
-            <button
+            <Button
               onClick={() => handleLanguageChange('en')}
-              className={`flex-1 font-semibold py-3 px-4 rounded-lg transition-all ${
-                language === 'en'
-                  ? 'bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20'
-                  : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground hover:border-accent/50'
-              }`}
+              variant={language === 'en' ? 'primary' : 'outline'}
+              className="flex-1"
             >
               EN
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => handleLanguageChange('es')}
-              className={`flex-1 font-semibold py-3 px-4 rounded-lg transition-all ${
-                language === 'es'
-                  ? 'bg-accent hover:bg-accent/90 text-white shadow-lg shadow-accent/20'
-                  : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground hover:border-accent/50'
-              }`}
+              variant={language === 'es' ? 'primary' : 'outline'}
+              className="flex-1"
             >
               ES
-            </button>
+            </Button>
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

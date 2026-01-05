@@ -20,7 +20,7 @@ export interface DocFile {
 }
 
 const docsDirectory = path.join(process.cwd(), 'docs')
-const rootDocsFiles = ['README.md', 'PRD.md']
+const rootDocsFiles = ['README.md']
 
 /**
  * Get all available documentation files

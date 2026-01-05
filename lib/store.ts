@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import { validateAndClampConfig, IncomeConfig } from './calculations'
+import { validateAndClampConfig, IncomeConfig, TaxMode } from './calculations'
 
 export type Currency = 'MXN' | 'USD'
 export type Language = 'en' | 'es'
@@ -33,8 +33,13 @@ export interface IncomePlannerState {
   // Snapshot mode - single scenario (current inputs)
   hourlyRate: number
   hoursPerWeek: number
+  unbillableHoursPerWeek: number
   vacationWeeks: number
+  monthlyBusinessExpenses: number
+  monthlyPersonalNeed: number | null
+  currentSavings: number | null
   taxRate: number
+  taxMode: TaxMode
   targetAnnualNet: number | null
   currency: Currency
   language: Language
@@ -58,8 +63,13 @@ export interface IncomePlannerState {
   setViewMode: (mode: ViewMode) => void
   setHourlyRate: (value: number) => void
   setHoursPerWeek: (value: number) => void
+  setUnbillableHoursPerWeek: (value: number) => void
   setVacationWeeks: (value: number) => void
+  setMonthlyBusinessExpenses: (value: number) => void
+  setMonthlyPersonalNeed: (value: number | null) => void
+  setCurrentSavings: (value: number | null) => void
   setTaxRate: (value: number) => void
+  setTaxMode: (mode: TaxMode) => void
   setTargetAnnualNet: (value: number | null) => void
   setCurrency: (currency: Currency) => void
   switchCurrency: (nextCurrency: Currency, mxnToUsdRate: number | null) => void
@@ -78,7 +88,11 @@ export interface IncomePlannerState {
 const DEFAULT_CONFIG: IncomeConfig = {
   hourlyRate: 500,
   hoursPerWeek: 40,
+  unbillableHoursPerWeek: 10,
   vacationWeeks: 2,
+  monthlyBusinessExpenses: 0,
+  monthlyPersonalNeed: null,
+  currentSavings: null,
   taxRate: 25,
 }
 
@@ -99,8 +113,13 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
       viewMode: 'snapshot',
       hourlyRate: DEFAULT_CONFIG.hourlyRate,
       hoursPerWeek: DEFAULT_CONFIG.hoursPerWeek,
+      unbillableHoursPerWeek: DEFAULT_CONFIG.unbillableHoursPerWeek ?? 0,
       vacationWeeks: DEFAULT_CONFIG.vacationWeeks,
+      monthlyBusinessExpenses: DEFAULT_CONFIG.monthlyBusinessExpenses ?? 0,
+      monthlyPersonalNeed: DEFAULT_CONFIG.monthlyPersonalNeed ?? null,
+      currentSavings: DEFAULT_CONFIG.currentSavings ?? null,
       taxRate: DEFAULT_CONFIG.taxRate,
+      taxMode: 'simple',
       targetAnnualNet: null,
       currency: 'MXN',
       language: 'en',
@@ -147,14 +166,38 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         set({ hoursPerWeek: validated.hoursPerWeek })
       },
 
+      setUnbillableHoursPerWeek: (value: number) => {
+        const validated = validateAndClampConfig({ unbillableHoursPerWeek: value })
+        set({ unbillableHoursPerWeek: validated.unbillableHoursPerWeek ?? 0 })
+      },
+
       setVacationWeeks: (value: number) => {
         const validated = validateAndClampConfig({ vacationWeeks: value })
         set({ vacationWeeks: validated.vacationWeeks })
       },
 
+      setMonthlyBusinessExpenses: (value: number) => {
+        const validated = validateAndClampConfig({ monthlyBusinessExpenses: value })
+        set({ monthlyBusinessExpenses: validated.monthlyBusinessExpenses ?? 0 })
+      },
+
+      setMonthlyPersonalNeed: (value: number | null) => {
+        const validated = validateAndClampConfig({ monthlyPersonalNeed: value })
+        set({ monthlyPersonalNeed: validated.monthlyPersonalNeed ?? null })
+      },
+
+      setCurrentSavings: (value: number | null) => {
+        const validated = validateAndClampConfig({ currentSavings: value })
+        set({ currentSavings: validated.currentSavings ?? null })
+      },
+
       setTaxRate: (value: number) => {
         const validated = validateAndClampConfig({ taxRate: value })
         set({ taxRate: validated.taxRate })
+      },
+
+      setTaxMode: (mode: TaxMode) => {
+        set({ taxMode: mode })
       },
 
       setTargetAnnualNet: (value: number | null) => {
@@ -184,8 +227,15 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         const nextSnapshot = validateAndClampConfig({
           hourlyRate: convert(state.hourlyRate),
           hoursPerWeek: state.hoursPerWeek,
+          unbillableHoursPerWeek: state.unbillableHoursPerWeek,
           vacationWeeks: state.vacationWeeks,
+          monthlyBusinessExpenses: convert(state.monthlyBusinessExpenses),
+          monthlyPersonalNeed:
+            state.monthlyPersonalNeed === null ? null : convert(state.monthlyPersonalNeed),
+          currentSavings:
+            state.currentSavings === null ? null : convert(state.currentSavings),
           taxRate: state.taxRate,
+          taxMode: state.taxMode,
         })
 
         const nextPessimistic = validateAndClampConfig({
@@ -213,7 +263,11 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
           currency: nextCurrency,
           hourlyRate: nextSnapshot.hourlyRate,
           hoursPerWeek: nextSnapshot.hoursPerWeek,
+          unbillableHoursPerWeek: nextSnapshot.unbillableHoursPerWeek ?? 0,
           vacationWeeks: nextSnapshot.vacationWeeks,
+          monthlyBusinessExpenses: nextSnapshot.monthlyBusinessExpenses ?? 0,
+          monthlyPersonalNeed: nextSnapshot.monthlyPersonalNeed ?? null,
+          currentSavings: nextSnapshot.currentSavings ?? null,
           taxRate: nextSnapshot.taxRate,
           targetAnnualNet:
             state.targetAnnualNet === null
@@ -285,8 +339,13 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         set({
           hourlyRate: DEFAULT_CONFIG.hourlyRate,
           hoursPerWeek: DEFAULT_CONFIG.hoursPerWeek,
+          unbillableHoursPerWeek: DEFAULT_CONFIG.unbillableHoursPerWeek ?? 0,
           vacationWeeks: DEFAULT_CONFIG.vacationWeeks,
+          monthlyBusinessExpenses: DEFAULT_CONFIG.monthlyBusinessExpenses ?? 0,
+          monthlyPersonalNeed: DEFAULT_CONFIG.monthlyPersonalNeed ?? null,
+          currentSavings: DEFAULT_CONFIG.currentSavings ?? null,
           taxRate: DEFAULT_CONFIG.taxRate,
+          taxMode: 'simple',
           targetAnnualNet: null,
         })
       },
@@ -296,8 +355,13 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         return {
           hourlyRate: state.hourlyRate,
           hoursPerWeek: state.hoursPerWeek,
+          unbillableHoursPerWeek: state.unbillableHoursPerWeek,
           vacationWeeks: state.vacationWeeks,
+          monthlyBusinessExpenses: state.monthlyBusinessExpenses,
+          monthlyPersonalNeed: state.monthlyPersonalNeed,
+          currentSavings: state.currentSavings,
           taxRate: state.taxRate,
+          taxMode: state.taxMode,
         }
       },
     }),
@@ -307,8 +371,13 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
       partialize: (state) => ({
         hourlyRate: state.hourlyRate,
         hoursPerWeek: state.hoursPerWeek,
+        unbillableHoursPerWeek: state.unbillableHoursPerWeek,
         vacationWeeks: state.vacationWeeks,
+        monthlyBusinessExpenses: state.monthlyBusinessExpenses,
+        monthlyPersonalNeed: state.monthlyPersonalNeed,
+        currentSavings: state.currentSavings,
         taxRate: state.taxRate,
+        taxMode: state.taxMode,
         currency: state.currency,
         language: state.language,
         scenarios: state.scenarios,

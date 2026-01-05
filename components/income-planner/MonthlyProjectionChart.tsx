@@ -2,8 +2,12 @@
 
 import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
-import { generateSeasonalProjection } from '@/lib/chartData'
+import {
+  generateRunwayProjection,
+  generateSeasonalProjection,
+} from '@/lib/chartData'
 import { formatCurrency } from '@/lib/formatters'
+import { getDefaultProgressiveTaxBrackets } from '@/lib/calculations'
 import {
   LineChart,
   Line,
@@ -17,16 +21,95 @@ import {
   ReferenceLine,
 } from 'recharts'
 import { useState } from 'react'
+import { Card } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
 
 export default function MonthlyProjectionChart() {
-  const { scenarios, taxRate, targetAnnualNet, currency, language } = useIncomePlannerStore()
+  const {
+    scenarios,
+    taxRate,
+    taxMode,
+    unbillableHoursPerWeek,
+    monthlyBusinessExpenses,
+    monthlyPersonalNeed,
+    currentSavings,
+    targetAnnualNet,
+    currency,
+    language,
+  } = useIncomePlannerStore()
   const t = useTranslation(language)
-  const [seasonalPattern, setSeasonalPattern] = useState<'steady' | 'q4-heavy' | 'summer-slow'>('steady')
+  const [seasonalPattern, setSeasonalPattern] = useState<
+    'steady' | 'q4-heavy' | 'summer-slow'
+  >('steady')
+
+  const taxBrackets =
+    taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(currency) : undefined
 
   const data = generateSeasonalProjection(
-    { ...scenarios.pessimistic, taxRate },
-    { ...scenarios.realistic, taxRate },
-    { ...scenarios.optimistic, taxRate },
+    {
+      ...scenarios.pessimistic,
+      unbillableHoursPerWeek,
+      monthlyBusinessExpenses,
+      monthlyPersonalNeed,
+      currentSavings,
+      taxRate,
+      taxMode,
+      taxBrackets,
+    },
+    {
+      ...scenarios.realistic,
+      unbillableHoursPerWeek,
+      monthlyBusinessExpenses,
+      monthlyPersonalNeed,
+      currentSavings,
+      taxRate,
+      taxMode,
+      taxBrackets,
+    },
+    {
+      ...scenarios.optimistic,
+      unbillableHoursPerWeek,
+      monthlyBusinessExpenses,
+      monthlyPersonalNeed,
+      currentSavings,
+      taxRate,
+      taxMode,
+      taxBrackets,
+    },
+    seasonalPattern
+  )
+
+  const runwayData = generateRunwayProjection(
+    {
+      ...scenarios.pessimistic,
+      unbillableHoursPerWeek,
+      monthlyBusinessExpenses,
+      monthlyPersonalNeed,
+      currentSavings,
+      taxRate,
+      taxMode,
+      taxBrackets,
+    },
+    {
+      ...scenarios.realistic,
+      unbillableHoursPerWeek,
+      monthlyBusinessExpenses,
+      monthlyPersonalNeed,
+      currentSavings,
+      taxRate,
+      taxMode,
+      taxBrackets,
+    },
+    {
+      ...scenarios.optimistic,
+      unbillableHoursPerWeek,
+      monthlyBusinessExpenses,
+      monthlyPersonalNeed,
+      currentSavings,
+      taxRate,
+      taxMode,
+      taxBrackets,
+    },
     seasonalPattern
   )
 
@@ -37,9 +120,9 @@ export default function MonthlyProjectionChart() {
 
   if (dataWithRange.length === 0) {
     return (
-      <div className="bg-background border border-muted-strong/20 rounded-xl p-6 text-center text-muted">
+      <Card className="p-6 text-center text-muted">
         {t.errors.unableToGenerateChartData}
-      </div>
+      </Card>
     )
   }
 
@@ -55,16 +138,24 @@ export default function MonthlyProjectionChart() {
   }
 
   const formatMoney = (value: number): string => {
-    return formatCurrency({ value, currency, language, maximumFractionDigits: 0, minimumFractionDigits: 0 })
+    return formatCurrency({
+      value,
+      currency,
+      language,
+      maximumFractionDigits: 0,
+      minimumFractionDigits: 0,
+    })
   }
 
   const targetMonthly =
-    typeof targetAnnualNet === 'number' && Number.isFinite(targetAnnualNet) && targetAnnualNet > 0
+    typeof targetAnnualNet === 'number' &&
+    Number.isFinite(targetAnnualNet) &&
+    targetAnnualNet > 0
       ? targetAnnualNet / 12
       : null
 
   return (
-    <div className="bg-background border border-muted-strong/20 rounded-xl p-8">
+    <Card className="p-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
         <h2 className="font-heading text-2xl font-bold mb-4 md:mb-0">
           {t.chart.title}
@@ -72,47 +163,45 @@ export default function MonthlyProjectionChart() {
 
         {/* Seasonal Pattern Toggle */}
         <div className="flex gap-2">
-          <button
+          <Button
             onClick={() => setSeasonalPattern('steady')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              seasonalPattern === 'steady'
-                ? 'bg-accent text-white'
-                : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground'
-            }`}
+            variant={seasonalPattern === 'steady' ? 'primary' : 'outline'}
+            size="sm"
+            className="text-xs"
           >
             {t.chart.steady}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setSeasonalPattern('q4-heavy')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              seasonalPattern === 'q4-heavy'
-                ? 'bg-accent text-white'
-                : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground'
-            }`}
+            variant={seasonalPattern === 'q4-heavy' ? 'primary' : 'outline'}
+            size="sm"
+            className="text-xs"
           >
             {t.chart.q4Heavy}
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setSeasonalPattern('summer-slow')}
-            className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-              seasonalPattern === 'summer-slow'
-                ? 'bg-accent text-white'
-                : 'bg-background border border-muted-strong/30 text-muted hover:text-foreground'
-            }`}
+            variant={seasonalPattern === 'summer-slow' ? 'primary' : 'outline'}
+            size="sm"
+            className="text-xs"
           >
             {t.chart.summerSlow}
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Chart */}
+      {/* Income Chart */}
       <div className="w-full h-80">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={dataWithRange}
             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="var(--muted-strong)" opacity={0.25} />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--muted-strong)"
+              opacity={0.25}
+            />
             <XAxis
               dataKey="month"
               stroke="var(--muted-strong)"
@@ -131,7 +220,10 @@ export default function MonthlyProjectionChart() {
                 color: 'var(--foreground)',
               }}
               formatter={(value, name) => {
-                const n = typeof value === 'number' && Number.isFinite(value) ? value : 0
+                const n =
+                  typeof value === 'number' && Number.isFinite(value)
+                    ? value
+                    : 0
 
                 if (name === 'rangeBand') {
                   return [formatMoney(n), t.chartLegend.rangeBand]
@@ -149,10 +241,7 @@ export default function MonthlyProjectionChart() {
               }}
               labelStyle={{ color: 'var(--muted)' }}
             />
-            <Legend
-              wrapperStyle={{ paddingTop: '20px' }}
-              iconType="line"
-            />
+            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="line" />
 
             <Area
               type="monotone"
@@ -201,6 +290,15 @@ export default function MonthlyProjectionChart() {
             />
             <Line
               type="monotone"
+              dataKey="pessimistic"
+              stroke="var(--chart-pessimistic)"
+              strokeWidth={2}
+              dot={{ fill: 'var(--chart-pessimistic)', r: 3 }}
+              activeDot={{ r: 5 }}
+              name={t.chartLegend.pessimistic}
+            />
+            <Line
+              type="monotone"
               dataKey="optimistic"
               stroke="var(--chart-optimistic)"
               strokeWidth={2}
@@ -212,6 +310,109 @@ export default function MonthlyProjectionChart() {
         </ResponsiveContainer>
       </div>
 
+      {/* Runway Chart */}
+      <div className="mt-10">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-heading text-lg font-semibold">
+            {t.chart.runwayTitle}
+          </h3>
+        </div>
+
+        {runwayData.length === 0 ? (
+          <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 text-xs text-muted">
+            {t.chart.runwayNotSet}
+          </div>
+        ) : (
+          <div className="w-full h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={runwayData}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--muted-strong)"
+                  opacity={0.25}
+                />
+                <XAxis
+                  dataKey="month"
+                  stroke="var(--muted-strong)"
+                  style={{ fontSize: '12px' }}
+                />
+                <YAxis
+                  stroke="var(--muted-strong)"
+                  style={{ fontSize: '12px' }}
+                  tickFormatter={formatMoneyCompact}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'var(--background)',
+                    border: '1px solid var(--muted-strong)',
+                    borderRadius: '8px',
+                    color: 'var(--foreground)',
+                  }}
+                  formatter={(value, name) => {
+                    const n =
+                      typeof value === 'number' && Number.isFinite(value)
+                        ? value
+                        : 0
+
+                    if (name === 'pessimistic') {
+                      return [formatMoney(n), t.chartLegend.pessimistic]
+                    }
+                    if (name === 'realistic') {
+                      return [formatMoney(n), t.chartLegend.realistic]
+                    }
+                    if (name === 'optimistic') {
+                      return [formatMoney(n), t.chartLegend.optimistic]
+                    }
+                    return [formatMoney(n), name]
+                  }}
+                  labelStyle={{ color: 'var(--muted)' }}
+                />
+                <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="line" />
+
+                <ReferenceLine
+                  y={0}
+                  stroke="var(--muted-strong)"
+                  strokeDasharray="6 6"
+                  strokeWidth={1}
+                  ifOverflow="extendDomain"
+                />
+
+                <Line
+                  type="monotone"
+                  dataKey="pessimistic"
+                  stroke="var(--chart-pessimistic)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                  name={t.chartLegend.pessimistic}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="realistic"
+                  stroke="var(--chart-realistic)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                  name={t.chartLegend.realistic}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="optimistic"
+                  stroke="var(--chart-optimistic)"
+                  strokeWidth={2}
+                  dot={false}
+                  activeDot={{ r: 5 }}
+                  name={t.chartLegend.optimistic}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </div>
+
       {/* Pattern Description */}
       <div className="mt-6 p-4 bg-accent/5 border border-accent/20 rounded-lg">
         <p className="text-xs text-muted">
@@ -220,6 +421,6 @@ export default function MonthlyProjectionChart() {
           {seasonalPattern === 'summer-slow' && t.chart.summerSlowDesc}
         </p>
       </div>
-    </div>
+    </Card>
   )
 }

@@ -8,8 +8,14 @@
 export interface IncomeConfig {
   hourlyRate: number
   hoursPerWeek: number
+  unbillableHoursPerWeek?: number
   vacationWeeks: number
+  monthlyBusinessExpenses?: number
+  monthlyPersonalNeed?: number | null
+  currentSavings?: number | null
   taxRate: number
+  taxMode?: TaxMode
+  taxBrackets?: ProgressiveTaxBracket[]
 }
 
 export interface IncomeResult {
@@ -21,11 +27,72 @@ export interface IncomeResult {
   monthlyNet: number
   annualGross: number
   annualNet: number
+  effectiveHourlyRate: number
+  takeHomePerBillableHour: number
+  unbillablePercentage: number
+  annualBusinessExpenses: number
+  annualTaxableIncome: number
+  annualTaxPaid: number
+  monthlyCashFlow: number | null
+  runwayMonths: number | null
+  runwayIsSustainable: boolean
 }
 
 export interface CalculationError {
   success: false
   error: string
+}
+
+export type TaxMode = 'simple' | 'smart'
+
+export type ProgressiveTaxBracket = {
+  upTo: number | null
+  rate: number
+}
+
+export function calculateProgressiveTax(
+  annualGross: number,
+  brackets: ProgressiveTaxBracket[]
+): number {
+  const safeGross = Number.isFinite(annualGross) ? Math.max(0, annualGross) : 0
+  if (!Array.isArray(brackets) || brackets.length === 0) return 0
+
+  let remaining = safeGross
+  let previousLimit = 0
+  let tax = 0
+
+  for (const bracket of brackets) {
+    if (remaining <= 0) break
+    const rate = Number.isFinite(bracket.rate) ? bracket.rate : 0
+    if (rate <= 0) {
+      previousLimit = bracket.upTo ?? previousLimit
+      continue
+    }
+
+    const limit = bracket.upTo
+    const bracketCap = limit === null ? remaining : Math.max(0, limit - previousLimit)
+    const taxableHere = Math.min(remaining, bracketCap)
+
+    tax += taxableHere * rate
+    remaining -= taxableHere
+
+    if (limit !== null) {
+      previousLimit = limit
+    }
+  }
+
+  return tax
+}
+
+export function getDefaultProgressiveTaxBrackets(
+  currency: 'USD' | 'MXN'
+): ProgressiveTaxBracket[] {
+  const base = currency === 'MXN' ? 2_000_000 : 100_000
+  return [
+    { upTo: base, rate: 0.15 },
+    { upTo: base * 2, rate: 0.25 },
+    { upTo: null, rate: 0.35 },
+  ]
 }
 
 /**
@@ -44,13 +111,26 @@ export function calculateIncome(
   config: IncomeConfig
 ): IncomeResult | CalculationError {
   try {
-    const { hourlyRate, hoursPerWeek, vacationWeeks, taxRate } = config
+    const {
+      hourlyRate,
+      hoursPerWeek,
+      unbillableHoursPerWeek = 0,
+      vacationWeeks,
+      monthlyBusinessExpenses = 0,
+      monthlyPersonalNeed = null,
+      currentSavings = null,
+      taxRate,
+      taxMode = 'simple',
+      taxBrackets,
+    } = config
 
     // Validate inputs
     if (
       !Number.isFinite(hourlyRate) ||
       !Number.isFinite(hoursPerWeek) ||
+      !Number.isFinite(unbillableHoursPerWeek) ||
       !Number.isFinite(vacationWeeks) ||
+      !Number.isFinite(monthlyBusinessExpenses) ||
       !Number.isFinite(taxRate)
     ) {
       return {
@@ -65,9 +145,18 @@ export function calculateIncome(
     // Calculate annual gross income
     const annualGross = hourlyRate * hoursPerWeek * billableWeeks
 
+    const annualBusinessExpenses = Math.max(0, monthlyBusinessExpenses) * 12
+    const annualTaxableIncome = Math.max(0, annualGross - annualBusinessExpenses)
+
+    const annualTaxPaid = (() => {
+      if (taxMode === 'smart' && Array.isArray(taxBrackets) && taxBrackets.length > 0) {
+        return calculateProgressiveTax(annualTaxableIncome, taxBrackets)
+      }
+      return annualTaxableIncome * (taxRate / 100)
+    })()
+
     // Calculate annual net income (after tax)
-    const taxMultiplier = 1 - taxRate / 100
-    const annualNet = annualGross * taxMultiplier
+    const annualNet = Math.max(0, annualTaxableIncome - annualTaxPaid)
 
     // Derive other intervals
     const dailyGross = annualGross / 365
@@ -79,6 +168,39 @@ export function calculateIncome(
     const monthlyGross = annualGross / 12
     const monthlyNet = annualNet / 12
 
+    const totalWorkHoursPerYear = Math.max(0, (hoursPerWeek + unbillableHoursPerWeek) * billableWeeks)
+    const billableHoursPerYear = Math.max(0, hoursPerWeek * billableWeeks)
+
+    const effectiveHourlyRate = totalWorkHoursPerYear > 0 ? annualNet / totalWorkHoursPerYear : 0
+    const takeHomePerBillableHour = billableHoursPerYear > 0 ? annualNet / billableHoursPerYear : 0
+    const unbillablePercentage = (() => {
+      const weeklyTotal = hoursPerWeek + unbillableHoursPerWeek
+      if (weeklyTotal <= 0) return 0
+      return (unbillableHoursPerWeek / weeklyTotal) * 100
+    })()
+
+    const monthlyCashFlow = (() => {
+      if (monthlyPersonalNeed === null) return null
+      if (!Number.isFinite(monthlyPersonalNeed) || monthlyPersonalNeed < 0) return null
+      return monthlyNet - monthlyPersonalNeed
+    })()
+
+    const runway = (() => {
+      if (monthlyCashFlow === null) {
+        return { runwayMonths: null, runwayIsSustainable: false }
+      }
+      if (monthlyCashFlow >= 0) {
+        return { runwayMonths: null, runwayIsSustainable: true }
+      }
+      if (currentSavings === null) {
+        return { runwayMonths: null, runwayIsSustainable: false }
+      }
+      if (!Number.isFinite(currentSavings) || currentSavings <= 0) {
+        return { runwayMonths: 0, runwayIsSustainable: false }
+      }
+      return { runwayMonths: currentSavings / Math.abs(monthlyCashFlow), runwayIsSustainable: false }
+    })()
+
     return {
       dailyGross,
       dailyNet,
@@ -88,8 +210,83 @@ export function calculateIncome(
       monthlyNet,
       annualGross,
       annualNet,
+      effectiveHourlyRate,
+      takeHomePerBillableHour,
+      unbillablePercentage,
+      annualBusinessExpenses,
+      annualTaxableIncome,
+      annualTaxPaid,
+      monthlyCashFlow,
+      runwayMonths: runway.runwayMonths,
+      runwayIsSustainable: runway.runwayIsSustainable,
     }
   } catch (error) {
+    return {
+      success: false,
+      error: 'Calculation failed',
+    }
+  }
+}
+
+export function calculateRequiredHourlyRateForAnnualNet(
+  config: IncomeConfig,
+  targetAnnualNet: number
+): { requiredRate: number } | CalculationError {
+  try {
+    if (!Number.isFinite(targetAnnualNet) || targetAnnualNet <= 0) {
+      return {
+        success: false,
+        error: 'Invalid target income',
+      }
+    }
+
+    const baseConfig = validateAndClampConfig(config)
+
+    const evalAtRate = (rate: number): number | CalculationError => {
+      const res = calculateIncome({ ...baseConfig, hourlyRate: rate })
+      if ('error' in res) return res
+      return res.annualNet
+    }
+
+    let low = 0
+    let high = Math.max(50, baseConfig.hourlyRate)
+
+    for (let i = 0; i < 20; i += 1) {
+      const netAtHigh = evalAtRate(high)
+      if (typeof netAtHigh !== 'number') {
+        return netAtHigh
+      }
+      if (netAtHigh >= targetAnnualNet) break
+      high *= 2
+    }
+
+    const netAtHigh = evalAtRate(high)
+    if (typeof netAtHigh !== 'number') {
+      return netAtHigh
+    }
+    if (netAtHigh < targetAnnualNet) {
+      return {
+        success: false,
+        error: 'Unable to reach target with current constraints',
+      }
+    }
+
+    for (let i = 0; i < 30; i += 1) {
+      const mid = (low + high) / 2
+      const netAtMid = evalAtRate(mid)
+      if (typeof netAtMid !== 'number') {
+        return netAtMid
+      }
+
+      if (netAtMid >= targetAnnualNet) {
+        high = mid
+      } else {
+        low = mid
+      }
+    }
+
+    return { requiredRate: high }
+  } catch {
     return {
       success: false,
       error: 'Calculation failed',
@@ -211,7 +408,19 @@ export function validateAndClampConfig(config: Partial<IncomeConfig>): IncomeCon
   return {
     hourlyRate: clampValue(config.hourlyRate ?? 500, 50, 5000),
     hoursPerWeek: clampValue(config.hoursPerWeek ?? 40, 0, 60),
+    unbillableHoursPerWeek: clampValue(config.unbillableHoursPerWeek ?? 0, 0, 40),
     vacationWeeks: clampValue(config.vacationWeeks ?? 2, 0, 12),
+    monthlyBusinessExpenses: clampValue(config.monthlyBusinessExpenses ?? 0, 0, 1_000_000),
+    monthlyPersonalNeed:
+      config.monthlyPersonalNeed === null
+        ? null
+        : clampValue(config.monthlyPersonalNeed ?? 0, 0, 1_000_000),
+    currentSavings:
+      config.currentSavings === null
+        ? null
+        : clampValue(config.currentSavings ?? 0, 0, 10_000_000),
     taxRate: clampValue(config.taxRate ?? 25, 0, 50),
+    taxMode: config.taxMode,
+    taxBrackets: config.taxBrackets,
   }
 }

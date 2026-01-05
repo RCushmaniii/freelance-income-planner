@@ -7,9 +7,9 @@ order: 10
 
 # Pre-Deploy Audit Checklist - CushLabs Income Planner
 
-**Last Updated:** December 11, 2025  
+**Last Updated:** December 18, 2025  
 **Project:** CushLabs Income Planner  
-**Version:** 1.0.0 (Phase 3C Complete)
+**Version:** 1.4.0
 
 ---
 
@@ -46,9 +46,12 @@ order: 10
 - [ ] Hours per week validates and clamps (0-60)
 - [ ] Vacation weeks validates and clamps (0-12)
 - [ ] Tax rate validates and clamps (0-50%)
+- [ ] Tax mode toggle works (Simple/Smart)
 - [ ] Currency toggle works (MXN/USD)
 - [ ] Language toggle works (EN/ES)
 - [ ] Summary cards display correct calculations
+- [ ] Reality Check cards render (effective hourly rate, unbillable %, runway)
+- [ ] Target Annual Net goal insight shows ahead/behind + required rate when behind
 - [ ] Rate Benchmark panel renders (static example data)
 - [ ] Rate Benchmark "You" marker updates with inputs
 - [ ] Theme toggle affects all Snapshot UI (no hardcoded colors)
@@ -60,8 +63,11 @@ order: 10
 - [ ] Scenario inputs validate and clamp properly
 - [ ] Range visualization shows correct income spread
 - [ ] Monthly projection chart renders correctly
+- [ ] Pessimistic/Realistic/Optimistic series all render in charts and legends
 - [ ] Seasonal patterns work (Steady/Q4 Heavy/Summer Slow)
 - [ ] Insights generate correctly for all scenarios
+- [ ] Runway projection chart renders when monthly need + savings are set
+- [ ] Goal insight compares realistic scenario net vs targetAnnualNet
 
 ### Calculations
 
@@ -105,6 +111,7 @@ order: 10
 ### Branding
 
 - [ ] Orange accent (#FF6A3D) used consistently
+- [ ] Pastel chart colors use CSS variables (`--chart-pessimistic`, `--chart-realistic`, `--chart-optimistic`)
 - [ ] CushLabs branding dot present
 - [ ] Space Grotesk font for headings
 - [ ] Source Serif 4 font for body
@@ -150,6 +157,7 @@ order: 10
 
 - [ ] No sensitive data in localStorage
 - [ ] No API keys in client code
+- [ ] FX calls only go to internal `/api/fx` (no direct calls from client to third-party)
 - [ ] No console.log with user data
 - [ ] XSS prevention in place
 
@@ -175,9 +183,10 @@ order: 10
 
 - [ ] README.md up to date
 - [ ] LICENSE file present
-- [ ] PRD.md reflects current state
-- [ ] Future features documented
-- [ ] Brand guidelines documented
+- [ ] `docs/PRD.md` reflects current state
+- [ ] `docs/ROADMAP.md` reflects current state
+- [ ] `docs/BRAND.md` reflects current state
+- [ ] `docs/DESIGN.md` reflects current state
 
 ---
 
@@ -267,6 +276,7 @@ order: 10
 ### Deployment Ready
 
 - [ ] Environment variables documented
+- [ ] `EXCHANGE_RATE_API_KEY` set in Vercel Environment Variables (Production; optionally Preview/Development)
 - [ ] Build command works
 - [ ] Start command works
 - [ ] Port configuration correct
@@ -334,6 +344,9 @@ npm run dev
 
 # Start production server (after a successful build)
 npm start
+
+# Vercel deploy
+vercel --prod
 ```
 
 ---

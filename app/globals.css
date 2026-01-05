@@ -11,8 +11,9 @@
   --muted: #aaaaaa;
   --muted-strong: #888888;
   --accent: #ff6a3d;
-  --chart-realistic: #3b82f6;
-  --chart-optimistic: #22c55e;
+  --chart-pessimistic: #f3a6b4;
+  --chart-realistic: #a7c7ff;
+  --chart-optimistic: #a6e6c6;
 }
 
 .light {
@@ -21,8 +22,9 @@
   --muted: #666666;
   --muted-strong: #444444;
   --accent: #ff6a3d;
-  --chart-realistic: #3b82f6;
-  --chart-optimistic: #22c55e;
+  --chart-pessimistic: #f08fa2;
+  --chart-realistic: #6fa8ff;
+  --chart-optimistic: #62d69b;
 }
 
 body {

@@ -22,9 +22,7 @@ export default function Footer() {
               <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
               <span>{t.header.title}</span>
             </Link>
-            <p className="text-sm text-muted max-w-md">
-              {t.hero.note}
-            </p>
+            <p className="text-sm text-muted max-w-md">{t.hero.note}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
@@ -42,7 +40,7 @@ export default function Footer() {
                   {t.footer.docs}
                 </a>
                 <a
-                  href="https://github.com/RCushmaniii/ai-income-generator/blob/main/PRD.md"
+                  href="https://github.com/RCushmaniii/ai-income-generator/blob/main/docs/PRD.md"
                   target="_blank"
                   rel="noreferrer"
                   className="text-muted hover:text-foreground transition-colors"

@@ -9,6 +9,8 @@ order: 1
 
 A complete brand strategy document for CushLabs as a premium solo AI consulting studio.
 
+This repository also includes the **CushLabs Income Planner** — a flagship portfolio tool that demonstrates clean engineering, bilingual UX (EN/ES), and practical financial modeling.
+
 ---
 
 ## 1. Core Brand Positioning
@@ -67,6 +69,27 @@ A **premium solo AI consultant and full-stack builder** who delivers end-to-end 
 > "You're working directly with me — one point of contact, one person who fully understands your business and your system."
 
 This is a **massive selling point** for SMB founders.
+
+---
+
+## 2.1 Product Copy Tone (Income Planner)
+
+The Income Planner is intentionally:
+
+- Direct and numbers-first
+- Helpful, not preachy
+- Professional, but warm
+
+It should avoid:
+
+- Hype
+- Over-promising
+- Shaming language around finances
+
+For Spanish (ES), prefer:
+
+- Simple, neutral phrasing suitable for Mexico / LATAM users
+- Clear labels over slang
 
 ---
 

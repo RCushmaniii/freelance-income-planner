@@ -2,27 +2,58 @@
 
 import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
-import { calculateIncome } from '@/lib/calculations'
+import { calculateIncome, getDefaultProgressiveTaxBrackets } from '@/lib/calculations'
 import { formatCurrency } from '@/lib/formatters'
+import { Card } from '@/components/ui/Card'
 
 export default function RangeVisualization() {
-  const { scenarios, taxRate, currency, language } = useIncomePlannerStore()
+  const {
+    scenarios,
+    taxRate,
+    taxMode,
+    unbillableHoursPerWeek,
+    monthlyBusinessExpenses,
+    monthlyPersonalNeed,
+    currentSavings,
+    currency,
+    language,
+  } = useIncomePlannerStore()
   const t = useTranslation(language)
+
+  const taxBrackets = taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(currency) : undefined
 
   // Calculate income for each scenario
   const pessimisticResult = calculateIncome({
     ...scenarios.pessimistic,
+    unbillableHoursPerWeek,
+    monthlyBusinessExpenses,
+    monthlyPersonalNeed,
+    currentSavings,
     taxRate,
+    taxMode,
+    taxBrackets,
   })
 
   const realisticResult = calculateIncome({
     ...scenarios.realistic,
+    unbillableHoursPerWeek,
+    monthlyBusinessExpenses,
+    monthlyPersonalNeed,
+    currentSavings,
     taxRate,
+    taxMode,
+    taxBrackets,
   })
 
   const optimisticResult = calculateIncome({
     ...scenarios.optimistic,
+    unbillableHoursPerWeek,
+    monthlyBusinessExpenses,
+    monthlyPersonalNeed,
+    currentSavings,
     taxRate,
+    taxMode,
+    taxBrackets,
   })
 
   if (
@@ -31,9 +62,9 @@ export default function RangeVisualization() {
     'error' in optimisticResult
   ) {
     return (
-      <div className="bg-background border border-muted-strong/20 rounded-xl p-6 text-center text-muted">
+      <Card className="p-6 text-center text-muted">
         {t.errors.unableToCalculateRange}
-      </div>
+      </Card>
     )
   }
 
@@ -47,7 +78,7 @@ export default function RangeVisualization() {
   const spread = (maxIncome / minIncome).toFixed(1)
 
   return (
-    <div className="bg-background border border-muted-strong/20 rounded-xl p-8">
+    <Card className="p-6 md:p-8">
       <h2 className="font-heading text-2xl font-bold mb-6 text-center">
         {t.range.title}
       </h2>
@@ -57,38 +88,38 @@ export default function RangeVisualization() {
         <div className="relative h-16 bg-muted-strong/10 rounded-lg overflow-hidden">
           {/* Pessimistic */}
           <div
-            className="absolute left-0 top-0 h-full bg-red-500/30 border-r-2 border-red-400"
-            style={{ width: '33.33%' }}
+            className="absolute left-0 top-0 h-full border-r-2"
+            style={{ width: '33.33%', backgroundColor: 'var(--chart-pessimistic)', opacity: 0.35, borderColor: 'var(--chart-pessimistic)' }}
           />
           {/* Realistic */}
           <div
-            className="absolute left-[33.33%] top-0 h-full bg-blue-500/30 border-r-2 border-blue-400"
-            style={{ width: '33.33%' }}
+            className="absolute left-[33.33%] top-0 h-full border-r-2"
+            style={{ width: '33.33%', backgroundColor: 'var(--chart-realistic)', opacity: 0.35, borderColor: 'var(--chart-realistic)' }}
           />
           {/* Optimistic */}
           <div
-            className="absolute left-[66.66%] top-0 h-full bg-green-500/30"
-            style={{ width: '33.34%' }}
+            className="absolute left-[66.66%] top-0 h-full"
+            style={{ width: '33.34%', backgroundColor: 'var(--chart-optimistic)', opacity: 0.35 }}
           />
         </div>
 
         {/* Labels */}
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
           <div className="text-center">
             <p className="text-xs text-muted mb-1">{t.scenarios.pessimistic}</p>
-            <p className="font-heading text-lg font-bold text-red-400">
+            <p className="font-heading text-lg font-bold" style={{ color: 'var(--chart-pessimistic)' }}>
               {formatMoney(minIncome)}
             </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted mb-1">{t.scenarios.realistic}</p>
-            <p className="font-heading text-lg font-bold text-blue-400">
+            <p className="font-heading text-lg font-bold" style={{ color: 'var(--chart-realistic)' }}>
               {formatMoney(midIncome)}
             </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-muted mb-1">{t.scenarios.optimistic}</p>
-            <p className="font-heading text-lg font-bold text-green-400">
+            <p className="font-heading text-lg font-bold" style={{ color: 'var(--chart-optimistic)' }}>
               {formatMoney(maxIncome)}
             </p>
           </div>
@@ -108,6 +139,6 @@ export default function RangeVisualization() {
           </p>
         </div>
       </div>
-    </div>
+    </Card>
   )
 }

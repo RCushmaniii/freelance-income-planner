@@ -36,8 +36,8 @@ Built with Next.js, TypeScript, and Tailwind CSS by [CushLabs.ai](https://cushla
 
 ```bash
 # Clone the repository
-git clone https://github.com/RCushmaniii/ai-income-generator.git
-cd ai-income-generator
+git clone https://github.com/RCushmaniii/ai-income-planner.git
+cd ai-income-planner
 
 # Install dependencies
 npm install
@@ -81,7 +81,7 @@ npm run format   # Format code with Prettier
 ## 📁 Project Structure
 
 ```
-ai-income-generator/
+ai-income-planner/
 ├── app/                    # Next.js App Router pages
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Homepage
@@ -99,7 +99,7 @@ ai-income-generator/
 │   ├── PREDEPLOY_AUDIT.md # Deployment checklist
 │   ├── brand.md           # Brand guidelines
 │   ├── design.md          # Design system
-│   └── future-features.md # Roadmap
+│   └── ROADMAP.md         # Roadmap
 └── .windsurf/rules/        # Coding standards
 ```
 
@@ -109,7 +109,7 @@ ai-income-generator/
 
 ### Core Documents
 
-- **[PRD.md](./PRD.md)** - Complete product requirements and specifications
+- **[docs/PRD.md](./docs/PRD.md)** - Complete product requirements and specifications
 - **[docs/PREDEPLOY_AUDIT.md](./docs/PREDEPLOY_AUDIT.md)** - Pre-deployment checklist
 - **[LICENSE](./LICENSE)** - Educational License v1.0
 
@@ -117,7 +117,7 @@ ai-income-generator/
 
 - **[docs/brand.md](./docs/brand.md)** - Brand guidelines and messaging
 - **[docs/design.md](./docs/design.md)** - Complete design system
-- **[docs/future-features.md](./docs/future-features.md)** - Roadmap and planned features
+- **[docs/ROADMAP.md](./docs/ROADMAP.md)** - Roadmap and planned features
 
 ### Coding Standards
 
@@ -197,7 +197,7 @@ Translation files: `lib/i18n/translations.ts`
 
 - **Phase 5:** Analytics & Monitoring (Planned)
 
-See [docs/future-features.md](./docs/future-features.md) for the complete roadmap.
+See [docs/ROADMAP.md](./docs/ROADMAP.md) for the complete roadmap.
 
 ---
 

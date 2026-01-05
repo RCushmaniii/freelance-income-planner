@@ -2,6 +2,7 @@
 
 import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
+import { Button } from '@/components/ui/Button'
 
 export default function ViewToggle() {
   const { viewMode, setViewMode, language } = useIncomePlannerStore()
@@ -9,27 +10,29 @@ export default function ViewToggle() {
 
   return (
     <div className="flex justify-center mb-8">
-      <div className="inline-flex bg-background border border-muted-strong/20 rounded-lg p-1">
-        <button
+      <div className="inline-flex flex-wrap bg-background border border-muted-strong/20 rounded-lg p-1 max-w-full">
+        <Button
           onClick={() => setViewMode('snapshot')}
-          className={`px-6 py-2 rounded-md font-semibold transition-all ${
+          variant={viewMode === 'snapshot' ? 'primary' : 'ghost'}
+          className={`px-4 sm:px-6 py-2 rounded-md font-semibold transition-all ${
             viewMode === 'snapshot'
-              ? 'bg-accent text-white shadow-lg shadow-accent/20'
-              : 'text-muted hover:text-foreground'
+              ? ''
+              : 'text-muted hover:text-foreground hover:bg-transparent'
           }`}
         >
           {t.viewToggle.snapshot}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => setViewMode('forecast')}
-          className={`px-6 py-2 rounded-md font-semibold transition-all ${
+          variant={viewMode === 'forecast' ? 'primary' : 'ghost'}
+          className={`px-4 sm:px-6 py-2 rounded-md font-semibold transition-all ${
             viewMode === 'forecast'
-              ? 'bg-accent text-white shadow-lg shadow-accent/20'
-              : 'text-muted hover:text-foreground'
+              ? ''
+              : 'text-muted hover:text-foreground hover:bg-transparent'
           }`}
         >
           {t.viewToggle.forecast}
-        </button>
+        </Button>
       </div>
     </div>
   )
