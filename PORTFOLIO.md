@@ -1,116 +1,117 @@
 ---
 # =============================================================================
-# PORTFOLIO.md — AI Income Generator
+# PORTFOLIO.md — AI Income Planner
 # =============================================================================
 
 portfolio_enabled: true
 portfolio_priority: 5
 portfolio_featured: false
-portfolio_last_reviewed: "2025-12-31"
+portfolio_last_reviewed: '2026-01-04'
 
-title: "AI Income Generator"
-tagline: "Automated content creation and monetization system powered by AI"
-slug: "ai-income-generator"
+title: 'AI Income Planner'
+tagline: 'Bilingual income planning tool for freelancers and consultants'
+slug: 'ai-income-planner'
 
-category: "AI Automation"
-target_audience: "Content creators and entrepreneurs seeking passive income streams"
+category: 'Web Application'
+target_audience: 'Freelancers, consultants, and independent professionals'
 tags:
-  - "ai"
-  - "content-generation"
-  - "automation"
-  - "monetization"
-  - "seo"
+  - 'nextjs'
+  - 'typescript'
+  - 'income-planning'
+  - 'financial-tools'
+  - 'bilingual'
 
-thumbnail: ""
+thumbnail: ''
 hero_images: []
-demo_video_url: ""
+demo_video_url: ''
 
-live_url: ""
-case_study_url: ""
+live_url: ''
+case_study_url: ''
 
 problem_solved: |
-  Creating high-quality content consistently is time-intensive. Content creators
-  struggle to maintain publishing schedules while researching, writing, editing,
-  and optimizing for SEO. Manual processes limit income potential and growth.
+  Freelancers and consultants struggle to accurately plan their income, understand
+  their true earning potential, and make informed business decisions. Manual
+  calculations are error-prone and don't account for multiple scenarios or seasonal
+  variations.
 
 key_outcomes:
-  - "Automated content research and topic generation based on trends"
-  - "AI-powered article writing with SEO optimization"
-  - "Multi-platform publishing automation"
-  - "Performance tracking and optimization recommendations"
-  - "Scales content production 10x without proportional time investment"
+  - 'Real-time income calculations with snapshot and forecast modes'
+  - 'Three-scenario planning (Pessimistic/Realistic/Optimistic)'
+  - 'Interactive monthly projections with seasonal modeling'
+  - 'Full EN/ES bilingual support with currency formatting'
+  - 'State persistence and responsive design for mobile/desktop'
 
 tech_stack:
-  - "Python"
-  - "OpenAI API"
-  - "Content APIs"
-  - "SEO Tools Integration"
-  - "Automation Workflows"
+  - 'Next.js 14 (App Router)'
+  - 'TypeScript 5.5+'
+  - 'Tailwind CSS'
+  - 'Zustand (State Management)'
+  - 'Recharts (Data Visualization)'
 
-complexity: "MVP"
-
+complexity: 'MVP'
 ---
 
 ## Overview
 
-AI Income Generator is an automated content creation and publishing system that helps creators scale their content production without scaling their time investment. Using AI for research, writing, and optimization, it enables consistent content output across multiple platforms.
+AI Income Planner is a beautiful, bilingual income planning tool designed for freelancers and consultants. It provides real-time income calculations, multi-scenario forecasting, and interactive visualizations to help independent professionals make informed business decisions.
 
-The system focuses on creating valuable content that ranks in search engines and generates traffic, turning content creation from a time-intensive process into a systematized operation.
+Built with Next.js 14 App Router, TypeScript, and modern web technologies, it demonstrates professional-grade architecture, design system discipline, and attention to user experience.
 
 ## The Challenge
 
-Content creators face fundamental scaling problems:
+Freelancers and consultants face income planning challenges:
 
-- **Time constraints** limit content output to 2-4 pieces per week
-- **Research and writing** consume 6-10 hours per article
-- **SEO optimization** requires specialized knowledge
-- **Publishing workflows** are manual and repetitive
-- **Monetization** requires consistent volume over time
+- **Manual calculations** are time-consuming and error-prone
+- **Single-scenario thinking** doesn't account for market volatility
+- **Lack of visualization** makes it hard to understand seasonal patterns
+- **Language barriers** limit accessibility for bilingual professionals
+- **No persistence** means recalculating every time
 
-These limitations create a ceiling on potential income. Creators can't scale revenue without scaling time investment, which doesn't work.
+These issues lead to poor financial planning and missed opportunities.
 
 ## The Solution
 
-AI Income Generator automates the content creation pipeline:
+AI Income Planner provides comprehensive income planning tools:
 
-**Research Phase:**
-- Monitors trending topics in target niches
-- Analyzes competitor content and gaps
-- Identifies high-traffic, low-competition keywords
-- Generates content ideas ranked by opportunity score
+**Snapshot Mode:**
 
-**Creation Phase:**
-- AI-powered article writing with custom style preservation
-- Automatic SEO optimization (meta descriptions, headings, keywords)
-- Image sourcing and optimization
-- Fact-checking and source citation
+- Single-scenario calculator with real-time calculations
+- Annual, monthly, weekly, and hourly income breakdowns
+- Tax and vacation adjustments
+- Static market benchmark example panel
 
-**Publishing Phase:**
-- Multi-platform distribution (blog, Medium, LinkedIn)
-- Social media promotion automation
-- Email newsletter integration
-- Scheduled publishing for consistent cadence
+**Forecast Mode:**
 
-**Optimization Phase:**
-- Performance tracking across platforms
-- A/B testing headlines and formats
-- Content refresh recommendations for older pieces
+- Three-scenario planning (Pessimistic/Realistic/Optimistic)
+- Monthly projections with interactive charts
+- Seasonal pattern modeling
+- Range visualization for income variability
+
+**Localization & Persistence:**
+
+- Complete EN/ES translation system
+- Currency formatting (MXN/USD)
+- localStorage state persistence
+- Theme switching (light/dark)
 
 ## Technical Highlights
 
-- **AI Content Generation:** Custom prompting for quality, style-consistent output
-- **SEO Integration:** Automated keyword research and on-page optimization
-- **Multi-Platform APIs:** Programmatic publishing to multiple destinations
-- **Analytics Pipeline:** Aggregates performance data for optimization
-- **Workflow Automation:** End-to-end orchestration from research to publishing
+- **Next.js 14 App Router:** Server Components by default, Client Components only when needed
+- **TypeScript:** Strict typing throughout, no `any` types
+- **Tailwind CSS:** Utility-first styling with custom design system
+- **Zustand:** Lightweight state management with persist middleware
+- **Recharts:** Interactive data visualizations
+- **Responsive Design:** Mobile-first approach with fluid typography
 
 ## Results
 
-This MVP demonstrates:
-- Practical application of AI for content automation
-- API integration across multiple platforms
-- Understanding of SEO and content marketing fundamentals
-- Building systems that generate tangible business value
-- Automation architecture and workflow design
+This production-ready application demonstrates:
 
-Shows the ability to identify a real problem, design an automated solution, and implement it with modern AI tools. Perfect for portfolios highlighting entrepreneurial thinking combined with technical execution.
+- Professional Next.js architecture and Server/Client boundary discipline
+- Complete design system implementation with brand consistency
+- Full internationalization (i18n) with bilingual support
+- State management and persistence patterns
+- Data visualization and interactive UI components
+- Deployment-ready code with comprehensive documentation
+
+Shows the ability to build portfolio-quality web applications with modern frameworks, maintain engineering discipline, and deliver polished user experiences.
