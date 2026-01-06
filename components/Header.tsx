@@ -7,6 +7,7 @@ import { Menu, X } from 'lucide-react'
 import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
 import ThemeToggle from './ThemeToggle'
+import LanguageSwitcher from './LanguageSwitcher'
 
 export default function Header() {
   const { language } = useIncomePlannerStore()
@@ -41,6 +42,11 @@ export default function Header() {
     }
   }, [mobileMenuOpen])
 
+  // Hide header on docs pages
+  if (pathname?.startsWith('/docs')) {
+    return null
+  }
+
   const linkClass = (href: string): string => {
     const isActive = pathname === href
     return `text-sm transition-colors ${
@@ -54,17 +60,13 @@ export default function Header() {
     <header className="border-b border-muted-strong/20">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 font-heading text-xl font-bold hover:text-accent transition-colors">
+          <Link href="/" className="flex items-center gap-3 hover:text-accent transition-colors">
             <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
-            <span>{t.header.title}</span>
+            <span className="font-heading text-xl font-bold">{t.header.title}</span>
           </Link>
 
           <div className="flex items-center gap-4">
             <nav className="hidden md:flex gap-6">
-              <Link href="/" className={linkClass('/')}
-              >
-                {t.header.home}
-              </Link>
               <Link href="/income-planner" className={linkClass('/income-planner')}>
                 {t.header.incomePlanner}
               </Link>
@@ -73,7 +75,8 @@ export default function Header() {
               </Link>
             </nav>
 
-            <div className="hidden md:block">
+            <div className="hidden md:flex md:items-center md:gap-3">
+              <LanguageSwitcher />
               <ThemeToggle />
             </div>
 
@@ -104,9 +107,9 @@ export default function Header() {
             className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-background border-l border-muted-strong/20 shadow-2xl"
           >
             <div className="flex items-center justify-between p-4 border-b border-muted-strong/20">
-              <div className="flex items-center gap-3 font-heading text-lg font-bold">
+              <div className="flex items-center gap-3">
                 <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
-                <span>{t.header.title}</span>
+                <span className="font-heading text-lg font-bold">{t.header.title}</span>
               </div>
               <button
                 type="button"
@@ -119,13 +122,7 @@ export default function Header() {
             </div>
 
             <div className="p-4">
-              <nav className="flex flex-col gap-2">
-                <Link
-                  href="/"
-                  className="rounded-lg px-4 py-3 text-sm font-semibold hover:bg-muted-strong/10 transition-colors"
-                >
-                  {t.header.home}
-                </Link>
+              <nav className="flex flex-col gap-1">
                 <Link
                   href="/income-planner"
                   className="rounded-lg px-4 py-3 text-sm font-semibold hover:bg-muted-strong/10 transition-colors"
@@ -140,9 +137,15 @@ export default function Header() {
                 </Link>
               </nav>
 
-              <div className="mt-6 pt-6 border-t border-muted-strong/20 flex items-center justify-between">
-                <span className="text-sm text-muted">{t.header.theme}</span>
-                <ThemeToggle />
+              <div className="mt-6 pt-6 border-t border-muted-strong/20 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted">{t.header.language}</span>
+                  <LanguageSwitcher />
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted">{t.header.theme}</span>
+                  <ThemeToggle />
+                </div>
               </div>
             </div>
           </div>

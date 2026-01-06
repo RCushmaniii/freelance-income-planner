@@ -25,6 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <input
             type={type}
             id={inputId}
+            inputMode={type === 'number' ? 'decimal' : undefined}
             className={cn(
               "flex w-full bg-background border border-muted-strong/30 rounded-lg px-4 py-3 text-foreground placeholder:text-muted/50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all disabled:cursor-not-allowed disabled:opacity-50",
               error && "border-red-500 focus:ring-red-500",

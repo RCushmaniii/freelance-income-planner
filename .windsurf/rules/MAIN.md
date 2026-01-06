@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # 🧠 CushLabs Income Planner — Engineering Rules (v1)
 
 ## 1. Manifesto
@@ -106,4 +110,3 @@ Refuse/avoid:
 
 If a request conflicts with **scope discipline**, **security**, or **simplicity**:
 pause, warn, and propose the smallest compliant alternative.
-

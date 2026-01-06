@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Button } from '@/components/ui/Button'
+import { Tooltip } from '@/components/ui/Tooltip'
 
 export default function InputPanel() {
   const {
@@ -22,6 +23,9 @@ export default function InputPanel() {
     taxMode,
     targetAnnualNet,
     currency,
+    billingCurrency,
+    spendingCurrency,
+    userExchangeRate,
     language,
     mxnToUsdRate,
     mxnToUsdRateUpdatedAt,
@@ -37,6 +41,9 @@ export default function InputPanel() {
     setTaxMode,
     setTargetAnnualNet,
     setCurrency,
+    setBillingCurrency,
+    setSpendingCurrency,
+    setUserExchangeRate,
     switchCurrency,
     setLanguage,
     setFxStatus,
@@ -140,7 +147,7 @@ export default function InputPanel() {
             value={hourlyRate}
             onChange={(e) => handleInputChange(e.target.value, setHourlyRate)}
             placeholder="500"
-            rightElement={currency}
+            rightElement={billingCurrency}
             helperText={`${t.inputs.rangeLabel}: 50 - 5000`}
           />
         </div>
@@ -191,20 +198,25 @@ export default function InputPanel() {
             value={monthlyBusinessExpenses}
             onChange={(e) => handleInputChange(e.target.value, setMonthlyBusinessExpenses)}
             placeholder="0"
-            rightElement={currency}
+            rightElement={spendingCurrency}
           />
         </div>
 
         <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 space-y-4">
           <div>
+            <div className="flex items-center mb-2">
+              <Label htmlFor="monthlyPersonalNeed">
+                {t.inputs.monthlyPersonalNeed}
+              </Label>
+              <Tooltip text={t.inputs?.burnRateTooltip || "Your 'Burn Rate'. Rent, food, and essentials to survive."} />
+            </div>
             <Input
               id="monthlyPersonalNeed"
-              label={t.inputs.monthlyPersonalNeed}
               type="number"
               value={monthlyPersonalNeed ?? ''}
               onChange={(e) => handleNullableChange(e.target.value, setMonthlyPersonalNeed)}
               placeholder=""
-              rightElement={currency}
+              rightElement={spendingCurrency}
             />
           </div>
 
@@ -216,7 +228,7 @@ export default function InputPanel() {
               value={currentSavings ?? ''}
               onChange={(e) => handleNullableChange(e.target.value, setCurrentSavings)}
               placeholder=""
-              rightElement={currency}
+              rightElement={spendingCurrency}
             />
           </div>
         </div>
@@ -270,52 +282,63 @@ export default function InputPanel() {
             value={targetAnnualNet ?? ''}
             onChange={(e) => handleTargetChange(e.target.value)}
             placeholder="100000"
-            rightElement={currency}
+            rightElement={spendingCurrency}
             helperText={t.inputs.targetPlaceholder}
           />
         </div>
 
-        {/* Currency Toggle */}
-        <div>
-          <Label className="block mb-2">{t.inputs.currency}</Label>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => handleCurrencyChange('MXN')}
-              variant={currency === 'MXN' ? 'primary' : 'outline'}
-              className="flex-1"
-            >
-              MXN
-            </Button>
-            <Button
-              onClick={() => handleCurrencyChange('USD')}
-              variant={currency === 'USD' ? 'primary' : 'outline'}
-              className="flex-1"
-            >
-              USD
-            </Button>
+        {/* Smart Currency Selector */}
+        <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label className="block mb-2 text-xs font-bold text-muted-strong uppercase">
+                {t.inputs?.billingCurrency || 'I Bill In'}
+              </Label>
+              <select
+                className="w-full p-2 border border-muted-strong/30 rounded bg-background text-foreground focus:ring-2 focus:ring-accent focus:border-accent"
+                value={billingCurrency}
+                onChange={(e) => setBillingCurrency(e.target.value as any)}
+              >
+                <option value="USD">USD ($)</option>
+                <option value="MXN">MXN ($)</option>
+                <option value="EUR">EUR (€)</option>
+              </select>
+            </div>
+            <div>
+              <Label className="block mb-2 text-xs font-bold text-muted-strong uppercase">
+                {t.inputs?.spendingCurrency || 'I Spend In'}
+              </Label>
+              <select
+                className="w-full p-2 border border-muted-strong/30 rounded bg-background text-foreground focus:ring-2 focus:ring-accent focus:border-accent"
+                value={spendingCurrency}
+                onChange={(e) => setSpendingCurrency(e.target.value as any)}
+              >
+                <option value="USD">USD ($)</option>
+                <option value="MXN">MXN ($)</option>
+                <option value="EUR">EUR (€)</option>
+              </select>
+            </div>
           </div>
+
+          {/* Conditionally show exchange rate field */}
+          {billingCurrency !== spendingCurrency && (
+            <div className="pt-2 animate-fade-in">
+              <Label className="block mb-2 text-sm">
+                {t.inputs?.exchangeRate || 'Exchange Rate'} (1 {billingCurrency} = ? {spendingCurrency})
+                <Tooltip text={t.inputs?.exchangeRateTooltip || 'The exchange rate used to convert your billing currency to your spending currency.'} />
+              </Label>
+              <Input
+                id="exchangeRate"
+                type="number"
+                value={userExchangeRate ?? ''}
+                onChange={(e) => handleNullableChange(e.target.value, setUserExchangeRate)}
+                placeholder="18.50"
+                helperText={t.inputs?.exchangeRateHelper || 'Enter the current exchange rate'}
+              />
+            </div>
+          )}
         </div>
 
-        {/* Language Toggle */}
-        <div>
-          <Label className="block mb-2">{t.inputs.language}</Label>
-          <div className="flex gap-2">
-            <Button
-              onClick={() => handleLanguageChange('en')}
-              variant={language === 'en' ? 'primary' : 'outline'}
-              className="flex-1"
-            >
-              EN
-            </Button>
-            <Button
-              onClick={() => handleLanguageChange('es')}
-              variant={language === 'es' ? 'primary' : 'outline'}
-              className="flex-1"
-            >
-              ES
-            </Button>
-          </div>
-        </div>
       </div>
     </Card>
   )

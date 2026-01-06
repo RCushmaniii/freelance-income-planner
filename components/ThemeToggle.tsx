@@ -20,7 +20,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggleTheme}
       className="p-2 rounded-lg hover:bg-muted-strong/10 transition-colors"
-      aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+      aria-label={!mounted ? 'Toggle theme' : theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
     >
       {!mounted ? (
         <span className="block w-5 h-5" />

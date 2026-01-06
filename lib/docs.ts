@@ -56,12 +56,12 @@ export function getAllDocs(): DocFile[] {
     const filenames = fs.readdirSync(docsDirectory)
 
     filenames.forEach((filename) => {
-      if (filename.endsWith('.md')) {
+      if (filename.endsWith('.md') || filename.endsWith('.MD')) {
         const fullPath = path.join(docsDirectory, filename)
         const fileContents = fs.readFileSync(fullPath, 'utf8')
         const { data, content } = matter(fileContents)
 
-        const slug = filename.replace(/\.md$/, '').toLowerCase()
+        const slug = filename.replace(/\.md$/i, '').toLowerCase()
         docs.push({
           slug,
           title:

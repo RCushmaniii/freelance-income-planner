@@ -13,6 +13,7 @@ export interface IncomeConfig {
   monthlyBusinessExpenses?: number
   monthlyPersonalNeed?: number | null
   currentSavings?: number | null
+  targetAnnualNet?: number | null
   taxRate: number
   taxMode?: TaxMode
   taxBrackets?: ProgressiveTaxBracket[]
@@ -406,20 +407,20 @@ export function clampValue(value: number, min: number, max: number): number {
  */
 export function validateAndClampConfig(config: Partial<IncomeConfig>): IncomeConfig {
   return {
-    hourlyRate: clampValue(config.hourlyRate ?? 500, 50, 5000),
-    hoursPerWeek: clampValue(config.hoursPerWeek ?? 40, 0, 60),
-    unbillableHoursPerWeek: clampValue(config.unbillableHoursPerWeek ?? 0, 0, 40),
-    vacationWeeks: clampValue(config.vacationWeeks ?? 2, 0, 12),
-    monthlyBusinessExpenses: clampValue(config.monthlyBusinessExpenses ?? 0, 0, 1_000_000),
+    hourlyRate: clampValue(config.hourlyRate ?? 500, 0, 100000),
+    hoursPerWeek: clampValue(config.hoursPerWeek ?? 40, 0, 168),
+    unbillableHoursPerWeek: clampValue(config.unbillableHoursPerWeek ?? 0, 0, 168),
+    vacationWeeks: clampValue(config.vacationWeeks ?? 2, 0, 52),
+    monthlyBusinessExpenses: clampValue(config.monthlyBusinessExpenses ?? 0, 0, 10_000_000),
     monthlyPersonalNeed:
       config.monthlyPersonalNeed === null
         ? null
-        : clampValue(config.monthlyPersonalNeed ?? 0, 0, 1_000_000),
+        : clampValue(config.monthlyPersonalNeed ?? 0, 0, 10_000_000),
     currentSavings:
       config.currentSavings === null
         ? null
-        : clampValue(config.currentSavings ?? 0, 0, 10_000_000),
-    taxRate: clampValue(config.taxRate ?? 25, 0, 50),
+        : clampValue(config.currentSavings ?? 0, 0, 100_000_000),
+    taxRate: clampValue(config.taxRate ?? 25, 0, 100),
     taxMode: config.taxMode,
     taxBrackets: config.taxBrackets,
   }

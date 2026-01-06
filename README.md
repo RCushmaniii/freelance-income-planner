@@ -18,6 +18,7 @@ Built with Next.js, TypeScript, and Tailwind CSS by [CushLabs.ai](https://cushla
 - **Rate Benchmark (Example)** - Snapshot includes a static example market benchmark panel (no AI calls)
 - **Forecast Mode** - Three-scenario planning (Pessimistic/Realistic/Optimistic)
 - **Monthly Projections** - Interactive charts with seasonal pattern modeling
+- **Documentation Viewer** - Responsive docs with left sidebar navigation and markdown rendering
 - **Full Localization** - Complete EN/ES translation system
 - **State Persistence** - localStorage saves your scenarios automatically
 - **Theme Switching** - Global light/dark theme with system preference default
@@ -71,9 +72,10 @@ npm run format   # Format code with Prettier
 
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript 5.5+
-- **Styling:** Tailwind CSS 3.4+
+- **Styling:** Tailwind CSS 3.4+ with @tailwindcss/typography
 - **State:** Zustand 4.4+ with persist middleware
 - **Charts:** Recharts 2.10+
+- **Markdown:** react-markdown with remark-gfm
 - **Notifications:** react-hot-toast 2.4+
 
 ---
@@ -85,7 +87,10 @@ ai-income-planner/
 ├── app/                    # Next.js App Router pages
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Homepage
-│   └── income-planner/    # Income planner page
+│   ├── income-planner/    # Income planner page
+│   └── docs/              # Documentation viewer
+│       ├── page.tsx       # Docs index
+│       └── [slug]/        # Dynamic doc pages
 ├── components/             # React components
 │   ├── Header.tsx         # Global header
 │   ├── ErrorBoundary.tsx  # Error handling
@@ -94,12 +99,14 @@ ai-income-planner/
 │   ├── calculations.ts    # Pure calculation functions
 │   ├── chartData.ts       # Chart data generators
 │   ├── store.ts           # Zustand state management
+│   ├── docs.ts            # Documentation utilities
 │   └── i18n/              # Translations (EN/ES)
-├── docs/                   # Documentation
-│   ├── PREDEPLOY_AUDIT.md # Deployment checklist
-│   ├── brand.md           # Brand guidelines
-│   ├── design.md          # Design system
-│   └── ROADMAP.md         # Roadmap
+├── docs/                   # Documentation (markdown)
+│   ├── INDEX.md           # Documentation index
+│   ├── PRD.md             # Product requirements
+│   ├── DESIGN.md          # Design system
+│   ├── BRAND.md           # Brand guidelines
+│   └── LESSONS_LEARNED.md # Development lessons
 └── .windsurf/rules/        # Coding standards
 ```
 
@@ -107,21 +114,33 @@ ai-income-planner/
 
 ## 📚 Documentation
 
+### Live Documentation Viewer
+
+Visit `/docs` in the running app for a responsive documentation viewer with:
+
+- Left sidebar navigation on desktop
+- Hamburger menu on mobile
+- Proper markdown rendering with syntax highlighting
+- 11+ documentation files covering all aspects of the project
+
 ### Core Documents
 
+- **[docs/INDEX.md](./docs/INDEX.md)** - Documentation index and navigation
 - **[docs/PRD.md](./docs/PRD.md)** - Complete product requirements and specifications
+- **[docs/AI_STARTUP.md](./docs/AI_STARTUP.md)** - Quick onboarding guide for AI assistants
+- **[docs/LESSONS_LEARNED.md](./docs/LESSONS_LEARNED.md)** - Development lessons and bug fixes
 - **[docs/PREDEPLOY_AUDIT.md](./docs/PREDEPLOY_AUDIT.md)** - Pre-deployment checklist
 - **[LICENSE](./LICENSE)** - Educational License v1.0
 
 ### Design & Development
 
-- **[docs/brand.md](./docs/brand.md)** - Brand guidelines and messaging
-- **[docs/design.md](./docs/design.md)** - Complete design system
+- **[docs/BRAND.md](./docs/BRAND.md)** - Brand guidelines and messaging
+- **[docs/DESIGN.md](./docs/DESIGN.md)** - Complete design system
 - **[docs/ROADMAP.md](./docs/ROADMAP.md)** - Roadmap and planned features
 
 ### Coding Standards
 
-See `.windsurf/rules/` for detailed coding standards including:
+See `.windsurf/rules/` and `docs/AI_ENGINEERING_RULES.md` for detailed coding standards including:
 
 - SRP (Single Responsibility Principle)
 - DRY (Don't Repeat Yourself)
@@ -270,6 +289,6 @@ Built with modern web technologies and best practices:
 
 ---
 
-**Last Updated:** December 11, 2025  
-**Version:** 1.0  
+**Last Updated:** January 5, 2026  
+**Version:** 1.1  
 **Status:** Production Ready

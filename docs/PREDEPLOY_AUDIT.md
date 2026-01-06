@@ -5,7 +5,7 @@ category: Operations
 order: 10
 ---
 
-# Pre-Deploy Audit Checklist - CushLabs Income Planner
+# Pre-Deploy Audit Checklist
 
 **Last Updated:** December 18, 2025  
 **Project:** CushLabs Income Planner  

@@ -4,6 +4,7 @@ import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
 import { calculateIncome, getDefaultProgressiveTaxBrackets } from '@/lib/calculations'
 import { formatCurrency } from '@/lib/formatters'
+import { convertCurrency } from '@/lib/currency-conversion'
 import { Card } from '@/components/ui/Card'
 
 export default function RangeVisualization() {
@@ -15,12 +16,24 @@ export default function RangeVisualization() {
     monthlyBusinessExpenses,
     monthlyPersonalNeed,
     currentSavings,
-    currency,
+    billingCurrency,
+    spendingCurrency,
+    userExchangeRate,
     language,
   } = useIncomePlannerStore()
   const t = useTranslation(language)
 
-  const taxBrackets = taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(currency) : undefined
+  const taxBrackets = taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(billingCurrency) : undefined
+
+  // Convert from billing currency to spending currency
+  const convertToSpending = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: billingCurrency,
+      toCurrency: spendingCurrency,
+      exchangeRate: userExchangeRate,
+    })
+  }
 
   // Calculate income for each scenario
   const pessimisticResult = calculateIncome({
@@ -69,12 +82,13 @@ export default function RangeVisualization() {
   }
 
   const formatMoney = (value: number): string => {
-    return formatCurrency({ value, currency, language, maximumFractionDigits: 0 })
+    const converted = convertToSpending(value)
+    return formatCurrency({ value: converted, currency: spendingCurrency, language, maximumFractionDigits: 0 })
   }
 
-  const minIncome = pessimisticResult.annualNet
-  const midIncome = realisticResult.annualNet
-  const maxIncome = optimisticResult.annualNet
+  const minIncome = convertToSpending(pessimisticResult.annualNet)
+  const midIncome = convertToSpending(realisticResult.annualNet)
+  const maxIncome = convertToSpending(optimisticResult.annualNet)
   const spread = (maxIncome / minIncome).toFixed(1)
 
   return (

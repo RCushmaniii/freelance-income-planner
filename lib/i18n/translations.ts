@@ -10,6 +10,7 @@ export interface Translations {
     openMenu: string
     closeMenu: string
     theme: string
+    language: string
   }
 
   footer: {
@@ -97,21 +98,34 @@ export interface Translations {
   // Input Panel
   inputs: {
     title: string
+    billingSection: string
     hourlyRate: string
     hoursPerWeek: string
     unbillableHoursPerWeek: string
+    weeksWorkedPerYear: string
     vacationWeeks: string
-    monthlyBusinessExpenses: string
-    monthlyPersonalNeed: string
-    currentSavings: string
+    exchangeSection: string
+    exchangeRate: string
+    exchangeRateHelp: string
+    exchangeRateTooltip: string
+    exchangeRateHelper: string
+    billingCurrency: string
+    spendingCurrency: string
+    deductionsSection: string
     taxRate: string
+    taxRateHelp: string
     taxMode: string
     taxModeSimple: string
     taxModeSmart: string
     taxModeHelp: string
+    monthlyBusinessExpenses: string
+    monthlyPersonalNeed: string
+    currentSavings: string
     targetAnnualNet: string
-    targetOptional: string
     targetPlaceholder: string
+    burnRateTooltip: string
+    optional: string
+    displayCurrency: string
     currency: string
     language: string
     rangeLabel: string
@@ -120,6 +134,7 @@ export interface Translations {
   // Summary Cards
   summary: {
     title: string
+    netMonthlyIncome: string
     realityTitle: string
     effectiveHourlyRate: string
     unbillableTime: string
@@ -139,6 +154,49 @@ export interface Translations {
     whatIf: string
     whatIfText: string
     whatIfSuffix: string
+    feasibilityTitle: string
+    sustainable: string
+    coverageMessage: string
+    coveringNeeds: string
+    shortfall: string
+    shortfallMessage: string
+  }
+
+  // Calculation Breakdown
+  breakdown: {
+    title: string
+    lineItem: string
+    value: string
+    grossBillings: string
+    converted: string
+    lessTaxes: string
+    taxNote: string
+    lessExpenses: string
+    expensesNote: string
+    unpaidTime: string
+    unpaidNote: string
+    netMonthly: string
+    afterAll: string
+    yourBurnRate: string
+    leftOver: string
+    shortfall: string
+  }
+
+  // Feasibility
+  feasibility: {
+    title: string
+    subtitle: string
+    feasible: string
+    notFeasible: string
+    monthlyShortfall: string
+    monthlyBuffer: string
+    unsustainable: string
+    losingMoney: string
+    tight: string
+    surviving: string
+    sustainable: string
+    thriving: string
+    tooltip: string
   }
 
   // Scenario Builder
@@ -290,13 +348,14 @@ export interface Translations {
 export const translations: Record<Language, Translations> = {
   en: {
     header: {
-      title: 'CushLabs.ai',
+      title: 'Income Planner',
       home: 'Home',
-      incomePlanner: 'Income Planner',
+      incomePlanner: 'Planner',
       about: 'About',
       openMenu: 'Open menu',
       closeMenu: 'Close menu',
       theme: 'Theme',
+      language: 'Language',
     },
 
     footer: {
@@ -352,27 +411,27 @@ export const translations: Record<Language, Translations> = {
     },
 
     home: {
-      tagline: 'CUSHLABS.AI',
-      headline: 'AI Integration & Modern Software Development for SMBs',
+      tagline: 'INCOME PLANNING TOOL',
+      headline: 'Plan Your Freelance Income with Confidence',
       subheading:
-        'I help businesses leverage AI, automate workflows, and build modern tools that are ready for real-world use.',
-      ctaPrimary: 'Try Income Planner',
-      ctaSecondary: 'View Projects',
+        'A bilingual income calculator for freelancers and consultants. See your real annual earnings, compare scenarios, and make informed decisions about your rates.',
+      ctaPrimary: 'Start Planning',
+      ctaSecondary: 'Learn More',
       features: {
         fast: {
-          title: 'Fast Delivery',
+          title: 'Instant Calculations',
           description:
-            'Production-ready systems in weeks, not months. Direct access, no handoffs.',
+            'Real-time income projections as you adjust your rate, hours, and expenses. No waiting, no complexity.',
         },
         realUse: {
-          title: 'Built for Real Use',
+          title: 'Scenario Planning',
           description:
-            'Clean code, proper testing, and documentation. No shortcuts or prototypes.',
+            'Compare pessimistic, realistic, and optimistic scenarios. Understand your income range and plan accordingly.',
         },
         personal: {
-          title: 'Personal & Direct',
+          title: '100% Private',
           description:
-            'One experienced builder. 25+ years of enterprise depth. You work directly with me.',
+            'All calculations happen in your browser. No accounts, no tracking, no data sent anywhere. Your numbers stay yours.',
         },
       },
     },
@@ -391,22 +450,34 @@ export const translations: Record<Language, Translations> = {
 
     inputs: {
       title: 'Your Inputs',
+      billingSection: 'Billing',
       hourlyRate: 'Hourly Rate',
       hoursPerWeek: 'Billable Hours per Week',
       unbillableHoursPerWeek: 'Unbillable Hours per Week',
-      vacationWeeks: 'Vacation Weeks per Year',
+      weeksWorkedPerYear: 'Weeks Worked per Year',
+      vacationWeeks: 'Vacation Weeks',
+      exchangeSection: 'Exchange',
+      exchangeRate: 'Exchange Rate',
+      exchangeRateHelp: 'Edit manually or use default (~20 MXN per USD)',
+      exchangeRateTooltip: 'Exchange rate between your billing and spending currencies',
+      exchangeRateHelper: 'Used to convert billing currency to spending currency',
+      billingCurrency: 'Billing Currency',
+      spendingCurrency: 'Spending Currency',
+      deductionsSection: 'Deductions',
+      taxRate: 'Tax Rate (%)',
+      taxRateHelp: 'Rule of thumb: 30% for safe keeping',
+      taxMode: 'Tax Mode',
+      taxModeSimple: 'Simple',
+      taxModeSmart: 'Smart',
+      taxModeHelp: 'Smart mode uses progressive tax brackets for more accurate calculations',
       monthlyBusinessExpenses: 'Monthly Business Expenses',
       monthlyPersonalNeed: 'Monthly Personal Need',
       currentSavings: 'Current Savings',
-      taxRate: 'Tax Rate (%)',
-      taxMode: 'Tax mode',
-      taxModeSimple: 'Simple',
-      taxModeSmart: 'Smart',
-      taxModeHelp:
-        'Uses a simple progressive tax curve (approx.) so higher incomes pay a higher effective rate.',
       targetAnnualNet: 'Target Annual Net Income',
-      targetOptional: '(optional)',
-      targetPlaceholder: 'Leave blank to calculate from inputs',
+      targetPlaceholder: 'Optional: Set a target to see required rate',
+      burnRateTooltip: 'Monthly expenses and personal needs combined',
+      optional: 'Optional',
+      displayCurrency: 'Display Currency',
       currency: 'Currency',
       language: 'Language',
       rangeLabel: 'Range',
@@ -414,6 +485,7 @@ export const translations: Record<Language, Translations> = {
 
     summary: {
       title: 'Your Income',
+      netMonthlyIncome: 'Net Monthly Income',
       realityTitle: 'Reality Check',
       effectiveHourlyRate: 'Effective hourly rate',
       unbillableTime: 'Unbillable time',
@@ -433,6 +505,47 @@ export const translations: Record<Language, Translations> = {
       whatIf: 'What if:',
       whatIfText: 'If you increased your hourly rate by 10%, you would earn',
       whatIfSuffix: 'per year.',
+      feasibilityTitle: 'Lifestyle Feasibility',
+      sustainable: 'Sustainable',
+      coverageMessage: 'You are {multiple}x over your monthly burn rate of {need}.',
+      coveringNeeds: 'Covering {percent}% of your monthly needs',
+      shortfall: 'Warning: Shortfall',
+      shortfallMessage: 'You need to earn more or reduce expenses.',
+    },
+
+    breakdown: {
+      title: 'See how this is calculated',
+      lineItem: 'Line Item',
+      value: 'Value',
+      grossBillings: 'Gross Billings',
+      converted: 'Converted to',
+      lessTaxes: 'Less: Taxes',
+      taxNote: 'Sent to tax authorities',
+      lessExpenses: 'Less: Business Expenses',
+      expensesNote: 'Software, tools, services',
+      unpaidTime: 'Unpaid Time',
+      unpaidNote: 'Already factored into hourly calculation',
+      netMonthly: 'Net Monthly Income',
+      afterAll: 'After taxes and expenses',
+      yourBurnRate: 'Your Monthly Burn Rate',
+      leftOver: 'Left Over',
+      shortfall: 'Shortfall',
+    },
+
+    feasibility: {
+      title: 'Lifestyle Feasibility',
+      subtitle: 'Can you sustain your current lifestyle?',
+      feasible: 'Feasible',
+      notFeasible: 'Not Feasible',
+      monthlyShortfall: 'Monthly Shortfall',
+      monthlyBuffer: 'Monthly Buffer',
+      unsustainable: 'Unsustainable',
+      losingMoney: 'You are losing money. Income < Expenses',
+      tight: 'Tight',
+      surviving: 'You cover bills, but one emergency will break you.',
+      sustainable: 'Sustainable',
+      thriving: 'You have a 25% buffer for savings and errors.',
+      tooltip: 'Sustainable means earning at least 125% of your monthly needs.',
     },
 
     scenarios: {
@@ -594,13 +707,14 @@ export const translations: Record<Language, Translations> = {
 
   es: {
     header: {
-      title: 'CushLabs.ai',
+      title: 'Planificador de Ingresos',
       home: 'Inicio',
-      incomePlanner: 'Planificador de Ingresos',
+      incomePlanner: 'Planificador',
       about: 'Acerca de',
       openMenu: 'Abrir menú',
       closeMenu: 'Cerrar menú',
       theme: 'Tema',
+      language: 'Idioma',
     },
 
     footer: {
@@ -656,27 +770,27 @@ export const translations: Record<Language, Translations> = {
     },
 
     home: {
-      tagline: 'CUSHLABS.AI',
-      headline: 'Integración de IA y Desarrollo de Software Moderno para PyMEs',
+      tagline: 'HERRAMIENTA DE PLANIFICACIÓN',
+      headline: 'Planifica tus Ingresos Freelance con Confianza',
       subheading:
-        'Ayudo a empresas a aprovechar la IA, automatizar flujos de trabajo y construir herramientas modernas listas para uso real.',
-      ctaPrimary: 'Probar Planificador',
-      ctaSecondary: 'Ver Proyectos',
+        'Una calculadora bilingüe de ingresos para freelancers y consultores. Ve tus ganancias anuales reales, compara escenarios y toma decisiones informadas sobre tus tarifas.',
+      ctaPrimary: 'Comenzar a Planificar',
+      ctaSecondary: 'Saber Más',
       features: {
         fast: {
-          title: 'Entrega Rápida',
+          title: 'Cálculos Instantáneos',
           description:
-            'Sistemas listos para producción en semanas, no meses. Acceso directo, sin intermediarios.',
+            'Proyecciones de ingresos en tiempo real mientras ajustas tu tarifa, horas y gastos. Sin esperas, sin complejidad.',
         },
         realUse: {
-          title: 'Construido para Uso Real',
+          title: 'Planificación de Escenarios',
           description:
-            'Código limpio, pruebas adecuadas y documentación. Sin atajos ni prototipos.',
+            'Compara escenarios pesimistas, realistas y optimistas. Entiende tu rango de ingresos y planifica en consecuencia.',
         },
         personal: {
-          title: 'Personal y Directo',
+          title: '100% Privado',
           description:
-            'Un desarrollador experimentado. Más de 25 años de experiencia empresarial. Trabajas directamente conmigo.',
+            'Todos los cálculos ocurren en tu navegador. Sin cuentas, sin rastreo, sin datos enviados. Tus números son tuyos.',
         },
       },
     },
@@ -695,22 +809,34 @@ export const translations: Record<Language, Translations> = {
 
     inputs: {
       title: 'Tus Datos',
+      billingSection: 'Facturación',
       hourlyRate: 'Tarifa por Hora',
       hoursPerWeek: 'Horas Facturables por Semana',
       unbillableHoursPerWeek: 'Horas No Facturables por Semana',
-      vacationWeeks: 'Semanas de Vacaciones al Año',
+      weeksWorkedPerYear: 'Semanas Trabajadas al Año',
+      vacationWeeks: 'Semanas de Vacaciones',
+      exchangeSection: 'Tipo de Cambio',
+      exchangeRate: 'Tipo de Cambio',
+      exchangeRateHelp: 'Edita manualmente o usa el predeterminado (~20 MXN por USD)',
+      exchangeRateTooltip: 'Tipo de cambio entre tus monedas de facturación y gasto',
+      exchangeRateHelper: 'Se usa para convertir la moneda de facturación a la moneda de gasto',
+      billingCurrency: 'Moneda de Facturación',
+      spendingCurrency: 'Moneda de Gasto',
+      deductionsSection: 'Deducciones',
+      taxRate: 'Tasa de Impuestos (%)',
+      taxRateHelp: 'Regla general: 30% para estar seguro',
+      taxMode: 'Modo de Impuestos',
+      taxModeSimple: 'Simple',
+      taxModeSmart: 'Inteligente',
+      taxModeHelp: 'El modo inteligente usa tramos fiscales progresivos para cálculos más precisos',
       monthlyBusinessExpenses: 'Gastos Mensuales del Negocio',
       monthlyPersonalNeed: 'Necesidad Mensual Personal',
       currentSavings: 'Ahorros Actuales',
-      taxRate: 'Tasa de Impuestos (%)',
-      taxMode: 'Modo de impuestos',
-      taxModeSimple: 'Simple',
-      taxModeSmart: 'Inteligente',
-      taxModeHelp:
-        'Usa una curva progresiva simple (aprox.) para que ingresos más altos paguen una tasa efectiva mayor.',
-      targetAnnualNet: 'Ingreso Anual Neto Objetivo',
-      targetOptional: '(opcional)',
-      targetPlaceholder: 'Dejar en blanco para calcular de los datos',
+      targetAnnualNet: 'Ingreso Neto Anual Objetivo',
+      targetPlaceholder: 'Opcional: Establece un objetivo para ver la tarifa requerida',
+      burnRateTooltip: 'Gastos mensuales y necesidades personales combinados',
+      optional: 'Opcional',
+      displayCurrency: 'Moneda de Visualización',
       currency: 'Moneda',
       language: 'Idioma',
       rangeLabel: 'Rango',
@@ -718,6 +844,7 @@ export const translations: Record<Language, Translations> = {
 
     summary: {
       title: 'Tus Ingresos',
+      netMonthlyIncome: 'Ingreso Mensual Neto',
       realityTitle: 'Chequeo de Realidad',
       effectiveHourlyRate: 'Tarifa efectiva por hora',
       unbillableTime: 'Tiempo no facturable',
@@ -738,6 +865,47 @@ export const translations: Record<Language, Translations> = {
       whatIf: '¿Qué pasaría si:',
       whatIfText: 'Si aumentaras tu tarifa por hora en 10%, ganarías',
       whatIfSuffix: 'al año.',
+      feasibilityTitle: 'Viabilidad de Estilo de Vida',
+      sustainable: 'Sostenible',
+      coverageMessage: 'Estás {multiple}x por encima de tu tasa de consumo mensual de {need}.',
+      coveringNeeds: 'Cubriendo {percent}% de tus necesidades mensuales',
+      shortfall: 'Advertencia: Déficit',
+      shortfallMessage: 'Te faltan {amount} cada mes.',
+    },
+
+    breakdown: {
+      title: 'Ver cómo se calcula esto',
+      lineItem: 'Concepto',
+      value: 'Valor',
+      grossBillings: 'Facturación Bruta',
+      converted: 'Convertido a',
+      lessTaxes: 'Menos: Impuestos',
+      taxNote: 'Enviado a autoridades fiscales',
+      lessExpenses: 'Menos: Gastos del Negocio',
+      expensesNote: 'Software, herramientas, servicios',
+      unpaidTime: 'Tiempo No Pagado',
+      unpaidNote: 'Ya incluido en el cálculo por hora',
+      netMonthly: 'Ingreso Mensual Neto',
+      afterAll: 'Después de impuestos y gastos',
+      yourBurnRate: 'Tu Tasa de Consumo Mensual',
+      leftOver: 'Sobrante',
+      shortfall: 'Déficit',
+    },
+
+    feasibility: {
+      title: 'Viabilidad de Estilo de Vida',
+      subtitle: '¿Puedes sostener tu estilo de vida actual?',
+      feasible: 'Viable',
+      notFeasible: 'No Viable',
+      monthlyShortfall: 'Déficit Mensual',
+      monthlyBuffer: 'Colchón Mensual',
+      unsustainable: 'Insostenible',
+      losingMoney: 'Estás perdiendo dinero. Ingresos < Gastos',
+      tight: 'Ajustado',
+      surviving: 'Cubres las cuentas, pero una emergencia te quebraría.',
+      sustainable: 'Sostenible',
+      thriving: 'Tienes un colchón del 25% para ahorros y errores.',
+      tooltip: 'Sostenible significa ganar al menos 125% de tus necesidades mensuales.',
     },
 
     scenarios: {

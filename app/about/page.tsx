@@ -141,6 +141,33 @@ export default function AboutPage() {
           <li>{t.about.versionHistory.v11}</li>
         </ul>
       </div>
+
+      <div className="mt-10 bg-background border border-muted-strong/20 rounded-xl p-6 md:p-8">
+        <h2 className="font-heading text-2xl font-bold mb-4">{t.caseStudy.title}</h2>
+        <p className="text-sm text-muted mb-6">{t.caseStudy.builtBy}</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 className="font-heading text-lg font-bold mb-2">{t.caseStudy.sections.problem.title}</h3>
+            <p className="text-sm text-muted leading-relaxed">{t.caseStudy.sections.problem.body}</p>
+          </div>
+          
+          <div>
+            <h3 className="font-heading text-lg font-bold mb-2">{t.caseStudy.sections.design.title}</h3>
+            <p className="text-sm text-muted leading-relaxed">{t.caseStudy.sections.design.body}</p>
+          </div>
+          
+          <div>
+            <h3 className="font-heading text-lg font-bold mb-2">{t.caseStudy.sections.stack.title}</h3>
+            <p className="text-sm text-muted leading-relaxed">{t.caseStudy.sections.stack.body}</p>
+          </div>
+          
+          <div>
+            <h3 className="font-heading text-lg font-bold mb-2">{t.caseStudy.sections.privacy.title}</h3>
+            <p className="text-sm text-muted leading-relaxed">{t.caseStudy.sections.privacy.body}</p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

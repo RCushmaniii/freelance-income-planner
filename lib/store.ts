@@ -4,7 +4,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { validateAndClampConfig, IncomeConfig, TaxMode } from './calculations'
 
-export type Currency = 'MXN' | 'USD'
+export type Currency = 'MXN' | 'USD' | 'EUR'
 export type Language = 'en' | 'es'
 export type ViewMode = 'snapshot' | 'forecast'
 export type Theme = 'light' | 'dark'
@@ -34,15 +34,19 @@ export interface IncomePlannerState {
   hourlyRate: number
   hoursPerWeek: number
   unbillableHoursPerWeek: number
+  weeksWorkedPerYear: number
   vacationWeeks: number
   monthlyBusinessExpenses: number
   monthlyPersonalNeed: number | null
   currentSavings: number | null
+  targetAnnualNet: number | null
   taxRate: number
   taxMode: TaxMode
-  targetAnnualNet: number | null
-  currency: Currency
+  currency: Currency // Legacy field - keeping for backward compatibility
+  billingCurrency: Currency
+  spendingCurrency: Currency
   language: Language
+  userExchangeRate: number | null
 
   // UI
   theme: Theme
@@ -64,19 +68,23 @@ export interface IncomePlannerState {
   setHourlyRate: (value: number) => void
   setHoursPerWeek: (value: number) => void
   setUnbillableHoursPerWeek: (value: number) => void
+  setWeeksWorkedPerYear: (value: number) => void
   setVacationWeeks: (value: number) => void
   setMonthlyBusinessExpenses: (value: number) => void
   setMonthlyPersonalNeed: (value: number | null) => void
   setCurrentSavings: (value: number | null) => void
+  setTargetAnnualNet: (value: number | null) => void
   setTaxRate: (value: number) => void
   setTaxMode: (mode: TaxMode) => void
-  setTargetAnnualNet: (value: number | null) => void
   setCurrency: (currency: Currency) => void
+  setBillingCurrency: (currency: Currency) => void
+  setSpendingCurrency: (currency: Currency) => void
   switchCurrency: (nextCurrency: Currency, mxnToUsdRate: number | null) => void
   setLanguage: (language: Language) => void
   setTheme: (theme: Theme) => void
   setFxStatus: (status: FxStatus) => void
   setMxnToUsdRate: (rate: number | null, updatedAt: number | null) => void
+  setUserExchangeRate: (rate: number | null) => void
   setScenario: (
     scenario: 'pessimistic' | 'realistic' | 'optimistic',
     inputs: Partial<ScenarioInputs>
@@ -88,12 +96,12 @@ export interface IncomePlannerState {
 const DEFAULT_CONFIG: IncomeConfig = {
   hourlyRate: 500,
   hoursPerWeek: 40,
-  unbillableHoursPerWeek: 10,
-  vacationWeeks: 2,
+  unbillableHoursPerWeek: 0,
+  vacationWeeks: 0,
   monthlyBusinessExpenses: 0,
   monthlyPersonalNeed: null,
   currentSavings: null,
-  taxRate: 25,
+  taxRate: 30,
 }
 
 /**
@@ -113,16 +121,20 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
       viewMode: 'snapshot',
       hourlyRate: DEFAULT_CONFIG.hourlyRate,
       hoursPerWeek: DEFAULT_CONFIG.hoursPerWeek,
-      unbillableHoursPerWeek: DEFAULT_CONFIG.unbillableHoursPerWeek ?? 0,
-      vacationWeeks: DEFAULT_CONFIG.vacationWeeks,
+      unbillableHoursPerWeek: 0,
+      weeksWorkedPerYear: 48,
+      vacationWeeks: 4,
       monthlyBusinessExpenses: DEFAULT_CONFIG.monthlyBusinessExpenses ?? 0,
       monthlyPersonalNeed: DEFAULT_CONFIG.monthlyPersonalNeed ?? null,
       currentSavings: DEFAULT_CONFIG.currentSavings ?? null,
-      taxRate: DEFAULT_CONFIG.taxRate,
-      taxMode: 'simple',
       targetAnnualNet: null,
-      currency: 'MXN',
+      taxRate: DEFAULT_CONFIG.taxRate,
+      taxMode: 'simple' as TaxMode,
+      currency: 'MXN', // Legacy field
+      billingCurrency: 'USD',
+      spendingCurrency: 'MXN',
       language: 'en',
+      userExchangeRate: 18.50,
 
       // UI
       theme: getInitialTheme(),
@@ -167,13 +179,20 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
       },
 
       setUnbillableHoursPerWeek: (value: number) => {
-        const validated = validateAndClampConfig({ unbillableHoursPerWeek: value })
-        set({ unbillableHoursPerWeek: validated.unbillableHoursPerWeek ?? 0 })
+        const clamped = Math.max(0, Math.min(168, value))
+        set({ unbillableHoursPerWeek: clamped })
+      },
+
+      setWeeksWorkedPerYear: (value: number) => {
+        const clamped = Math.max(1, Math.min(52, value))
+        const vacationWeeks = 52 - clamped
+        set({ weeksWorkedPerYear: clamped, vacationWeeks })
       },
 
       setVacationWeeks: (value: number) => {
-        const validated = validateAndClampConfig({ vacationWeeks: value })
-        set({ vacationWeeks: validated.vacationWeeks })
+        const clamped = Math.max(0, Math.min(52, value))
+        const weeksWorkedPerYear = 52 - clamped
+        set({ vacationWeeks: clamped, weeksWorkedPerYear })
       },
 
       setMonthlyBusinessExpenses: (value: number) => {
@@ -191,6 +210,11 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         set({ currentSavings: validated.currentSavings ?? null })
       },
 
+      setTargetAnnualNet: (value: number | null) => {
+        const clamped = value === null ? null : Math.max(0, Math.min(100_000_000, value))
+        set({ targetAnnualNet: clamped })
+      },
+
       setTaxRate: (value: number) => {
         const validated = validateAndClampConfig({ taxRate: value })
         set({ taxRate: validated.taxRate })
@@ -200,12 +224,16 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         set({ taxMode: mode })
       },
 
-      setTargetAnnualNet: (value: number | null) => {
-        set({ targetAnnualNet: value })
-      },
-
       setCurrency: (currency: Currency) => {
         set({ currency })
+      },
+
+      setBillingCurrency: (currency: Currency) => {
+        set({ billingCurrency: currency })
+      },
+
+      setSpendingCurrency: (currency: Currency) => {
+        set({ spendingCurrency: currency })
       },
 
       switchCurrency: (nextCurrency: Currency, mxnToUsdRate: number | null) => {
@@ -228,12 +256,14 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
           hourlyRate: convert(state.hourlyRate),
           hoursPerWeek: state.hoursPerWeek,
           unbillableHoursPerWeek: state.unbillableHoursPerWeek,
-          vacationWeeks: state.vacationWeeks,
+          vacationWeeks: 52 - state.weeksWorkedPerYear,
           monthlyBusinessExpenses: convert(state.monthlyBusinessExpenses),
           monthlyPersonalNeed:
             state.monthlyPersonalNeed === null ? null : convert(state.monthlyPersonalNeed),
           currentSavings:
             state.currentSavings === null ? null : convert(state.currentSavings),
+          targetAnnualNet:
+            state.targetAnnualNet === null ? null : convert(state.targetAnnualNet),
           taxRate: state.taxRate,
           taxMode: state.taxMode,
         })
@@ -263,16 +293,15 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
           currency: nextCurrency,
           hourlyRate: nextSnapshot.hourlyRate,
           hoursPerWeek: nextSnapshot.hoursPerWeek,
-          unbillableHoursPerWeek: nextSnapshot.unbillableHoursPerWeek ?? 0,
+          unbillableHoursPerWeek: nextSnapshot.unbillableHoursPerWeek,
+          weeksWorkedPerYear: 52 - nextSnapshot.vacationWeeks,
           vacationWeeks: nextSnapshot.vacationWeeks,
           monthlyBusinessExpenses: nextSnapshot.monthlyBusinessExpenses ?? 0,
           monthlyPersonalNeed: nextSnapshot.monthlyPersonalNeed ?? null,
           currentSavings: nextSnapshot.currentSavings ?? null,
+          targetAnnualNet: nextSnapshot.targetAnnualNet ?? null,
           taxRate: nextSnapshot.taxRate,
-          targetAnnualNet:
-            state.targetAnnualNet === null
-              ? null
-              : Math.round(convert(state.targetAnnualNet)),
+          taxMode: nextSnapshot.taxMode,
           scenarios: {
             pessimistic: {
               hourlyRate: nextPessimistic.hourlyRate,
@@ -309,6 +338,10 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         set({ mxnToUsdRate: rate, mxnToUsdRateUpdatedAt: updatedAt })
       },
 
+      setUserExchangeRate: (rate: number | null) => {
+        set({ userExchangeRate: rate })
+      },
+
       setScenario: (
         scenario: 'pessimistic' | 'realistic' | 'optimistic',
         inputs: Partial<ScenarioInputs>
@@ -339,14 +372,16 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         set({
           hourlyRate: DEFAULT_CONFIG.hourlyRate,
           hoursPerWeek: DEFAULT_CONFIG.hoursPerWeek,
-          unbillableHoursPerWeek: DEFAULT_CONFIG.unbillableHoursPerWeek ?? 0,
-          vacationWeeks: DEFAULT_CONFIG.vacationWeeks,
+          unbillableHoursPerWeek: 0,
+          weeksWorkedPerYear: 48,
+          vacationWeeks: 4,
           monthlyBusinessExpenses: DEFAULT_CONFIG.monthlyBusinessExpenses ?? 0,
           monthlyPersonalNeed: DEFAULT_CONFIG.monthlyPersonalNeed ?? null,
           currentSavings: DEFAULT_CONFIG.currentSavings ?? null,
-          taxRate: DEFAULT_CONFIG.taxRate,
-          taxMode: 'simple',
           targetAnnualNet: null,
+          taxRate: DEFAULT_CONFIG.taxRate,
+          taxMode: 'simple' as TaxMode,
+          userExchangeRate: 20,
         })
       },
 
@@ -356,10 +391,11 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
           hourlyRate: state.hourlyRate,
           hoursPerWeek: state.hoursPerWeek,
           unbillableHoursPerWeek: state.unbillableHoursPerWeek,
-          vacationWeeks: state.vacationWeeks,
+          vacationWeeks: 52 - state.weeksWorkedPerYear,
           monthlyBusinessExpenses: state.monthlyBusinessExpenses,
           monthlyPersonalNeed: state.monthlyPersonalNeed,
           currentSavings: state.currentSavings,
+          targetAnnualNet: state.targetAnnualNet,
           taxRate: state.taxRate,
           taxMode: state.taxMode,
         }
@@ -372,14 +408,19 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         hourlyRate: state.hourlyRate,
         hoursPerWeek: state.hoursPerWeek,
         unbillableHoursPerWeek: state.unbillableHoursPerWeek,
+        weeksWorkedPerYear: state.weeksWorkedPerYear,
         vacationWeeks: state.vacationWeeks,
         monthlyBusinessExpenses: state.monthlyBusinessExpenses,
         monthlyPersonalNeed: state.monthlyPersonalNeed,
         currentSavings: state.currentSavings,
+        targetAnnualNet: state.targetAnnualNet,
         taxRate: state.taxRate,
         taxMode: state.taxMode,
         currency: state.currency,
+        billingCurrency: state.billingCurrency,
+        spendingCurrency: state.spendingCurrency,
         language: state.language,
+        userExchangeRate: state.userExchangeRate,
         scenarios: state.scenarios,
         viewMode: state.viewMode,
         theme: state.theme,

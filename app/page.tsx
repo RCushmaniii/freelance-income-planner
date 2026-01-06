@@ -37,12 +37,12 @@ export default function Home() {
           >
             {t.home.ctaPrimary}
           </Link>
-          <a
-            href="#projects"
+          <Link
+            href="/about"
             className="bg-background border border-muted-strong/30 text-foreground hover:border-accent/50 font-semibold px-8 py-4 rounded-lg transition-all inline-block"
           >
             {t.home.ctaSecondary}
-          </a>
+          </Link>
         </div>
 
         {/* Features grid */}
