@@ -86,9 +86,18 @@ export function calculateProgressiveTax(
 }
 
 export function getDefaultProgressiveTaxBrackets(
-  currency: 'USD' | 'MXN'
+  currency: 'USD' | 'MXN' | 'EUR'
 ): ProgressiveTaxBracket[] {
-  const base = currency === 'MXN' ? 2_000_000 : 100_000
+  // Set base threshold based on currency
+  let base: number
+  if (currency === 'MXN') {
+    base = 2_000_000 // ~$100k USD equivalent
+  } else if (currency === 'EUR') {
+    base = 90_000 // ~$100k USD equivalent
+  } else {
+    base = 100_000 // USD
+  }
+  
   return [
     { upTo: base, rate: 0.15 },
     { upTo: base * 2, rate: 0.25 },
@@ -147,17 +156,24 @@ export function calculateIncome(
     const annualGross = hourlyRate * hoursPerWeek * billableWeeks
 
     const annualBusinessExpenses = Math.max(0, monthlyBusinessExpenses) * 12
-    const annualTaxableIncome = Math.max(0, annualGross - annualBusinessExpenses)
-
+    const annualPersonalExpenses = monthlyPersonalNeed !== null && Number.isFinite(monthlyPersonalNeed) 
+      ? Math.max(0, monthlyPersonalNeed) * 12 
+      : 0
+    
+    // Tax is calculated on GROSS income (before business expenses)
+    // This ensures taxes are always paid on revenue earned
     const annualTaxPaid = (() => {
       if (taxMode === 'smart' && Array.isArray(taxBrackets) && taxBrackets.length > 0) {
-        return calculateProgressiveTax(annualTaxableIncome, taxBrackets)
+        return calculateProgressiveTax(annualGross, taxBrackets)
       }
-      return annualTaxableIncome * (taxRate / 100)
+      return annualGross * (taxRate / 100)
     })()
+    
+    // Taxable income for reporting purposes (gross minus business expenses)
+    const annualTaxableIncome = annualGross - annualBusinessExpenses
 
-    // Calculate annual net income (after tax)
-    const annualNet = Math.max(0, annualTaxableIncome - annualTaxPaid)
+    // Calculate annual net income (gross minus tax minus business expenses minus personal expenses)
+    const annualNet = Math.max(0, annualGross - annualTaxPaid - annualBusinessExpenses - annualPersonalExpenses)
 
     // Derive other intervals
     const dailyGross = annualGross / 365

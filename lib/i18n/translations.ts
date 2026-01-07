@@ -7,6 +7,7 @@ export interface Translations {
     home: string
     incomePlanner: string
     about: string
+    docs: string
     openMenu: string
     closeMenu: string
     theme: string
@@ -79,6 +80,10 @@ export interface Translations {
         title: string
         description: string
       }
+      multiCurrency: {
+        title: string
+        description: string
+      }
     }
   }
 
@@ -119,7 +124,9 @@ export interface Translations {
     taxModeSmart: string
     taxModeHelp: string
     monthlyBusinessExpenses: string
+    businessExpenses: string
     monthlyPersonalNeed: string
+    personalNeed: string
     currentSavings: string
     targetAnnualNet: string
     targetPlaceholder: string
@@ -135,8 +142,13 @@ export interface Translations {
   summary: {
     title: string
     netMonthlyIncome: string
+    netAfterTaxExpenses: string
     realityTitle: string
     effectiveHourlyRate: string
+    afterTaxesTimeOff: string
+    beforeDeductions: string
+    yourTakeHomePay: string
+    averagePerWeek: string
     unbillableTime: string
     runway: string
     runwaySustainable: string
@@ -218,9 +230,10 @@ export interface Translations {
     range: string
   }
 
-  // Monthly Chart
+  // Chart
   chart: {
     title: string
+    subtitle: string
     runwayTitle: string
     runwayNotSet: string
     steady: string
@@ -229,6 +242,27 @@ export interface Translations {
     steadyDesc: string
     q4HeavyDesc: string
     summerSlowDesc: string
+    monthlyVariation: string
+    seasonalityDescription: string
+    legendLow: string
+    legendNormal: string
+    legendHigh: string
+  }
+
+  // Months
+  months: {
+    jan: string
+    feb: string
+    mar: string
+    apr: string
+    may: string
+    jun: string
+    jul: string
+    aug: string
+    sep: string
+    oct: string
+    nov: string
+    dec: string
   }
 
   // Insights
@@ -240,6 +274,28 @@ export interface Translations {
     pessimisticFloor: string
     rateIncrease: string
     spread: string
+    strategicAnalysis: string
+  }
+
+  // Strategic Simulator
+  simulator: {
+    title: string
+    subtitle: string
+    stressTestTitle: string
+    stressTestDesc: string
+    stressTestSafe: string
+    stressTestRisk: string
+    stressTestSafeLabel: string
+    stressTestRiskLabel: string
+    capacityTitle: string
+    capacityDesc: string
+    capacitySustainable: string
+    capacityHeavy: string
+    capacityBurnout: string
+    growthTitle: string
+    growthDesc: string
+    growthLabel: string
+    toggleOff: string
   }
 
   // Toast Messages
@@ -287,7 +343,6 @@ export interface Translations {
     }
   }
 
-  // Chart Placeholder
   chartPlaceholder: {
     title: string
     comingSoon: string
@@ -337,7 +392,6 @@ export interface Translations {
     }
   }
 
-  // Common
   common: {
     loading: string
     error: string
@@ -352,6 +406,7 @@ export const translations: Record<Language, Translations> = {
       home: 'Home',
       incomePlanner: 'Planner',
       about: 'About',
+      docs: 'Docs',
       openMenu: 'Open menu',
       closeMenu: 'Close menu',
       theme: 'Theme',
@@ -365,7 +420,7 @@ export const translations: Record<Language, Translations> = {
       github: 'GitHub',
       prd: 'PRD',
       predeployAudit: 'Predeploy Audit',
-      copyright: '© {year} CushLabs.ai. All rights reserved.',
+      copyright: '  {year} CushLabs.ai. All rights reserved.',
     },
 
     about: {
@@ -412,26 +467,31 @@ export const translations: Record<Language, Translations> = {
 
     home: {
       tagline: 'INCOME PLANNING TOOL',
-      headline: 'Plan Your Freelance Income with Confidence',
+      headline: 'Stop Guessing. Start Forecasting.',
       subheading:
-        'A bilingual income calculator for freelancers and consultants. See your real annual earnings, compare scenarios, and make informed decisions about your rates.',
+        'The privacy-first income simulator for freelancers. Instantly see how rate changes, sick days, and taxes impact your actual take-home pay.',
       ctaPrimary: 'Start Planning',
       ctaSecondary: 'Learn More',
       features: {
         fast: {
-          title: 'Instant Calculations',
+          title: 'Real-Time "What-Ifs"',
           description:
-            'Real-time income projections as you adjust your rate, hours, and expenses. No waiting, no complexity.',
+            'See the impact immediately. What if you raise rates by 10%? What if you lose a client? No spreadsheets, just answers.',
         },
         realUse: {
-          title: 'Scenario Planning',
+          title: 'Feast or Famine Proof',
           description:
-            'Compare pessimistic, realistic, and optimistic scenarios. Understand your income range and plan accordingly.',
+            'Map out your "Survival," "Realistic," and "Dream" scenarios. Know exactly how much buffer you have before the month starts.',
         },
         personal: {
           title: '100% Private',
           description:
-            'All calculations happen in your browser. No accounts, no tracking, no data sent anywhere. Your numbers stay yours.',
+            'Data never leaves your browser. No accounts, no tracking, no data sent anywhere. Your numbers stay yours.',
+        },
+        multiCurrency: {
+          title: 'Earn in USD, Live in MXN',
+          description:
+            'Stop doing mental math. Handling exchange rates and local taxes automatically, so you know your real purchasing power.',
         },
       },
     },
@@ -471,7 +531,9 @@ export const translations: Record<Language, Translations> = {
       taxModeSmart: 'Smart',
       taxModeHelp: 'Smart mode uses progressive tax brackets for more accurate calculations',
       monthlyBusinessExpenses: 'Monthly Business Expenses',
+      businessExpenses: 'Business Expenses',
       monthlyPersonalNeed: 'Monthly Personal Need',
+      personalNeed: 'Personal Need',
       currentSavings: 'Current Savings',
       targetAnnualNet: 'Target Annual Net Income',
       targetPlaceholder: 'Optional: Set a target to see required rate',
@@ -486,8 +548,13 @@ export const translations: Record<Language, Translations> = {
     summary: {
       title: 'Your Income',
       netMonthlyIncome: 'Net Monthly Income',
+      netAfterTaxExpenses: 'Net (after tax + expenses)',
       realityTitle: 'Reality Check',
       effectiveHourlyRate: 'Effective hourly rate',
+      afterTaxesTimeOff: 'After taxes and time off',
+      beforeDeductions: 'Before deductions',
+      yourTakeHomePay: 'Your take-home pay',
+      averagePerWeek: 'Average per week',
       unbillableTime: 'Unbillable time',
       runway: 'Runway',
       runwaySustainable: 'Sustainable',
@@ -567,18 +634,35 @@ export const translations: Record<Language, Translations> = {
 
     chart: {
       title: 'Monthly Income Projection',
+      subtitle: 'Adjust monthly variations using the equalizer above',
       runwayTitle: 'Runway Projection (Savings Balance)',
-      runwayNotSet:
-        'Add monthly personal need + current savings to see your runway over time.',
+      runwayNotSet: 'Set current savings to see runway projection',
       steady: 'Steady',
       q4Heavy: 'Q4 Heavy',
       summerSlow: 'Summer Slow',
-      steadyDesc:
-        'Steady: Consistent income throughout the year with no seasonal variation.',
-      q4HeavyDesc:
-        'Q4 Heavy: Higher income in Q4 (Oct-Dec) due to year-end projects and budget spending. Common for consultants and B2B services.',
-      summerSlowDesc:
-        'Summer Slow: Reduced income in summer months (Jun-Aug) when clients take vacations. Common for many service businesses.',
+      steadyDesc: 'Equal income all year',
+      q4HeavyDesc: 'Higher income Q4',
+      summerSlowDesc: 'Lower income in summer',
+      monthlyVariation: 'Monthly Income Variation',
+      seasonalityDescription: 'Adjust each month to reflect seasonal income patterns.',
+      legendLow: 'Low (<80%)',
+      legendNormal: 'Normal',
+      legendHigh: 'High (>120%)',
+    },
+
+    months: {
+      jan: 'Jan',
+      feb: 'Feb',
+      mar: 'Mar',
+      apr: 'Apr',
+      may: 'May',
+      jun: 'Jun',
+      jul: 'Jul',
+      aug: 'Aug',
+      sep: 'Sep',
+      oct: 'Oct',
+      nov: 'Nov',
+      dec: 'Dec',
     },
 
     insights: {
@@ -592,6 +676,27 @@ export const translations: Record<Language, Translations> = {
       rateIncrease:
         'A 10% rate increase would add {amount} to your annual income.',
       spread: 'potential upside',
+      strategicAnalysis: 'Strategic Analysis',
+    },
+
+    simulator: {
+      title: 'Strategic Scenarios',
+      subtitle: 'Test the resilience and potential of your current forecast.',
+      stressTestTitle: 'Stress Test: 20% Client Churn',
+      stressTestDesc: 'Simulate losing 1 out of every 5 clients.',
+      stressTestSafe: 'You stay profitable.',
+      stressTestRisk: 'Income drops below expenses.',
+      stressTestSafeLabel: 'Safe Level',
+      stressTestRiskLabel: 'Risk Level',
+      capacityTitle: 'Capacity Check: Optimistic Goal',
+      capacityDesc: 'Required workload to hit your optimistic target of',
+      capacitySustainable: 'Sustainable',
+      capacityHeavy: 'Heavy Load',
+      capacityBurnout: 'Burnout Risk',
+      growthTitle: 'Growth: 10% Rate Increase',
+      growthDesc: 'Impact of increasing your hourly rate to',
+      growthLabel: 'Annual Gain',
+      toggleOff: 'Turn on to test',
     },
 
     toast: {
@@ -711,6 +816,7 @@ export const translations: Record<Language, Translations> = {
       home: 'Inicio',
       incomePlanner: 'Planificador',
       about: 'Acerca de',
+      docs: 'Documentación',
       openMenu: 'Abrir menú',
       closeMenu: 'Cerrar menú',
       theme: 'Tema',
@@ -724,7 +830,7 @@ export const translations: Record<Language, Translations> = {
       github: 'GitHub',
       prd: 'PRD',
       predeployAudit: 'Auditoría Predeploy',
-      copyright: '© {year} CushLabs.ai. Todos los derechos reservados.',
+      copyright: '  {year} CushLabs.ai. Todos los derechos reservados.',
     },
 
     about: {
@@ -771,26 +877,31 @@ export const translations: Record<Language, Translations> = {
 
     home: {
       tagline: 'HERRAMIENTA DE PLANIFICACIÓN',
-      headline: 'Planifica tus Ingresos Freelance con Confianza',
+      headline: 'Deja de Adivinar. Empieza a Pronosticar.',
       subheading:
-        'Una calculadora bilingüe de ingresos para freelancers y consultores. Ve tus ganancias anuales reales, compara escenarios y toma decisiones informadas sobre tus tarifas.',
+        'El simulador de ingresos que respeta tu privacidad para freelancers. Ve al instante cómo los cambios de tarifa, días de enfermedad e impuestos impactan tu pago neto real.',
       ctaPrimary: 'Comenzar a Planificar',
       ctaSecondary: 'Saber Más',
       features: {
         fast: {
-          title: 'Cálculos Instantáneos',
+          title: 'Escenarios "¿Qué Pasaría Si?" en Tiempo Real',
           description:
-            'Proyecciones de ingresos en tiempo real mientras ajustas tu tarifa, horas y gastos. Sin esperas, sin complejidad.',
+            'Ve el impacto inmediatamente. ¿Qué pasaría si subes tus tarifas un 10%? ¿Si pierdes un cliente? Sin hojas de cálculo, solo respuestas.',
         },
         realUse: {
-          title: 'Planificación de Escenarios',
+          title: 'A Prueba de Altibajos',
           description:
-            'Compara escenarios pesimistas, realistas y optimistas. Entiende tu rango de ingresos y planifica en consecuencia.',
+            'Mapea tus escenarios de "Supervivencia," "Realista" y "Sueño." Sabe exactamente cuánto margen tienes antes de que empiece el mes.',
         },
         personal: {
           title: '100% Privado',
           description:
-            'Todos los cálculos ocurren en tu navegador. Sin cuentas, sin rastreo, sin datos enviados. Tus números son tuyos.',
+            'Los datos nunca salen de tu navegador. Sin cuentas, sin rastreo, sin datos enviados a ningún lugar. Tus números son tuyos.',
+        },
+        multiCurrency: {
+          title: 'Gana en USD, Vive en MXN',
+          description:
+            'Deja de hacer cálculos mentales. Maneja tipos de cambio e impuestos locales automáticamente, para que conozcas tu poder adquisitivo real.',
         },
       },
     },
@@ -830,7 +941,9 @@ export const translations: Record<Language, Translations> = {
       taxModeSmart: 'Inteligente',
       taxModeHelp: 'El modo inteligente usa tramos fiscales progresivos para cálculos más precisos',
       monthlyBusinessExpenses: 'Gastos Mensuales del Negocio',
+      businessExpenses: 'Gastos del Negocio',
       monthlyPersonalNeed: 'Necesidad Mensual Personal',
+      personalNeed: 'Necesidad Personal',
       currentSavings: 'Ahorros Actuales',
       targetAnnualNet: 'Ingreso Neto Anual Objetivo',
       targetPlaceholder: 'Opcional: Establece un objetivo para ver la tarifa requerida',
@@ -845,8 +958,13 @@ export const translations: Record<Language, Translations> = {
     summary: {
       title: 'Tus Ingresos',
       netMonthlyIncome: 'Ingreso Mensual Neto',
+      netAfterTaxExpenses: 'Neto (después de impuestos + gastos)',
       realityTitle: 'Chequeo de Realidad',
       effectiveHourlyRate: 'Tarifa efectiva por hora',
+      afterTaxesTimeOff: 'Después de impuestos y tiempo libre',
+      beforeDeductions: 'Antes de deducciones',
+      yourTakeHomePay: 'Tu pago neto',
+      averagePerWeek: 'Promedio por semana',
       unbillableTime: 'Tiempo no facturable',
       runway: 'Runway',
       runwaySustainable: 'Sostenible',
@@ -927,9 +1045,10 @@ export const translations: Record<Language, Translations> = {
 
     chart: {
       title: 'Proyección Mensual de Ingresos',
-      runwayTitle: 'Proyección de Runway (Saldo de Ahorros)',
+      subtitle: 'Ajusta las variaciones mensuales usando el ecualizador arriba',
+      runwayTitle: 'Proyección de Pista (Agotamiento de Ahorros)',
       runwayNotSet:
-        'Agrega necesidad mensual personal + ahorros actuales para ver tu runway con el tiempo.',
+        'Agrega necesidad mensual personal + ahorros actuales para ver tu pista con el tiempo.',
       steady: 'Estable',
       q4Heavy: 'Q4 Alto',
       summerSlow: 'Verano Lento',
@@ -939,6 +1058,26 @@ export const translations: Record<Language, Translations> = {
         'Q4 Alto: Mayores ingresos en Q4 (Oct-Dic) debido a proyectos de fin de año y gasto presupuestario. Común para consultores y servicios B2B.',
       summerSlowDesc:
         'Verano Lento: Ingresos reducidos en meses de verano (Jun-Ago) cuando los clientes toman vacaciones. Común para muchos negocios de servicios.',
+      monthlyVariation: 'Variación Mensual de Ingresos',
+      seasonalityDescription: 'Ajusta cada mes para reflejar patrones estacionales.',
+      legendLow: 'Bajo (<80%)',
+      legendNormal: 'Normal',
+      legendHigh: 'Alto (>120%)',
+    },
+
+    months: {
+      jan: 'Ene',
+      feb: 'Feb',
+      mar: 'Mar',
+      apr: 'Abr',
+      may: 'May',
+      jun: 'Jun',
+      jul: 'Jul',
+      aug: 'Ago',
+      sep: 'Sep',
+      oct: 'Oct',
+      nov: 'Nov',
+      dec: 'Dic',
     },
 
     insights: {
@@ -952,6 +1091,27 @@ export const translations: Record<Language, Translations> = {
       rateIncrease:
         'Un aumento de tarifa del 10% agregaría {amount} a tu ingreso anual.',
       spread: 'potencial al alza',
+      strategicAnalysis: 'Análisis Estratégico',
+    },
+
+    simulator: {
+      title: 'Escenarios Estratégicos',
+      subtitle: 'Prueba la resistencia y el potencial de tu pronóstico actual.',
+      stressTestTitle: 'Prueba de Estrés: 20% Pérdida de Clientes',
+      stressTestDesc: 'Simula perder 1 de cada 5 clientes.',
+      stressTestSafe: 'Te mantienes rentable.',
+      stressTestRisk: 'Los ingresos caen por debajo de los gastos.',
+      stressTestSafeLabel: 'Nivel Seguro',
+      stressTestRiskLabel: 'Nivel de Riesgo',
+      capacityTitle: 'Verificación de Capacidad: Meta Optimista',
+      capacityDesc: 'Carga de trabajo requerida para alcanzar tu meta optimista de',
+      capacitySustainable: 'Sostenible',
+      capacityHeavy: 'Carga Pesada',
+      capacityBurnout: 'Riesgo de Agotamiento',
+      growthTitle: 'Crecimiento: Aumento de Tarifa del 10%',
+      growthDesc: 'Impacto de aumentar tu tarifa por hora a',
+      growthLabel: 'Ganancia Anual',
+      toggleOff: 'Activa para probar',
     },
 
     toast: {

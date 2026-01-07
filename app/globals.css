@@ -11,9 +11,13 @@
   --muted: #aaaaaa;
   --muted-strong: #888888;
   --accent: #ff6a3d;
-  --chart-pessimistic: #f3a6b4;
-  --chart-realistic: #a7c7ff;
-  --chart-optimistic: #a6e6c6;
+  --chart-pessimistic: #64748b;
+  --chart-realistic: #3b82f6;
+  --chart-optimistic: #10b981;
+  --slider-track-bg: #374151;
+  --slider-track-fill: #ff6a3d;
+  --card-bg: #1a1a1a;
+  --card-border: #333333;
 }
 
 .light {
@@ -22,9 +26,13 @@
   --muted: #666666;
   --muted-strong: #444444;
   --accent: #ff6a3d;
-  --chart-pessimistic: #f08fa2;
-  --chart-realistic: #6fa8ff;
-  --chart-optimistic: #62d69b;
+  --chart-pessimistic: #64748b;
+  --chart-realistic: #3b82f6;
+  --chart-optimistic: #10b981;
+  --slider-track-bg: #e5e7eb;
+  --slider-track-fill: #ff6a3d;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
 }
 
 body {
@@ -34,4 +42,149 @@ body {
   transition:
     background-color 0.3s ease,
     color 0.3s ease;
+}
+
+/* Horizontal slider styling with visible track and fill */
+input[type="range"].horizontal-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: var(--slider-track-bg);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+}
+
+input[type="range"].horizontal-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid var(--accent);
+  cursor: grab;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
+}
+
+input[type="range"].horizontal-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid var(--accent);
+  cursor: grab;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s ease;
+}
+
+input[type="range"].horizontal-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 6px rgba(255, 106, 61, 0.4);
+}
+
+input[type="range"].horizontal-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 6px rgba(255, 106, 61, 0.4);
+}
+
+input[type="range"].horizontal-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+input[type="range"].horizontal-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+/* Vertical slider styling for monthly income equalizer */
+input[type="range"].vertical-slider {
+  -webkit-appearance: slider-vertical;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
+
+/* Track styling - WebKit (Chrome, Safari, Edge) */
+input[type="range"].vertical-slider::-webkit-slider-runnable-track {
+  width: 16px;
+  background: var(--slider-track-bg);
+  border-radius: 8px;
+  border: 2px solid var(--card-border);
+}
+
+/* Track styling - Firefox */
+input[type="range"].vertical-slider::-moz-range-track {
+  width: 16px;
+  background: var(--slider-track-bg);
+  border-radius: 8px;
+  border: 2px solid var(--card-border);
+}
+
+/* Thumb styling - WebKit */
+input[type="range"].vertical-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+/* Thumb styling - Firefox */
+input[type="range"].vertical-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 4px solid var(--accent);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+/* Hover states */
+input[type="range"].vertical-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px rgba(255, 106, 61, 0.4);
+}
+
+input[type="range"].vertical-slider::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px rgba(255, 106, 61, 0.4);
+}
+
+/* Active states */
+input[type="range"].vertical-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+input[type="range"].vertical-slider::-moz-range-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.05);
+}
+
+/* Focus states */
+input[type="range"].vertical-slider:focus {
+  outline: none;
+}
+
+input[type="range"].vertical-slider:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px rgba(255, 106, 61, 0.2);
+}
+
+input[type="range"].vertical-slider:focus::-moz-range-thumb {
+  box-shadow: 0 0 0 4px rgba(255, 106, 61, 0.2);
 }

@@ -33,37 +33,10 @@ export default function DocViewer({ slug, content, title, category, description 
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      {/* Mobile Header - Hidden on desktop (docs: breakpoint) */}
-      <div className="docs:hidden border-b border-muted-strong/20">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 hover:text-accent transition-colors">
-              <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
-              <span className="font-heading text-xl font-bold">Documentation</span>
-            </Link>
-
-            <button
-              type="button"
-              className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-muted-strong/30 hover:border-accent/50 transition-colors"
-              onClick={() => setMobileMenuOpen(true)}
-              aria-label="Open menu"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      </div>
-
       <div className="flex">
         {/* Desktop Sidebar - Hidden on mobile, fixed on desktop */}
-        <aside className="hidden docs:block w-64 min-h-screen bg-muted/5 border-r border-muted/20 fixed left-0 top-0 overflow-y-auto">
+        <aside className="hidden docs:block w-64 min-h-screen bg-muted/5 border-r border-muted/20 fixed left-0 top-[73px] overflow-y-auto">
           <div className="p-6">
-            <Link
-              href="/"
-              className="text-muted hover:text-accent text-sm mb-6 block transition-colors"
-            >
-              ← Back to Site
-            </Link>
             <div className="flex items-center gap-3 mb-4">
               <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
               <h2 className="text-lg font-semibold text-foreground font-heading">
@@ -88,67 +61,37 @@ export default function DocViewer({ slug, content, title, category, description 
           </div>
         </aside>
 
-        {/* Mobile Sidebar - Slide-in panel matching main app */}
-        {mobileMenuOpen && (
-          <div className="docs:hidden fixed inset-0 z-50">
+        {/* Mobile Sidebar - Collapsible docs navigation for mobile */}
+        <div className="docs:hidden w-full">
+          <div className="border-b border-muted-strong/20 bg-muted/5">
             <button
               type="button"
-              className="absolute inset-0 bg-black/60"
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Close menu"
-            />
-
-            <div
-              role="dialog"
-              aria-modal="true"
-              className="absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-background border-l border-muted-strong/20 shadow-2xl"
+              className="w-full px-4 py-3 flex items-center justify-between text-sm font-semibold hover:bg-muted/10 transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <div className="flex items-center justify-between p-4 border-b border-muted-strong/20">
-                <div className="flex items-center gap-3">
-                  <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
-                  <span className="font-heading text-lg font-bold">Documentation</span>
-                </div>
-                <button
-                  type="button"
-                  className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-muted-strong/30 hover:border-accent/50 transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                  aria-label="Close menu"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              <div className="p-4">
-                <nav className="flex flex-col gap-1">
-                  {DOCS_NAV.map((doc) => (
-                    <Link
-                      key={doc.slug}
-                      href={`/docs/${doc.slug}`}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`rounded-lg px-4 py-3 text-sm font-semibold transition-colors ${
-                        doc.slug === slug
-                          ? "bg-accent/10 text-foreground"
-                          : "hover:bg-muted-strong/10"
-                      }`}
-                    >
-                      {doc.title}
-                    </Link>
-                  ))}
-                </nav>
-
-                <div className="mt-6 pt-6 border-t border-muted-strong/20">
+              <span>Documentation Navigation</span>
+              {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            </button>
+            {mobileMenuOpen && (
+              <nav className="px-4 pb-4 space-y-1">
+                {DOCS_NAV.map((doc) => (
                   <Link
-                    href="/"
-                    className="flex items-center gap-2 text-sm text-muted hover:text-foreground transition-colors"
+                    key={doc.slug}
+                    href={`/docs/${doc.slug}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
+                      doc.slug === slug
+                        ? "bg-accent/10 text-foreground font-medium"
+                        : "text-muted hover:text-foreground hover:bg-muted/10"
+                    }`}
                   >
-                    <ArrowLeft className="w-4 h-4" />
-                    <span>Back to Site</span>
+                    {doc.title}
                   </Link>
-                </div>
-              </div>
-            </div>
+                ))}
+              </nav>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Main Content - Offset by sidebar width on desktop */}
         <main className="w-full docs:ml-64 flex-1 px-4 md:px-8 lg:px-12 py-6 md:py-8 lg:py-12">

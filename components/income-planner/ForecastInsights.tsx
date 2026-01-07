@@ -8,6 +8,7 @@ import {
   getDefaultProgressiveTaxBrackets,
 } from '@/lib/calculations'
 import { formatCurrency } from '@/lib/formatters'
+import { convertCurrency } from '@/lib/currency-conversion'
 import {
   Lightbulb,
   BarChart3,
@@ -29,19 +30,45 @@ export default function ForecastInsights() {
     monthlyPersonalNeed,
     currentSavings,
     targetAnnualNet,
-    currency,
+    billingCurrency,
+    spendingCurrency,
+    userExchangeRate,
     language,
   } = useIncomePlannerStore()
   const t = useTranslation(language)
 
-  const taxBrackets = taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(currency) : undefined
+  const taxBrackets = taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(billingCurrency) : undefined
 
-  // Calculate income for each scenario
+  // Convert from billing currency to spending currency
+  const convertToSpending = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: billingCurrency,
+      toCurrency: spendingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+
+  // Convert from spending currency to billing currency
+  const convertToBilling = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: spendingCurrency,
+      toCurrency: billingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+
+  // Calculate income for each scenario (convert expenses to billing currency)
   const pessimisticResult = calculateIncome({
     ...scenarios.pessimistic,
     unbillableHoursPerWeek,
-    monthlyBusinessExpenses,
-    monthlyPersonalNeed,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
     currentSavings,
     taxRate,
     taxMode,
@@ -51,8 +78,8 @@ export default function ForecastInsights() {
   const realisticResult = calculateIncome({
     ...scenarios.realistic,
     unbillableHoursPerWeek,
-    monthlyBusinessExpenses,
-    monthlyPersonalNeed,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
     currentSavings,
     taxRate,
     taxMode,
@@ -62,8 +89,8 @@ export default function ForecastInsights() {
   const optimisticResult = calculateIncome({
     ...scenarios.optimistic,
     unbillableHoursPerWeek,
-    monthlyBusinessExpenses,
-    monthlyPersonalNeed,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
     currentSavings,
     taxRate,
     taxMode,
@@ -79,7 +106,8 @@ export default function ForecastInsights() {
   }
 
   const formatMoney = (value: number): string => {
-    return formatCurrency({ value, currency, language, maximumFractionDigits: 0 })
+    const converted = convertToSpending(value)
+    return formatCurrency({ value: converted, currency: spendingCurrency, language, maximumFractionDigits: 0 })
   }
 
   // Generate insights
@@ -92,7 +120,8 @@ export default function ForecastInsights() {
   })
 
   if (typeof targetAnnualNet === 'number' && Number.isFinite(targetAnnualNet) && targetAnnualNet > 0) {
-    const delta = realisticResult.annualNet - targetAnnualNet
+    const targetInBilling = convertToBilling(targetAnnualNet)
+    const delta = realisticResult.annualNet - targetInBilling
     const isAhead = delta >= 0
 
     const requiredRate = (() => {

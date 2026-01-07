@@ -1,4 +1,5 @@
 import { calculateIncome, IncomeConfig } from './calculations'
+import { translations, Language } from './i18n/translations'
 
 export interface MonthlyDataPoint {
   month: string
@@ -14,6 +15,24 @@ export interface RunwayDataPoint {
   optimistic: number
 }
 
+function getMonthNames(language: Language): string[] {
+  const t = translations[language]
+  return [
+    t.months.jan,
+    t.months.feb,
+    t.months.mar,
+    t.months.apr,
+    t.months.may,
+    t.months.jun,
+    t.months.jul,
+    t.months.aug,
+    t.months.sep,
+    t.months.oct,
+    t.months.nov,
+    t.months.dec,
+  ]
+}
+
 /**
  * Generate monthly income projection data for all three scenarios
  * Returns an array of 12 data points (one per month)
@@ -21,22 +40,10 @@ export interface RunwayDataPoint {
 export function generateMonthlyProjection(
   pessimisticConfig: IncomeConfig,
   realisticConfig: IncomeConfig,
-  optimisticConfig: IncomeConfig
+  optimisticConfig: IncomeConfig,
+  language: Language = 'en'
 ): MonthlyDataPoint[] {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
+  const months = getMonthNames(language)
 
   const pessimisticResult = calculateIncome(pessimisticConfig)
   const realisticResult = calculateIncome(realisticConfig)
@@ -66,31 +73,13 @@ export function generateSeasonalProjection(
   pessimisticConfig: IncomeConfig,
   realisticConfig: IncomeConfig,
   optimisticConfig: IncomeConfig,
-  seasonalPattern: 'steady' | 'q4-heavy' | 'summer-slow' = 'steady'
+  monthlyMultipliers: number[] = Array(12).fill(1.0),
+  language: Language = 'en'
 ): MonthlyDataPoint[] {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
+  const months = getMonthNames(language)
 
-  // Seasonal multipliers for different patterns
-  const patterns = {
-    steady: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    'q4-heavy': [0.8, 0.8, 0.9, 0.9, 1.0, 1.0, 0.9, 0.9, 1.0, 1.1, 1.2, 1.3],
-    'summer-slow': [1.0, 1.0, 1.1, 1.1, 0.9, 0.7, 0.7, 0.8, 1.0, 1.1, 1.1, 1.0],
-  }
-
-  const multipliers = patterns[seasonalPattern]
+  // Use custom monthly multipliers (default to steady if not provided)
+  const multipliers = monthlyMultipliers.length === 12 ? monthlyMultipliers : Array(12).fill(1.0)
 
   const pessimisticResult = calculateIncome(pessimisticConfig)
   const realisticResult = calculateIncome(realisticConfig)
@@ -116,30 +105,13 @@ export function generateRunwayProjection(
   pessimisticConfig: IncomeConfig,
   realisticConfig: IncomeConfig,
   optimisticConfig: IncomeConfig,
-  seasonalPattern: 'steady' | 'q4-heavy' | 'summer-slow' = 'steady'
+  monthlyMultipliers: number[] = Array(12).fill(1.0),
+  language: Language = 'en'
 ): RunwayDataPoint[] {
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
+  const months = getMonthNames(language)
 
-  const patterns = {
-    steady: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    'q4-heavy': [0.8, 0.8, 0.9, 0.9, 1.0, 1.0, 0.9, 0.9, 1.0, 1.1, 1.2, 1.3],
-    'summer-slow': [1.0, 1.0, 1.1, 1.1, 0.9, 0.7, 0.7, 0.8, 1.0, 1.1, 1.1, 1.0],
-  }
-
-  const multipliers = patterns[seasonalPattern]
+  // Use custom monthly multipliers (default to steady if not provided)
+  const multipliers = monthlyMultipliers.length === 12 ? monthlyMultipliers : Array(12).fill(1.0)
 
   const pessimisticResult = calculateIncome(pessimisticConfig)
   const realisticResult = calculateIncome(realisticConfig)

@@ -12,18 +12,29 @@ export default function ScenarioBuilder() {
     scenarios,
     taxRate,
     taxMode,
+    monthlyBusinessExpenses,
+    monthlyPersonalNeed,
     setScenario,
     setTaxRate,
     setTaxMode,
+    setMonthlyBusinessExpenses,
+    setMonthlyPersonalNeed,
+    billingCurrency,
+    spendingCurrency,
     language,
   } = useIncomePlannerStore()
   const t = useTranslation(language)
 
-  const handleTaxRateChange = (value: string) => {
-    const num = parseFloat(value)
-    if (!isNaN(num)) {
-      setTaxRate(num)
-    }
+  const handleTaxRateChange = (value: number) => {
+    setTaxRate(value)
+  }
+
+  const handleBusinessExpensesChange = (value: number) => {
+    setMonthlyBusinessExpenses(Math.round(value))
+  }
+
+  const handlePersonalExpensesChange = (value: number) => {
+    setMonthlyPersonalNeed(Math.round(value))
   }
 
   const handleScenarioChange = (
@@ -79,7 +90,7 @@ export default function ScenarioBuilder() {
               {/* Hourly Rate */}
               <div>
                 <Input
-                  label={t.inputs.hourlyRate}
+                  label={`${t.inputs.hourlyRate} (${billingCurrency})`}
                   type="number"
                   value={scenarios[scenario.key].hourlyRate}
                   onChange={(e) =>
@@ -119,47 +130,161 @@ export default function ScenarioBuilder() {
         ))}
       </div>
 
-      {/* Shared Tax */}
-      <Card className="mt-8 max-w-md mx-auto p-6">
-        <Label className="block text-sm font-medium mb-3 text-center">
-          {t.scenarios.sharedTaxRate}
-        </Label>
-
-        <div className="flex gap-2">
-          <Button
-            type="button"
-            onClick={() => setTaxMode('simple')}
-            variant={taxMode === 'simple' ? 'primary' : 'outline'}
-            className="flex-1 py-2.5"
-          >
-            {t.inputs.taxModeSimple}
-          </Button>
-          <Button
-            type="button"
-            onClick={() => setTaxMode('smart')}
-            variant={taxMode === 'smart' ? 'primary' : 'outline'}
-            className="flex-1 py-2.5"
-          >
-            {t.inputs.taxModeSmart}
-          </Button>
-        </div>
-
-        {taxMode === 'simple' ? (
-          <div className="mt-4">
-            <Input
-              label={t.inputs.taxRate}
-              type="number"
+      {/* Adjustable Parameters */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        {/* Tax Rate Slider */}
+        <Card className="p-5 bg-card-bg border-card-border min-h-[140px] flex flex-col justify-between">
+          <div className="flex flex-col gap-1 mb-4">
+            <Label className="text-[10px] font-bold text-muted uppercase tracking-widest truncate w-full">
+              {t.inputs.taxRate}
+            </Label>
+            <span className="text-3xl font-black tracking-tight">{taxRate.toFixed(1)}%</span>
+          </div>
+          
+          <div className="relative w-full h-6 flex items-center mb-2">
+            {/* Background Track */}
+            <div className="absolute w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--slider-track-bg)' }}>
+              {/* Fill Track */}
+              <div 
+                className="h-full transition-all duration-100 ease-out"
+                style={{ 
+                  width: `${(taxRate / 50) * 100}%`,
+                  background: 'var(--slider-track-fill)'
+                }}
+              />
+            </div>
+            
+            {/* Native Range Input */}
+            <input
+              type="range"
+              min="0"
+              max="50"
+              step="0.1"
               value={taxRate}
-              onChange={(e) => handleTaxRateChange(e.target.value)}
-              placeholder="25"
-              className="px-3 py-2 text-sm"
-              helperText={`${t.inputs.rangeLabel}: 0 - 50%`}
+              onChange={(e) => handleTaxRateChange(parseFloat(e.target.value))}
+              className="horizontal-slider absolute w-full opacity-0 cursor-pointer z-20"
+            />
+            
+            {/* Visual Thumb */}
+            <div 
+              className="absolute w-5 h-5 bg-white border-4 rounded-full shadow-md z-10 pointer-events-none transition-all duration-100 ease-out"
+              style={{ 
+                left: `calc(${(taxRate / 50) * 100}% - 10px)`,
+                borderColor: 'var(--accent)'
+              }}
             />
           </div>
-        ) : (
-          <p className="text-xs text-muted-strong mt-3 text-center">{t.inputs.taxModeHelp}</p>
-        )}
-      </Card>
+          
+          <div className="flex justify-between text-[10px] text-muted/50 font-bold mt-2">
+            <span>0%</span>
+            <span>50%</span>
+          </div>
+        </Card>
+
+        {/* Business Expenses Slider */}
+        <Card className="p-5 bg-card-bg border-card-border min-h-[140px] flex flex-col justify-between">
+          <div className="flex flex-col gap-1 mb-4">
+            <Label className="text-[10px] font-bold text-muted uppercase tracking-widest truncate w-full">
+              {t.inputs.businessExpenses}
+            </Label>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm font-bold text-muted">{spendingCurrency}</span>
+              <span className="text-3xl font-black tracking-tight">{monthlyBusinessExpenses.toLocaleString()}</span>
+            </div>
+          </div>
+          
+          <div className="relative w-full h-6 flex items-center mb-2">
+            {/* Background Track */}
+            <div className="absolute w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--slider-track-bg)' }}>
+              {/* Fill Track */}
+              <div 
+                className="h-full transition-all duration-100 ease-out"
+                style={{ 
+                  width: `${(monthlyBusinessExpenses / 50000) * 100}%`,
+                  background: 'var(--slider-track-fill)'
+                }}
+              />
+            </div>
+            
+            {/* Native Range Input */}
+            <input
+              type="range"
+              min="0"
+              max="50000"
+              step="100"
+              value={monthlyBusinessExpenses}
+              onChange={(e) => handleBusinessExpensesChange(parseFloat(e.target.value))}
+              className="horizontal-slider absolute w-full opacity-0 cursor-pointer z-20"
+            />
+            
+            {/* Visual Thumb */}
+            <div 
+              className="absolute w-5 h-5 bg-white border-4 rounded-full shadow-md z-10 pointer-events-none transition-all duration-100 ease-out"
+              style={{ 
+                left: `calc(${(monthlyBusinessExpenses / 50000) * 100}% - 10px)`,
+                borderColor: 'var(--accent)'
+              }}
+            />
+          </div>
+          
+          <div className="flex justify-between text-[10px] text-muted/50 font-bold mt-2">
+            <span>0</span>
+            <span>50k</span>
+          </div>
+        </Card>
+
+        {/* Personal Expenses Slider */}
+        <Card className="p-5 bg-card-bg border-card-border min-h-[140px] flex flex-col justify-between">
+          <div className="flex flex-col gap-1 mb-4">
+            <Label className="text-[10px] font-bold text-muted uppercase tracking-widest truncate w-full">
+              {t.inputs.personalNeed}
+            </Label>
+            <div className="flex items-baseline gap-1">
+              <span className="text-sm font-bold text-muted">{spendingCurrency}</span>
+              <span className="text-3xl font-black tracking-tight">{(monthlyPersonalNeed || 0).toLocaleString()}</span>
+            </div>
+          </div>
+          
+          <div className="relative w-full h-6 flex items-center mb-2">
+            {/* Background Track */}
+            <div className="absolute w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--slider-track-bg)' }}>
+              {/* Fill Track */}
+              <div 
+                className="h-full transition-all duration-100 ease-out"
+                style={{ 
+                  width: `${((monthlyPersonalNeed || 0) / 50000) * 100}%`,
+                  background: 'var(--slider-track-fill)'
+                }}
+              />
+            </div>
+            
+            {/* Native Range Input */}
+            <input
+              type="range"
+              min="0"
+              max="50000"
+              step="100"
+              value={monthlyPersonalNeed || 0}
+              onChange={(e) => handlePersonalExpensesChange(parseFloat(e.target.value))}
+              className="horizontal-slider absolute w-full opacity-0 cursor-pointer z-20"
+            />
+            
+            {/* Visual Thumb */}
+            <div 
+              className="absolute w-5 h-5 bg-white border-4 rounded-full shadow-md z-10 pointer-events-none transition-all duration-100 ease-out"
+              style={{ 
+                left: `calc(${((monthlyPersonalNeed || 0) / 50000) * 100}% - 10px)`,
+                borderColor: 'var(--accent)'
+              }}
+            />
+          </div>
+          
+          <div className="flex justify-between text-[10px] text-muted/50 font-bold mt-2">
+            <span>0</span>
+            <span>50k</span>
+          </div>
+        </Card>
+      </div>
     </div>
   )
 }

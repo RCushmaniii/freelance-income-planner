@@ -26,13 +26,25 @@ export default function LifestyleFeasibility() {
 
   const t = useTranslation(language)
 
+  // Convert expenses from spending currency to billing currency for calculation engine
+  const convertToBilling = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: spendingCurrency,
+      toCurrency: billingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+
   const config = {
     hourlyRate,
     hoursPerWeek,
     unbillableHoursPerWeek: 0,
     vacationWeeks: 52 - weeksWorkedPerYear,
-    monthlyBusinessExpenses,
-    monthlyPersonalNeed,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
     currentSavings: null,
     taxRate,
     taxMode,
@@ -51,11 +63,13 @@ export default function LifestyleFeasibility() {
       fromCurrency: billingCurrency,
       toCurrency: spendingCurrency,
       exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
     })
   }
 
   // Calculate true net leftover using cash flow logic
-  const weeksPerMonth = 52 / 12
+  const weeksPerMonth = 4.33 // 52 / 12 rounded to hundredths
   const monthlyGrossBilling = hourlyRate * hoursPerWeek * weeksPerMonth
   const monthlyGrossInSpending = convertToSpending(monthlyGrossBilling)
   const monthlyTax = convertToSpending(result.annualTaxPaid / 12)

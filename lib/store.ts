@@ -63,6 +63,9 @@ export interface IncomePlannerState {
     optimistic: ScenarioInputs
   }
 
+  // Monthly income multipliers for seasonal variations (1.0 = 100%)
+  monthlyMultipliers: number[]
+
   // Actions
   setViewMode: (mode: ViewMode) => void
   setHourlyRate: (value: number) => void
@@ -89,6 +92,7 @@ export interface IncomePlannerState {
     scenario: 'pessimistic' | 'realistic' | 'optimistic',
     inputs: Partial<ScenarioInputs>
   ) => void
+  setMonthlyMultipliers: (multipliers: number[]) => void
   resetToDefaults: () => void
   getConfig: () => IncomeConfig
 }
@@ -162,6 +166,9 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
           vacationWeeks: 1,
         },
       },
+
+      // Monthly multipliers - default to 100% for all months
+      monthlyMultipliers: Array(12).fill(1.0),
 
       // Actions with validation
       setViewMode: (mode: ViewMode) => {
@@ -368,6 +375,12 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         })
       },
 
+      setMonthlyMultipliers: (multipliers: number[]) => {
+        if (multipliers.length === 12) {
+          set({ monthlyMultipliers: multipliers })
+        }
+      },
+
       resetToDefaults: () => {
         set({
           hourlyRate: DEFAULT_CONFIG.hourlyRate,
@@ -422,6 +435,7 @@ export const useIncomePlannerStore = create<IncomePlannerState>()(
         language: state.language,
         userExchangeRate: state.userExchangeRate,
         scenarios: state.scenarios,
+        monthlyMultipliers: state.monthlyMultipliers,
         viewMode: state.viewMode,
         theme: state.theme,
         mxnToUsdRate: state.mxnToUsdRate,

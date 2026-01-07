@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Zap, Target, Handshake } from 'lucide-react'
+import { Zap, Target, Handshake, Banknote } from 'lucide-react'
 import { useIncomePlannerStore } from '@/lib/store'
 import { useTranslation } from '@/lib/i18n/translations'
 
@@ -46,7 +46,7 @@ export default function Home() {
         </div>
 
         {/* Features grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 max-w-4xl mx-auto">
           <div className="bg-background border border-muted-strong/20 rounded-xl p-6 hover:border-accent/30 transition-colors">
             <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
               <Zap className="h-5 w-5" />
@@ -80,6 +80,18 @@ export default function Home() {
             </h3>
             <p className="text-sm text-muted">
               {t.home.features.personal.description}
+            </p>
+          </div>
+
+          <div className="bg-background border border-muted-strong/20 rounded-xl p-6 hover:border-accent/30 transition-colors">
+            <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
+              <Banknote className="h-5 w-5" />
+            </div>
+            <h3 className="font-heading text-lg font-bold mb-2">
+              {t.home.features.multiCurrency.title}
+            </h3>
+            <p className="text-sm text-muted">
+              {t.home.features.multiCurrency.description}
             </p>
           </div>
         </div>

@@ -42,10 +42,7 @@ export default function Header() {
     }
   }, [mobileMenuOpen])
 
-  // Hide header on docs pages
-  if (pathname?.startsWith('/docs')) {
-    return null
-  }
+  // Header now shows on all pages including docs
 
   const linkClass = (href: string): string => {
     const isActive = pathname === href

@@ -8,7 +8,7 @@ order: 0
 
 **A transparent, bilingual income calculator for freelancers and consultants.**
 
-Built with Next.js, TypeScript, and Tailwind CSS by [CushLabs.ai](https://cushlabs.ai)
+🚀 **[Live Demo](https://ai-income-generator.vercel.app/)** | Built with Next.js, TypeScript, and Tailwind CSS by [CushLabs.ai](https://cushlabs.ai)
 
 > **Note:** Currently a deterministic calculator using pure math - no AI features yet. AI enhancements (market rate recommendations, natural language queries) are planned for Phase 2.
 
@@ -16,10 +16,19 @@ Built with Next.js, TypeScript, and Tailwind CSS by [CushLabs.ai](https://cushla
 
 ## ✨ Features
 
-### Current (Phase 1 - Production Ready)
+### Current (Phase 1 - Production Ready v1.0.0)
 
 - **Snapshot Calculator** - Real-time income calculations with transparent cash flow breakdown
-- **Currency Support** - USD and MXN with custom exchange rates
+- **Forecast View** - Three-scenario planning with professional UI redesign
+  - Scenario Builder with visible slider tracks and fill states
+  - Strategic Insights with coaching-style analysis cards
+  - Monthly Income Equalizer with color-coded seasonal variations
+  - Range Visualization with distinct outcome cards
+- **Multi-Currency Support** - USD, MXN, and EUR with sophisticated dual-currency model
+  - Bill clients in one currency, spend in another
+  - Automatic bidirectional conversion with custom exchange rates
+  - Tax calculations in billing currency, results in spending currency
+  - All 9 currency combinations supported (see [Currency Architecture](./docs/CURRENCY_ARCHITECTURE.md))
 - **Tax Calculations** - Simple percentage or progressive bracket modes
 - **Reality Check Stats** - Effective hourly rate, annual/weekly projections with formula tooltips
 - **Lifestyle Feasibility** - Visual indicator showing if income covers expenses with buffer
@@ -166,20 +175,32 @@ See `.windsurf/rules/` and `docs/AI_ENGINEERING_RULES.md` for detailed coding st
 
 ## 🎨 Design System
 
-### Colors
+### Professional Color Palette (v1.0.0)
 
 ```css
+/* Core Colors */
 --background: #000000; /* Dark */
 --foreground: #ffffff;
---accent: #ff6a3d;
+--accent: #ff6a3d; /* Orange */
 --muted: #aaaaaa;
 --muted-strong: #888888;
+
+/* Scenario Colors (Saturated) */
+--chart-pessimistic: #64748b; /* Slate Gray */
+--chart-realistic: #3b82f6; /* Royal Blue */
+--chart-optimistic: #10b981; /* Emerald Green */
+
+/* Slider System */
+--slider-track-bg: #e5e7eb; /* Light gray track */
+--slider-track-fill: #ff6a3d; /* Orange fill */
 ```
 
 ### Typography
 
 - **Headings:** Space Grotesk (600-700 weight)
 - **Body:** Source Serif 4 (300-400 weight)
+- **Hero Values:** 3xl font-black with tight tracking
+- **Labels:** 10px uppercase with wide tracking
 
 ---
 
@@ -218,17 +239,34 @@ Translation files: `lib/i18n/translations.ts`
 
 ## 📊 Implementation Status
 
-### ✅ Phase 1: Core Calculator (Complete)
+### ✅ Phase 1: Core Calculator (Complete - v1.0.0)
 
-- Snapshot view with transparent cash flow calculations
-- Currency conversion (USD/MXN)
+**Snapshot View:**
+
+- Transparent cash flow calculations
+- Currency conversion (USD/MXN/EUR)
 - Tax calculations (simple & progressive)
 - Reality Check stats with formula tooltips
 - Lifestyle Feasibility indicator
 - What-If scenario planning
+
+**Forecast View:**
+
+- Professional UI with saturated color palette
+- Scenario Builder with visible slider tracks and fill states
+- Strategic Insights with conditional coaching logic
+  - Safety Net Test (20% client loss scenario)
+  - Burnout Check (capacity warning at >45 hrs/week)
+  - Golden Lever (10% rate increase impact)
+- Monthly Income Equalizer with color-coded bars
+- Range Visualization as distinct outcome cards
+
+**System:**
+
 - Full EN/ES localization
 - Dark/light themes
 - Responsive design
+- State persistence
 
 ### 🚧 Phase 2: AI Features (Planned - Q2 2026)
 
@@ -316,5 +354,5 @@ Built with modern web technologies and best practices:
 ---
 
 **Last Updated:** January 6, 2026  
-**Version:** 1.0  
-**Status:** Phase 1 Complete - Production Ready
+**Version:** 1.0.0  
+**Status:** Production Ready - Fully Translated & Documented

@@ -3,8 +3,9 @@
 import { useIncomePlannerStore } from '@/lib/store'
 import ScenarioBuilder from './ScenarioBuilder'
 import RangeVisualization from './RangeVisualization'
+import MonthlyIncomeEqualizer from './MonthlyIncomeEqualizer'
 import MonthlyProjectionChart from './MonthlyProjectionChart'
-import ForecastInsights from './ForecastInsights'
+import StrategicSimulator from './StrategicSimulator'
 
 export default function ForecastView() {
   const { viewMode } = useIncomePlannerStore()
@@ -15,8 +16,9 @@ export default function ForecastView() {
     <div className="space-y-8">
       <ScenarioBuilder />
       <RangeVisualization />
+      <MonthlyIncomeEqualizer />
       <MonthlyProjectionChart />
-      <ForecastInsights />
+      <StrategicSimulator />
     </div>
   )
 }

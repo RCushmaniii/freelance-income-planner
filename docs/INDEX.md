@@ -15,6 +15,7 @@
 
 - **[DESIGN.md](DESIGN.md)** - Typography, color palette, spacing, and design principles
 - **[BRAND.md](BRAND.md)** - Brand identity, voice, and visual guidelines
+- **[CURRENCY_ARCHITECTURE.md](CURRENCY_ARCHITECTURE.md)** - Multi-currency conversion system architecture and algorithms
 - **[PORTFOLIO_TEMPLATE.md](PORTFOLIO_TEMPLATE.md)** - Portfolio piece explaining project purpose and technical decisions
 
 ### Development Process

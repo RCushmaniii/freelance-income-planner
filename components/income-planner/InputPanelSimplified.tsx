@@ -44,9 +44,11 @@ export default function InputPanelSimplified() {
       setter(0)
       return
     }
-    const num = allowDecimal ? parseFloat(value) : parseInt(value, 10)
-    if (!isNaN(num)) {
-      setter(num)
+    const num = parseFloat(value)
+    if (!isNaN(num) && isFinite(num)) {
+      // Round to whole number unless decimals are explicitly allowed (for exchange rate)
+      const finalValue = allowDecimal ? num : Math.round(num)
+      setter(finalValue)
     }
   }
 
@@ -206,10 +208,10 @@ export default function InputPanelSimplified() {
               type="number"
               value={monthlyBusinessExpenses}
               onChange={(e) =>
-                handleInputChange(e.target.value, setMonthlyBusinessExpenses, true)
+                handleInputChange(e.target.value, setMonthlyBusinessExpenses)
               }
               min="0"
-              step="0.01"
+              step="1"
             />
           </div>
 
@@ -228,7 +230,7 @@ export default function InputPanelSimplified() {
                 handleNullableInputChange(e.target.value, setMonthlyPersonalNeed)
               }
               min="0"
-              step="0.01"
+              step="1"
               placeholder={t.inputs.optional}
             />
           </div>

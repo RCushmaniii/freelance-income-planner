@@ -33,6 +33,20 @@ export default function WhatIfSlider() {
       fromCurrency: billingCurrency,
       toCurrency: spendingCurrency,
       exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+
+  // Convert expenses from spending currency to billing currency for calculation engine
+  const convertToBilling = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: spendingCurrency,
+      toCurrency: billingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
     })
   }
 
@@ -42,8 +56,8 @@ export default function WhatIfSlider() {
     hoursPerWeek,
     unbillableHoursPerWeek: 0,
     vacationWeeks: 52 - weeksWorkedPerYear,
-    monthlyBusinessExpenses,
-    monthlyPersonalNeed,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
     currentSavings: null,
     taxRate,
     taxMode,
@@ -53,7 +67,18 @@ export default function WhatIfSlider() {
 
   // What-if scenario
   const scenarioRate = hourlyRate * (1 + adjustment / 100)
-  const scenarioConfig = { ...currentConfig, hourlyRate: scenarioRate }
+  const scenarioConfig = {
+    hourlyRate: scenarioRate,
+    hoursPerWeek,
+    unbillableHoursPerWeek: 0,
+    vacationWeeks: 52 - weeksWorkedPerYear,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
+    currentSavings: null,
+    taxRate,
+    taxMode,
+  }
+
   const scenarioResult = calculateIncome(scenarioConfig)
 
   if (!currentResult || 'error' in currentResult || !scenarioResult || 'error' in scenarioResult) {
@@ -63,21 +88,21 @@ export default function WhatIfSlider() {
   // Calculate true net leftover for both scenarios (including personal expenses)
   const weeksPerMonth = 52 / 12
   const monthlyPersonalExp = monthlyPersonalNeed || 0
-  
+
   // Current scenario net leftover
   const currentMonthlyGross = hourlyRate * hoursPerWeek * weeksPerMonth
   const currentMonthlyGrossInSpending = convertToSpending(currentMonthlyGross)
   const currentMonthlyTax = convertToSpending(currentResult.annualTaxPaid / 12)
-  const currentNetLeftover = currentMonthlyGrossInSpending - currentMonthlyTax - monthlyBusinessExpenses - monthlyPersonalExp
+  const currentNetLeftover = currentMonthlyGrossInSpending - currentMonthlyTax - convertToSpending(convertToBilling(monthlyBusinessExpenses)) - convertToSpending(convertToBilling(monthlyPersonalExp))
   const currentAnnualLeftover = currentNetLeftover * 12
-  
+
   // Scenario net leftover
   const scenarioMonthlyGross = scenarioRate * hoursPerWeek * weeksPerMonth
   const scenarioMonthlyGrossInSpending = convertToSpending(scenarioMonthlyGross)
   const scenarioMonthlyTax = convertToSpending(scenarioResult.annualTaxPaid / 12)
-  const scenarioNetLeftover = scenarioMonthlyGrossInSpending - scenarioMonthlyTax - monthlyBusinessExpenses - monthlyPersonalExp
+  const scenarioNetLeftover = scenarioMonthlyGrossInSpending - scenarioMonthlyTax - convertToSpending(convertToBilling(monthlyBusinessExpenses)) - convertToSpending(convertToBilling(monthlyPersonalExp))
   const scenarioAnnualLeftover = scenarioNetLeftover * 12
-  
+
   // Calculate difference
   const annualDiff = scenarioAnnualLeftover - currentAnnualLeftover
 
@@ -101,8 +126,8 @@ export default function WhatIfSlider() {
         {/* Left: Current Rate */}
         <div className="text-center">
           <p className="text-xs text-muted uppercase tracking-wide mb-1">Current</p>
-          <p className="text-lg font-bold text-gray-700">{formatRate(hourlyRate)}</p>
-          <p className="text-xs text-muted mt-1">{formatMoney(currentAnnualLeftover)}/yr</p>
+          <p className="text-4xl font-bold text-foreground">{formatRate(hourlyRate)}</p>
+          <p className="text-sm text-muted mt-1">{formatMoney(currentAnnualLeftover)}/yr</p>
         </div>
 
         {/* Middle: New Rate + Amount Change */}

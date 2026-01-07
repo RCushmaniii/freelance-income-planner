@@ -12,10 +12,7 @@ export default function Footer() {
 
   const year = new Date().getFullYear().toString()
 
-  // Hide footer on docs pages
-  if (pathname?.startsWith('/docs')) {
-    return null
-  }
+  // Footer now shows on all pages including docs
 
   return (
     <footer className="border-t border-muted-strong/20 bg-background">
@@ -25,6 +22,12 @@ export default function Footer() {
             {t.footer.copyright.replace('{year}', year)}
           </p>
           <div className="flex items-center gap-4 text-sm">
+            <Link
+              href="/docs"
+              className="text-muted hover:text-foreground transition-colors"
+            >
+              {t.footer.docs}
+            </Link>
             <Link
               href="/about"
               className="text-muted hover:text-foreground transition-colors"

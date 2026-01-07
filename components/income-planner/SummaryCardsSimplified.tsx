@@ -27,13 +27,25 @@ export default function SummaryCardsSimplified() {
 
   const t = useTranslation(language)
 
+  // Convert expenses from spending currency to billing currency for calculation engine
+  const convertToBilling = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: spendingCurrency,
+      toCurrency: billingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+
   const config = {
     hourlyRate,
     hoursPerWeek,
     unbillableHoursPerWeek: 0,
     vacationWeeks: 52 - weeksWorkedPerYear,
-    monthlyBusinessExpenses,
-    monthlyPersonalNeed,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
     currentSavings: null,
     taxRate,
   }
@@ -55,11 +67,13 @@ export default function SummaryCardsSimplified() {
       fromCurrency: billingCurrency,
       toCurrency: spendingCurrency,
       exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
     })
   }
 
   // Calculate true net leftover (after ALL expenses including personal)
-  const weeksPerMonth = 52 / 12 // 4.33
+  const weeksPerMonth = 4.33 // 52 / 12 rounded to hundredths
   const monthlyGrossBilling = hourlyRate * hoursPerWeek * weeksPerMonth
   const monthlyGrossInSpending = convertToSpending(monthlyGrossBilling)
   const monthlyTax = convertToSpending(result.annualTaxPaid / 12)
@@ -106,7 +120,7 @@ export default function SummaryCardsSimplified() {
             {formatMoney(netLeftover)}
           </p>
           <p className="text-sm text-muted">
-            Net (after tax + expenses)
+            {t.summary.netAfterTaxExpenses}
           </p>
         </div>
       </Card>
@@ -151,7 +165,7 @@ export default function SummaryCardsSimplified() {
                 </div>
                 <p className="text-2xl font-bold">{formatRateDirect(effectiveHourlyRate)}</p>
                 <p className="text-xs text-muted">
-                  After taxes and time off
+                  {t.summary.afterTaxesTimeOff}
                 </p>
               </div>
 
@@ -170,7 +184,7 @@ export default function SummaryCardsSimplified() {
                 </div>
                 <p className="text-2xl font-bold">{formatMoney(annualGrossInSpending)}</p>
                 <p className="text-xs text-muted">
-                  Before deductions
+                  {t.summary.beforeDeductions}
                 </p>
               </div>
 
@@ -189,7 +203,7 @@ export default function SummaryCardsSimplified() {
                 </div>
                 <p className="text-2xl font-bold">{formatMoney(annualNetLeftover)}</p>
                 <p className="text-xs text-muted">
-                  Your take-home pay
+                  {t.summary.yourTakeHomePay}
                 </p>
               </div>
 
@@ -208,7 +222,7 @@ export default function SummaryCardsSimplified() {
                 </div>
                 <p className="text-2xl font-bold">{formatMoney(weeklyNetLeftover)}</p>
                 <p className="text-xs text-muted">
-                  Average per week
+                  {t.summary.averagePerWeek}
                 </p>
               </div>
             </div>

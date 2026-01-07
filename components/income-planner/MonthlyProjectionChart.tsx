@@ -8,6 +8,7 @@ import {
 } from '@/lib/chartData'
 import { formatCurrency } from '@/lib/formatters'
 import { getDefaultProgressiveTaxBrackets } from '@/lib/calculations'
+import { convertCurrency } from '@/lib/currency-conversion'
 import {
   LineChart,
   Line,
@@ -34,23 +35,48 @@ export default function MonthlyProjectionChart() {
     monthlyPersonalNeed,
     currentSavings,
     targetAnnualNet,
-    currency,
+    billingCurrency,
+    spendingCurrency,
+    userExchangeRate,
+    monthlyMultipliers,
     language,
   } = useIncomePlannerStore()
   const t = useTranslation(language)
-  const [seasonalPattern, setSeasonalPattern] = useState<
-    'steady' | 'q4-heavy' | 'summer-slow'
-  >('steady')
+
+  // Convert from spending currency to billing currency
+  const convertToBilling = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: spendingCurrency,
+      toCurrency: billingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+
+  // Convert from billing currency to spending currency
+  const convertToSpending = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: billingCurrency,
+      toCurrency: spendingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+  // Seasonal pattern is now controlled by monthlyMultipliers from the equalizer
 
   const taxBrackets =
-    taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(currency) : undefined
+    taxMode === 'smart' ? getDefaultProgressiveTaxBrackets(billingCurrency) : undefined
 
   const data = generateSeasonalProjection(
     {
       ...scenarios.pessimistic,
       unbillableHoursPerWeek,
-      monthlyBusinessExpenses,
-      monthlyPersonalNeed,
+      monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+      monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
       currentSavings,
       taxRate,
       taxMode,
@@ -59,8 +85,8 @@ export default function MonthlyProjectionChart() {
     {
       ...scenarios.realistic,
       unbillableHoursPerWeek,
-      monthlyBusinessExpenses,
-      monthlyPersonalNeed,
+      monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+      monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
       currentSavings,
       taxRate,
       taxMode,
@@ -69,22 +95,23 @@ export default function MonthlyProjectionChart() {
     {
       ...scenarios.optimistic,
       unbillableHoursPerWeek,
-      monthlyBusinessExpenses,
-      monthlyPersonalNeed,
+      monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+      monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
       currentSavings,
       taxRate,
       taxMode,
       taxBrackets,
     },
-    seasonalPattern
+    monthlyMultipliers,
+    language
   )
 
   const runwayData = generateRunwayProjection(
     {
       ...scenarios.pessimistic,
       unbillableHoursPerWeek,
-      monthlyBusinessExpenses,
-      monthlyPersonalNeed,
+      monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+      monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
       currentSavings,
       taxRate,
       taxMode,
@@ -93,8 +120,8 @@ export default function MonthlyProjectionChart() {
     {
       ...scenarios.realistic,
       unbillableHoursPerWeek,
-      monthlyBusinessExpenses,
-      monthlyPersonalNeed,
+      monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+      monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
       currentSavings,
       taxRate,
       taxMode,
@@ -103,19 +130,24 @@ export default function MonthlyProjectionChart() {
     {
       ...scenarios.optimistic,
       unbillableHoursPerWeek,
-      monthlyBusinessExpenses,
-      monthlyPersonalNeed,
+      monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+      monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
       currentSavings,
       taxRate,
       taxMode,
       taxBrackets,
     },
-    seasonalPattern
+    monthlyMultipliers,
+    language
   )
 
+  // Convert chart data to spending currency for display
   const dataWithRange = data.map((d) => ({
     ...d,
-    rangeBand: Math.max(0, d.optimistic - d.pessimistic),
+    pessimistic: convertToSpending(d.pessimistic),
+    realistic: convertToSpending(d.realistic),
+    optimistic: convertToSpending(d.optimistic),
+    rangeBand: Math.max(0, convertToSpending(d.optimistic) - convertToSpending(d.pessimistic)),
   }))
 
   if (dataWithRange.length === 0) {
@@ -129,7 +161,7 @@ export default function MonthlyProjectionChart() {
   const formatMoneyCompact = (value: number): string => {
     return formatCurrency({
       value,
-      currency,
+      currency: spendingCurrency,
       language,
       compact: true,
       maximumFractionDigits: 0,
@@ -140,7 +172,7 @@ export default function MonthlyProjectionChart() {
   const formatMoney = (value: number): string => {
     return formatCurrency({
       value,
-      currency,
+      currency: spendingCurrency,
       language,
       maximumFractionDigits: 0,
       minimumFractionDigits: 0,
@@ -156,38 +188,13 @@ export default function MonthlyProjectionChart() {
 
   return (
     <Card className="p-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h2 className="font-heading text-2xl font-bold mb-4 md:mb-0">
+      <div className="mb-6">
+        <h2 className="font-heading text-2xl font-bold">
           {t.chart.title}
         </h2>
-
-        {/* Seasonal Pattern Toggle */}
-        <div className="flex gap-2">
-          <Button
-            onClick={() => setSeasonalPattern('steady')}
-            variant={seasonalPattern === 'steady' ? 'primary' : 'outline'}
-            size="sm"
-            className="text-xs"
-          >
-            {t.chart.steady}
-          </Button>
-          <Button
-            onClick={() => setSeasonalPattern('q4-heavy')}
-            variant={seasonalPattern === 'q4-heavy' ? 'primary' : 'outline'}
-            size="sm"
-            className="text-xs"
-          >
-            {t.chart.q4Heavy}
-          </Button>
-          <Button
-            onClick={() => setSeasonalPattern('summer-slow')}
-            variant={seasonalPattern === 'summer-slow' ? 'primary' : 'outline'}
-            size="sm"
-            className="text-xs"
-          >
-            {t.chart.summerSlow}
-          </Button>
-        </div>
+        <p className="text-sm text-muted mt-1">
+          {t.chart.subtitle}
+        </p>
       </div>
 
       {/* Income Chart */}
@@ -241,7 +248,7 @@ export default function MonthlyProjectionChart() {
               }}
               labelStyle={{ color: 'var(--muted)' }}
             />
-            <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="line" />
+            <Legend wrapperStyle={{ paddingTop: '32px' }} iconType="line" />
 
             <Area
               type="monotone"
@@ -370,7 +377,7 @@ export default function MonthlyProjectionChart() {
                   }}
                   labelStyle={{ color: 'var(--muted)' }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="line" />
+                <Legend wrapperStyle={{ paddingTop: '32px' }} iconType="line" />
 
                 <ReferenceLine
                   y={0}
@@ -413,14 +420,7 @@ export default function MonthlyProjectionChart() {
         )}
       </div>
 
-      {/* Pattern Description */}
-      <div className="mt-6 p-4 bg-accent/5 border border-accent/20 rounded-lg">
-        <p className="text-xs text-muted">
-          {seasonalPattern === 'steady' && t.chart.steadyDesc}
-          {seasonalPattern === 'q4-heavy' && t.chart.q4HeavyDesc}
-          {seasonalPattern === 'summer-slow' && t.chart.summerSlowDesc}
-        </p>
-      </div>
+      {/* Pattern Description - Removed, now controlled by equalizer */}
     </Card>
   )
 }

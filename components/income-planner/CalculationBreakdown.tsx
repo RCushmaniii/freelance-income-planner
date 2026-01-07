@@ -27,13 +27,29 @@ export default function CalculationBreakdown() {
 
   const t = useTranslation(language)
 
+  // Check if cross-currency conversion is needed
+  const isCrossCurrency = billingCurrency !== spendingCurrency
+  const activeExchangeRate = isCrossCurrency ? (userExchangeRate ?? 1) : 1
+
+  // Convert expenses from spending currency to billing currency for calculation engine
+  const convertToBilling = (amount: number): number => {
+    return convertCurrency({
+      amount,
+      fromCurrency: spendingCurrency,
+      toCurrency: billingCurrency,
+      exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
+    })
+  }
+
   const config = {
     hourlyRate,
     hoursPerWeek,
     unbillableHoursPerWeek: 0,
     vacationWeeks: 52 - weeksWorkedPerYear,
-    monthlyBusinessExpenses,
-    monthlyPersonalNeed,
+    monthlyBusinessExpenses: convertToBilling(monthlyBusinessExpenses),
+    monthlyPersonalNeed: monthlyPersonalNeed ? convertToBilling(monthlyPersonalNeed) : null,
     currentSavings: null,
     taxRate,
     taxMode,
@@ -52,15 +68,13 @@ export default function CalculationBreakdown() {
       fromCurrency: billingCurrency,
       toCurrency: spendingCurrency,
       exchangeRate: userExchangeRate,
+      billingCurrency,
+      spendingCurrency,
     })
   }
 
-  // Check if cross-currency conversion is needed
-  const isCrossCurrency = billingCurrency !== spendingCurrency
-  const activeExchangeRate = isCrossCurrency ? (userExchangeRate ?? 1) : 1
-
   // Calculate cash flow values
-  const weeksPerMonth = 52 / 12
+  const weeksPerMonth = 4.33 // 52 / 12 rounded to hundredths
   const monthlyGrossBilling = hourlyRate * hoursPerWeek * weeksPerMonth
   const monthlyGrossInSpending = convertToSpending(monthlyGrossBilling)
   const monthlyTax = convertToSpending(result.annualTaxPaid / 12)
@@ -111,7 +125,7 @@ export default function CalculationBreakdown() {
             </span>
           </div>
           <div className="text-xs text-muted pl-4 -mt-2 mb-3">
-            {hoursPerWeek} hrs/wk × {formatMoneyBilling(hourlyRate)}/hr × {weeksPerMonth.toFixed(1)} wks/mo
+            {hoursPerWeek} hrs/wk × {formatMoneyBilling(hourlyRate)}/hr × {weeksPerMonth.toFixed(2)} wks/mo
           </div>
 
           {/* Currency Conversion (if applicable) */}
