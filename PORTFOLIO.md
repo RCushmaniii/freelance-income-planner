@@ -14,7 +14,6 @@ tech_stack:
   - "Next.js"
   - "React"
   - "Tailwind CSS"
-thumbnail: ""
 status: "Production"
 
 # === DETAIL PAGE ===
@@ -25,14 +24,12 @@ key_features:
   - "Multi-currency support (USD/MXN)"
   - "Privacy-first: all data stays in browser"
   - "Bilingual interface (English/Spanish)"
-metrics: []
 
 # === LINKS ===
 demo_url: "https://freelance-income-planner.vercel.app"
 live_url: "https://freelance-income-planner.vercel.app"
 
 # === OPTIONAL ===
-hero_images: []
 tags:
   - "bilingual"
   - "digital-nomad"
