@@ -68,27 +68,30 @@ export default function LifestyleFeasibility() {
     })
   }
 
-  // Calculate true net leftover using cash flow logic
-  const weeksPerMonth = 4.33 // 52 / 12 rounded to hundredths
-  const monthlyGrossBilling = hourlyRate * hoursPerWeek * weeksPerMonth
-  const monthlyGrossInSpending = convertToSpending(monthlyGrossBilling)
+  // Use engine values for consistency (avoids manual recalculation drift)
+  const monthlyGrossInSpending = convertToSpending(result.monthlyGross)
   const monthlyTax = convertToSpending(result.annualTaxPaid / 12)
   const monthlyPersonalExp = monthlyPersonalNeed || 0
-  
-  // Net leftover = gross - taxes - business expenses - personal expenses
-  const netLeftoverRaw = monthlyGrossInSpending - monthlyTax - monthlyBusinessExpenses - monthlyPersonalExp
-  const netMonthly = Math.round(netLeftoverRaw)
-  
+
   // Total burn rate = taxes + business + personal (all cash going out)
   const totalBurnRate = monthlyTax + monthlyBusinessExpenses + monthlyPersonalExp
 
-  if (totalBurnRate === 0) {
+  if (totalBurnRate <= 0 || !Number.isFinite(totalBurnRate)) {
+    return null
+  }
+
+  if (monthlyGrossInSpending <= 0 || !Number.isFinite(monthlyGrossInSpending)) {
     return null
   }
 
   // Calculate how much income covers the total burn rate
   const coverageMultiple = monthlyGrossInSpending / totalBurnRate
-  const coveragePercent = (coverageMultiple * 100)
+  const coveragePercent = coverageMultiple * 100
+
+  // Guard against NaN/Infinity propagation
+  if (!Number.isFinite(coveragePercent)) {
+    return null
+  }
 
   // 🔴 Red (< 100%): Losing money
   // 🟡 Yellow (100% - 125%): Surviving

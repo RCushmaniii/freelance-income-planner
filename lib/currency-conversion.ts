@@ -93,12 +93,13 @@ export function convertCurrency(params: ConversionParams): number {
     if (fromCurrency === billingCurrency && toCurrency === spendingCurrency) {
       return amount * exchangeRate
     }
-    
-    // Converting FROM spending TO billing: divide
+
+    // Converting FROM spending TO billing: divide (guarded)
     if (fromCurrency === spendingCurrency && toCurrency === billingCurrency) {
+      if (exchangeRate === 0) return amount
       return amount / exchangeRate
     }
-    
+
     // If neither matches, fall through to heuristic
     console.warn('Currency pair does not match billing/spending context')
   }
@@ -120,8 +121,9 @@ export function convertCurrency(params: ConversionParams): number {
     return amount * exchangeRate
   }
 
-  // Converting from weaker to stronger: divide (e.g., MXN → USD)
+  // Converting from weaker to stronger: divide (guarded against zero)
   if (fromStrength > toStrength) {
+    if (exchangeRate === 0) return amount
     return amount / exchangeRate
   }
 

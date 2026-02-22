@@ -85,25 +85,9 @@ export default function WhatIfSlider() {
     return null
   }
 
-  // Calculate true net leftover for both scenarios (including personal expenses)
-  const weeksPerMonth = 52 / 12
-  const monthlyPersonalExp = monthlyPersonalNeed || 0
-
-  // Current scenario net leftover
-  const currentMonthlyGross = hourlyRate * hoursPerWeek * weeksPerMonth
-  const currentMonthlyGrossInSpending = convertToSpending(currentMonthlyGross)
-  const currentMonthlyTax = convertToSpending(currentResult.annualTaxPaid / 12)
-  const currentNetLeftover = currentMonthlyGrossInSpending - currentMonthlyTax - convertToSpending(convertToBilling(monthlyBusinessExpenses)) - convertToSpending(convertToBilling(monthlyPersonalExp))
-  const currentAnnualLeftover = currentNetLeftover * 12
-
-  // Scenario net leftover
-  const scenarioMonthlyGross = scenarioRate * hoursPerWeek * weeksPerMonth
-  const scenarioMonthlyGrossInSpending = convertToSpending(scenarioMonthlyGross)
-  const scenarioMonthlyTax = convertToSpending(scenarioResult.annualTaxPaid / 12)
-  const scenarioNetLeftover = scenarioMonthlyGrossInSpending - scenarioMonthlyTax - convertToSpending(convertToBilling(monthlyBusinessExpenses)) - convertToSpending(convertToBilling(monthlyPersonalExp))
-  const scenarioAnnualLeftover = scenarioNetLeftover * 12
-
-  // Calculate difference
+  // Use engine values for consistency (accounts for vacation weeks correctly)
+  const currentAnnualLeftover = convertToSpending(currentResult.annualNet)
+  const scenarioAnnualLeftover = convertToSpending(scenarioResult.annualNet)
   const annualDiff = scenarioAnnualLeftover - currentAnnualLeftover
 
   const formatMoney = (value: number): string => {

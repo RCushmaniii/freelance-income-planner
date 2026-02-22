@@ -156,24 +156,25 @@ export function calculateIncome(
     const annualGross = hourlyRate * hoursPerWeek * billableWeeks
 
     const annualBusinessExpenses = Math.max(0, monthlyBusinessExpenses) * 12
-    const annualPersonalExpenses = monthlyPersonalNeed !== null && Number.isFinite(monthlyPersonalNeed) 
-      ? Math.max(0, monthlyPersonalNeed) * 12 
+    const annualPersonalExpenses = monthlyPersonalNeed !== null && Number.isFinite(monthlyPersonalNeed)
+      ? Math.max(0, monthlyPersonalNeed) * 12
       : 0
-    
-    // Tax is calculated on GROSS income (before business expenses)
-    // This ensures taxes are always paid on revenue earned
+
+    // Taxable income = gross minus business expenses (standard tax treatment)
+    const annualTaxableIncome = Math.max(0, annualGross - annualBusinessExpenses)
+
+    // Tax is calculated on TAXABLE income (after business expense deductions)
+    // This matches standard tax treatment: business expenses reduce taxable income
     const annualTaxPaid = (() => {
       if (taxMode === 'smart' && Array.isArray(taxBrackets) && taxBrackets.length > 0) {
-        return calculateProgressiveTax(annualGross, taxBrackets)
+        return calculateProgressiveTax(annualTaxableIncome, taxBrackets)
       }
-      return annualGross * (taxRate / 100)
+      return annualTaxableIncome * (taxRate / 100)
     })()
-    
-    // Taxable income for reporting purposes (gross minus business expenses)
-    const annualTaxableIncome = annualGross - annualBusinessExpenses
 
-    // Calculate annual net income (gross minus tax minus business expenses minus personal expenses)
-    const annualNet = Math.max(0, annualGross - annualTaxPaid - annualBusinessExpenses - annualPersonalExpenses)
+    // Annual net income (gross minus tax minus business expenses minus personal expenses)
+    // Not clamped to 0 — negative values indicate a deficit, used for runway calculations
+    const annualNet = annualGross - annualTaxPaid - annualBusinessExpenses - annualPersonalExpenses
 
     // Derive other intervals
     const dailyGross = annualGross / 365
@@ -196,10 +197,12 @@ export function calculateIncome(
       return (unbillableHoursPerWeek / weeklyTotal) * 100
     })()
 
+    // monthlyCashFlow = monthlyNet (personal expenses already deducted in annualNet)
+    // Positive → saving money, Negative → burning savings
     const monthlyCashFlow = (() => {
       if (monthlyPersonalNeed === null) return null
       if (!Number.isFinite(monthlyPersonalNeed) || monthlyPersonalNeed < 0) return null
-      return monthlyNet - monthlyPersonalNeed
+      return monthlyNet
     })()
 
     const runway = (() => {

@@ -27,7 +27,6 @@ export default function CalculationBreakdown() {
 
   const t = useTranslation(language)
 
-  // Check if cross-currency conversion is needed
   const isCrossCurrency = billingCurrency !== spendingCurrency
   const activeExchangeRate = isCrossCurrency ? (userExchangeRate ?? 1) : 1
 
@@ -73,17 +72,17 @@ export default function CalculationBreakdown() {
     })
   }
 
-  // Calculate cash flow values
-  const weeksPerMonth = 4.33 // 52 / 12 rounded to hundredths
-  const monthlyGrossBilling = hourlyRate * hoursPerWeek * weeksPerMonth
+  // Use engine values for consistency (accounts for vacation weeks correctly)
+  const monthlyGrossBilling = result.monthlyGross
   const monthlyGrossInSpending = convertToSpending(monthlyGrossBilling)
   const monthlyTax = convertToSpending(result.annualTaxPaid / 12)
   const monthlyBusinessExp = monthlyBusinessExpenses
   const monthlyPersonalExp = monthlyPersonalNeed || 0
-  
+  const weeksPerMonth = weeksWorkedPerYear / 12
+
   // Total burn rate = taxes + business + personal expenses (all cash going out)
   const totalBurnRate = monthlyTax + monthlyBusinessExp + monthlyPersonalExp
-  
+
   // Net leftover = gross - taxes - business - personal
   const netLeftover = monthlyGrossInSpending - monthlyTax - monthlyBusinessExp - monthlyPersonalExp
 

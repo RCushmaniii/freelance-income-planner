@@ -72,28 +72,16 @@ export default function SummaryCardsSimplified() {
     })
   }
 
-  // Calculate true net leftover (after ALL expenses including personal)
-  const weeksPerMonth = 4.33 // 52 / 12 rounded to hundredths
-  const monthlyGrossBilling = hourlyRate * hoursPerWeek * weeksPerMonth
-  const monthlyGrossInSpending = convertToSpending(monthlyGrossBilling)
-  const monthlyTax = convertToSpending(result.annualTaxPaid / 12)
-  const monthlyPersonalExp = monthlyPersonalNeed || 0
-  
-  // Net leftover = gross - taxes - business expenses - personal expenses
-  const netLeftoverRaw = monthlyGrossInSpending - monthlyTax - monthlyBusinessExpenses - monthlyPersonalExp
-  
-  // Round monthly to match display, then calculate annual and weekly from the rounded value
-  const netLeftover = Math.round(netLeftoverRaw)
-  const annualNetLeftover = netLeftover * 12
-  const weeklyNetLeftover = Math.round(netLeftover / 4.3)
-  
-  // Calculate TRUE gross per year (before ANY deductions)
-  const annualGrossBilling = hourlyRate * hoursPerWeek * weeksWorkedPerYear
-  const annualGrossInSpending = convertToSpending(annualGrossBilling)
-  
-  // Calculate TRUE effective hourly rate (using net leftover, not the engine's value)
-  const totalHoursWorked = hoursPerWeek * weeksWorkedPerYear
-  const effectiveHourlyRate = totalHoursWorked > 0 ? annualNetLeftover / totalHoursWorked : 0
+  // Use engine values for consistency (accounts for vacation weeks correctly)
+  const netLeftover = Math.round(convertToSpending(result.monthlyNet))
+  const annualNetLeftover = Math.round(convertToSpending(result.annualNet))
+  const weeklyNetLeftover = Math.round(convertToSpending(result.weeklyNet))
+
+  // Gross per year from engine (before ANY deductions)
+  const annualGrossInSpending = convertToSpending(result.annualGross)
+
+  // Effective hourly rate from engine (net income ÷ total hours worked)
+  const effectiveHourlyRate = convertToSpending(result.effectiveHourlyRate)
 
   const formatMoney = (value: number): string => {
     return formatCurrency({ value, currency: spendingCurrency, language, maximumFractionDigits: 0 })
@@ -159,7 +147,7 @@ export default function SummaryCardsSimplified() {
                   <div className="group relative">
                     <Info className="w-3 h-3 text-muted cursor-help" />
                     <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded shadow-lg z-10">
-                      Net Annual ÷ Hours Worked = {formatMoney(annualNetLeftover)} ÷ ({hoursPerWeek} hrs/wk × {weeksWorkedPerYear} wks)
+                      Net Annual ÷ Hours Worked = {formatMoney(annualNetLeftover)} ÷ ({hoursPerWeek} hrs × {weeksWorkedPerYear} wks)
                     </div>
                   </div>
                 </div>
@@ -216,7 +204,7 @@ export default function SummaryCardsSimplified() {
                   <div className="group relative">
                     <Info className="w-3 h-3 text-muted cursor-help" />
                     <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded shadow-lg z-10">
-                      Net Monthly ÷ 4.3 = {formatMoney(netLeftover)} ÷ 4.3 weeks/month
+                      Net Annual ÷ 52 = {formatMoney(annualNetLeftover)} ÷ 52 weeks
                     </div>
                   </div>
                 </div>

@@ -151,8 +151,9 @@ export default function ForecastInsights() {
   }
 
   // 2. Income range
-  const range = optimisticResult.annualNet - pessimisticResult.annualNet
-  const spread = (optimisticResult.annualNet / pessimisticResult.annualNet).toFixed(1)
+  const spread = pessimisticResult.annualNet > 0
+    ? (optimisticResult.annualNet / pessimisticResult.annualNet).toFixed(1)
+    : '—'
   insights.push({
     Icon: BarChart3,
     text: `${t.insights.incomeRange} ${formatMoney(pessimisticResult.annualNet)} - ${formatMoney(optimisticResult.annualNet)} (${spread}x ${t.insights.spread})`,

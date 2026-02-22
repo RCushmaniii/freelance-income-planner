@@ -104,7 +104,7 @@ export default function RangeVisualization() {
   const minIncome = convertToSpending(pessimisticResult.annualNet)
   const midIncome = convertToSpending(realisticResult.annualNet)
   const maxIncome = convertToSpending(optimisticResult.annualNet)
-  const spread = (maxIncome / minIncome).toFixed(1)
+  const spread = minIncome > 0 ? (maxIncome / minIncome).toFixed(1) : '—'
 
   return (
     <div className="bg-card-bg p-6 rounded-xl border border-card-border shadow-sm">
