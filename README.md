@@ -26,15 +26,7 @@ The app runs entirely in the browser. No accounts, no server-side data storage, 
 
 Two views serve different planning needs. **Snapshot mode** gives an immediate income breakdown with transparent calculation steps. **Forecast mode** enables three-scenario comparison (pessimistic, realistic, optimistic) with monthly projection charts, seasonal multipliers, and runway analysis.
 
-## Screenshots
-
-### Snapshot View
-
-![Snapshot calculator showing income breakdown](.github/screenshots/app-screen-shot.jpg)
-
-### Forecast View
-
-![Forecast view with three-scenario planning and charts](.github/screenshots/forecast-view.jpg)
+![Freelance Income Planner](public/images/freelance-income-planner-thumb.jpg)
 
 ## The Challenge
 
