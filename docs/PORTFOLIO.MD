@@ -45,13 +45,22 @@ tags:
 
 # === VISUALS ===
 
-thumbnail_url: "https://github.com/RCushmaniii/freelance-income-planner/raw/main/.github/screenshots/app-screen-shot.jpg"
+thumbnail_url: "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-thumb.jpg"
 hero_image_urls:
 
-- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/.github/screenshots/app-screen-shot.jpg"
-- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/.github/screenshots/forecast-view.jpg"
-- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/.github/screenshots/income-planner.jpg"
-  demo_video_url: ""
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-01.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-02.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-03.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-04.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-05.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-06.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-07.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-08.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-09.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-10.png"
+- "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/images/freelance-income-planner-11.png"
+demo_video_url: "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/video/freelance-income-planner-brief.mp4"
+demo_video_poster: "https://github.com/RCushmaniii/freelance-income-planner/raw/main/public/video/freelance-income-planner-brief-poster.jpg"
 
 # === LINKS ===
 
