@@ -57,9 +57,9 @@ export default function Header() {
     <header className="border-b border-muted-strong/20">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 hover:text-accent transition-colors">
-            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
-            <span className="font-heading text-xl font-bold">{t.header.title}</span>
+          <Link href="/" className="flex items-center gap-3 min-w-0 hover:text-accent transition-colors">
+            <span className="inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-accent" />
+            <span className="font-heading text-xl font-bold truncate">{t.header.title}</span>
           </Link>
 
           <div className="flex items-center gap-4">
@@ -111,14 +111,14 @@ export default function Header() {
         <div
           role="dialog"
           aria-modal="true"
-          className={`absolute right-0 top-0 h-full w-[80vw] max-w-xs bg-background border-l border-muted-strong/20 shadow-2xl transition-transform duration-300 ease-out ${
+          className={`absolute right-0 top-0 h-full w-[85vw] max-w-sm bg-background border-l border-muted-strong/20 shadow-2xl transition-transform duration-300 ease-out ${
             mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
           }`}
         >
           <div className="flex items-center justify-between p-4 border-b border-muted-strong/20">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-2.5 w-2.5 rounded-full bg-accent" />
-              <span className="font-heading text-lg font-bold">{t.header.title}</span>
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-accent" />
+              <span className="font-heading text-lg font-bold truncate">{t.header.title}</span>
             </div>
             <button
               type="button"
@@ -150,12 +150,12 @@ export default function Header() {
             </nav>
 
             <div className="mt-6 pt-6 border-t border-muted-strong/20 space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted">{t.header.language}</span>
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm text-muted shrink-0">{t.header.language}</span>
                 <LanguageSwitcher />
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-muted">{t.header.theme}</span>
+              <div className="flex items-center justify-between gap-4">
+                <span className="text-sm text-muted shrink-0">{t.header.theme}</span>
                 <ThemeToggle />
               </div>
             </div>
