@@ -67,7 +67,7 @@ npm run format
 
 ## Current Focus
 
-Production stable at v1.0.0. Calculation bugs fixed (tax base, division-by-zero, cash flow double-counting). Phase 2 planned: AI-powered rate recommendations and natural language queries.
+Production stable at v1.0.1. Patch release resolved mobile menu overflow (especially in Spanish), fixed tax calculations, restructured assets from `.github/screenshots/` to `public/images/` and `public/video/`, and added marketing copy. Phase 2 planned: AI-powered rate recommendations and natural language queries.
 
 ## Known Issues
 
