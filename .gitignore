@@ -13,8 +13,16 @@ node_modules
 # Production
 /build
 
-# Misc
+# OS
 .DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Misc
 *.pem
 
 # Debug

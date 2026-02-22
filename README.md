@@ -6,15 +6,27 @@ order: 0
 
 # Freelance Income Planner
 
-**A transparent, bilingual income calculator for freelancers and consultants.**
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5-blue?logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)
+![Zustand](https://img.shields.io/badge/Zustand-4.4-orange)
+![Vercel](https://img.shields.io/badge/Deployed-Vercel-black?logo=vercel)
 
-🚀 **[Live Demo](https://freelance-income-planner.vercel.app/)** | Built with Next.js, TypeScript, and Tailwind CSS by [CushLabs.ai](https://cushlabs.ai)
+> Privacy-first bilingual income calculator for freelancers and consultants. Bill in one currency, spend in another, plan for feast or famine.
 
-> **Note:** Currently a deterministic calculator using pure math - no AI features yet. AI enhancements (market rate recommendations, natural language queries) are planned for Phase 2.
+**[Live Demo](https://freelance-income-planner.vercel.app/)** | Built by [CushLabs.ai](https://cushlabs.ai)
 
----
+> **Note:** Currently a deterministic calculator using pure math — no AI features yet. AI enhancements (market rate recommendations, natural language queries) are planned for Phase 2.
 
-## 📸 Screenshots
+## Overview
+
+Freelance Income Planner helps freelancers and consultants answer the question every self-employed person struggles with: "What's my actual take-home pay?" It goes beyond rate-times-hours arithmetic by factoring in taxes (simple or progressive brackets), business expenses, personal cost of living, vacation weeks, and multi-currency billing.
+
+The app runs entirely in the browser. No accounts, no server-side data storage, no analytics on financial inputs. State persists in localStorage so users can return to saved scenarios without re-entering data. The full interface is available in English and Spanish with instant switching.
+
+Two views serve different planning needs. **Snapshot mode** gives an immediate income breakdown with transparent calculation steps. **Forecast mode** enables three-scenario comparison (pessimistic, realistic, optimistic) with monthly projection charts, seasonal multipliers, and runway analysis.
+
+## Screenshots
 
 ### Snapshot View
 
@@ -24,56 +36,47 @@ order: 0
 
 ![Forecast view with three-scenario planning and charts](.github/screenshots/forecast-view.jpg)
 
----
+## The Challenge
 
-## ✨ Features
+Freelancers face compounding uncertainty that salaried workers don't:
 
-### Current (Phase 1 - Production Ready v1.0.0)
+- **Variable income:** Hours shift week to week. Clients churn. Seasonal demand creates feast-or-famine cycles that simple annual projections don't capture.
+- **Multi-currency complexity:** Digital nomads billing in USD while spending in MXN or EUR need every calculation — gross, tax, expenses, net — to flow through correct currency conversion at each step.
+- **Tax opacity:** Self-employment taxes are calculated on taxable income (gross minus business expenses), not raw gross. Most online calculators get this wrong, overstating tax burden and understating take-home pay.
+- **Privacy risk:** Entering detailed financial data into third-party tools means trusting someone else with your most sensitive numbers.
 
-- **Snapshot Calculator** - Real-time income calculations with transparent cash flow breakdown
-- **Forecast View** - Three-scenario planning with professional UI redesign
-  - Scenario Builder with visible slider tracks and fill states
-  - Strategic Insights with coaching-style analysis cards
-  - Monthly Income Equalizer with color-coded seasonal variations
-  - Range Visualization with distinct outcome cards
-- **Multi-Currency Support** - USD, MXN, and EUR with sophisticated dual-currency model
-  - Bill clients in one currency, spend in another
-  - Automatic bidirectional conversion with custom exchange rates
-  - Tax calculations in billing currency, results in spending currency
-  - All 9 currency combinations supported (see [Currency Architecture](./docs/CURRENCY_ARCHITECTURE.md))
-- **Tax Calculations** - Simple percentage or progressive bracket modes
-- **Reality Check Stats** - Effective hourly rate, annual/weekly projections with formula tooltips
-- **Lifestyle Feasibility** - Visual indicator showing if income covers expenses with buffer
-- **What-If Scenarios** - Interactive rate adjustment showing impact on annual income
-- **Documentation Viewer** - Responsive docs with left sidebar navigation and markdown rendering
-- **Full Localization** - Complete EN/ES translation system
-- **State Persistence** - localStorage saves your inputs automatically
-- **Theme Switching** - Global light/dark theme with system preference default
-- **Responsive Design** - Mobile-first, works beautifully on all screen sizes
+## The Solution
 
-### Coming Soon (Phase 2 - Planned)
+**Privacy-first architecture.** All computation runs client-side in pure TypeScript. The only external call is an optional exchange rate fetch. No user accounts, no telemetry on financial data.
 
-- **Market Rate Recommendations** - AI-powered rate benchmarking against industry data
-- **Natural Language Queries** - Conversational input like "I want to earn $120k next year"
-- **Enhanced Forecast View** - Three-scenario planning with visual charts
+**Accurate tax modeling.** Tax is calculated on taxable income (gross minus business expenses), matching standard self-employment treatment. Progressive bracket mode supports jurisdiction-specific rates for USD, MXN, and EUR. The engine reports deficits honestly rather than clamping negative income to zero.
 
-See [docs/ROADMAP.md](./docs/ROADMAP.md) for the complete development roadmap.
+**Dual-currency model.** Users set a billing currency (what clients pay) and a spending currency (where they live). All 9 combinations of USD/MXN/EUR are supported with bidirectional conversion. The exchange rate is user-controlled with an optional live FX fetch.
 
----
+**Three-scenario forecasting.** Forecast mode runs independent calculations for pessimistic, realistic, and optimistic scenarios with adjustable rates, hours, and vacation weeks. Monthly projection charts apply seasonal multipliers. Runway analysis shows how long savings last under each scenario.
 
-## 🚀 Quick Start
+## Technical Highlights
+
+- **Pure calculation engine** — All income math lives in `lib/calculations.ts` as side-effect-free functions, validated against 151 edge cases covering tax logic, division safety, currency roundtrips, and deficit scenarios.
+- **Single source of truth** — Display components consume engine results rather than recalculating independently, eliminating inconsistencies between summary cards, breakdowns, and charts.
+- **Server/client discipline** — Strict Next.js 14 App Router patterns. `'use client'` only where hooks or browser APIs are required. Markdown docs parse server-side, render client-side.
+- **Defensive numerics** — Division-by-zero guards, NaN/Infinity propagation checks, and input validation clamping across all calculation and currency conversion paths.
+- **Bidirectional currency conversion** — Exchange rate interpretation is context-aware (billing-to-spending multiplies, spending-to-billing divides) with fallback heuristics for edge cases.
+- **Zustand with selective subscriptions** — Granular store access prevents unnecessary re-renders across 20+ interactive components.
+
+## Getting Started
 
 ### Prerequisites
 
 - Node.js 20.x or higher
-- npm or pnpm
+- npm (or pnpm for new projects)
 
 ### Installation
 
-```bash
+```powershell
 # Clone the repository
-git clone https://github.com/RCushmaniii/ai-income-planner.git
-cd ai-income-planner
+git clone https://github.com/RCushmaniii/freelance-income-planner.git
+cd freelance-income-planner
 
 # Install dependencies
 npm install
@@ -87,13 +90,59 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-If port 3000 is already in use, Next.js will automatically try the next available port.
+### Environment Variables
 
----
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `EXCHANGE_RATE_API_KEY` | Optional | API key for live exchange rates. App functions without it; currency formatting still works but live FX conversion is unavailable. |
 
-## 📦 Available Scripts
+## Live Demo
 
-```bash
+**[Try it live](https://freelance-income-planner.vercel.app/)**
+
+Test scenarios to try:
+
+1. **Snapshot mode:** Set $100/hr, 40 hrs/week, 4 vacation weeks, 25% tax, $500/mo business expenses. Check the calculation breakdown to see how tax is applied to taxable income.
+2. **Cross-currency:** Switch billing to USD and spending to MXN. Set exchange rate to 20. Watch all values convert in real time.
+3. **Forecast mode:** Toggle to forecast view. Adjust the pessimistic scenario to 20 hrs/week and compare the three-scenario range visualization.
+
+## Project Structure
+
+```
+freelance-income-planner/
+├── app/                    # Next.js App Router
+│   ├── income-planner/     # Main calculator page
+│   ├── docs/[slug]/        # Dynamic documentation viewer
+│   ├── api/fx/             # Exchange rate API endpoint
+│   └── about/              # About page
+├── components/
+│   ├── income-planner/     # Feature components (20 files)
+│   └── ui/                 # Base UI primitives
+├── lib/
+│   ├── calculations.ts     # Core calculation engine
+│   ├── store.ts            # Zustand state management
+│   ├── currency-conversion.ts # Multi-currency logic
+│   ├── chartData.ts        # Chart data generators
+│   └── i18n/               # EN/ES translations (42KB)
+└── docs/                   # Markdown documentation (12 files)
+```
+
+## Deployment
+
+### Build for Production
+
+```powershell
+npm run build
+npm start
+```
+
+### Recommended Platform
+
+**Vercel** — optimized for Next.js, currently hosting the production deployment.
+
+### Available Scripts
+
+```powershell
 npm run dev      # Start development server
 npm run build    # Build for production
 npm start        # Start production server
@@ -101,270 +150,42 @@ npm run lint     # Run ESLint
 npm run format   # Format code with Prettier
 ```
 
----
+## Results
 
-## 🛠️ Tech Stack
+**For the End User:**
+- Answers "what's my real take-home pay?" in under 30 seconds
+- Handles the full complexity of freelance income (taxes, expenses, currencies, seasonality) without spreadsheet skills
+- Data stays private — no accounts, no server-side storage
 
-- **Framework:** Next.js 14 (App Router)
-- **Language:** TypeScript 5.5+
-- **Styling:** Tailwind CSS 3.4+ with @tailwindcss/typography
-- **State:** Zustand 4.4+ with persist middleware
-- **Charts:** Recharts 2.10+
-- **Markdown:** react-markdown with remark-gfm
-- **Notifications:** react-hot-toast 2.4+
+**Technical Demonstration:**
 
----
+| Aspect | Detail |
+|--------|--------|
+| Calculation accuracy | 151 test cases covering tax, edge cases, currency roundtrips |
+| Build size | 225 KB first load JS for income planner page |
+| Supported currencies | 9 pair combinations (USD, MXN, EUR) |
+| Translation coverage | Full EN/ES across all UI text (42 KB) |
+| State persistence | Zustand + localStorage, restores on reload |
 
-## 📁 Project Structure
+## Contact
 
-```
-ai-income-planner/
-├── app/                    # Next.js App Router pages
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Homepage
-│   ├── income-planner/    # Income planner page
-│   └── docs/              # Documentation viewer
-│       ├── page.tsx       # Docs index
-│       └── [slug]/        # Dynamic doc pages
-├── components/             # React components
-│   ├── Header.tsx         # Global header
-│   ├── ErrorBoundary.tsx  # Error handling
-│   └── income-planner/    # Feature components
-├── lib/                    # Utilities & logic
-│   ├── calculations.ts    # Pure calculation functions
-│   ├── chartData.ts       # Chart data generators
-│   ├── store.ts           # Zustand state management
-│   ├── docs.ts            # Documentation utilities
-│   └── i18n/              # Translations (EN/ES)
-├── docs/                   # Documentation (markdown)
-│   ├── INDEX.md           # Documentation index
-│   ├── PRD.md             # Product requirements
-│   ├── DESIGN.md          # Design system
-│   ├── BRAND.md           # Brand guidelines
-│   └── LESSONS_LEARNED.md # Development lessons
-└── .windsurf/rules/        # Coding standards
-```
+**Robert Cushman**
+Business Solution Architect & Full-Stack Developer
+Guadalajara, Mexico
 
----
+:email: info@cushlabs.ai
+:link: [GitHub](https://github.com/RCushmaniii) | [LinkedIn](https://linkedin.com/in/robertcushman) | [Portfolio](https://cushlabs.ai)
 
-## 📚 Documentation
+## License
 
-### Live Documentation Viewer
+**CushLabs Income Planner Educational License v1.0**
 
-Visit `/docs` in the running app for a responsive documentation viewer with:
-
-- Left sidebar navigation on desktop
-- Hamburger menu on mobile
-- Proper markdown rendering with syntax highlighting
-- 11+ documentation files covering all aspects of the project
-
-### Core Documents
-
-- **[docs/INDEX.md](./docs/INDEX.md)** - Documentation index and navigation
-- **[docs/PRD.md](./docs/PRD.md)** - Complete product requirements and specifications
-- **[docs/AI_STARTUP.md](./docs/AI_STARTUP.md)** - Quick onboarding guide for AI assistants
-- **[docs/LESSONS_LEARNED.md](./docs/LESSONS_LEARNED.md)** - Development lessons and bug fixes
-- **[docs/PREDEPLOY_AUDIT.md](./docs/PREDEPLOY_AUDIT.md)** - Pre-deployment checklist
-- **[LICENSE](./LICENSE)** - Educational License v1.0
-
-### Design & Development
-
-- **[docs/BRAND.md](./docs/BRAND.md)** - Brand guidelines and messaging
-- **[docs/DESIGN.md](./docs/DESIGN.md)** - Complete design system
-- **[docs/ROADMAP.md](./docs/ROADMAP.md)** - Roadmap and planned features
-
-### Coding Standards
-
-See `.windsurf/rules/` and `docs/AI_ENGINEERING_RULES.md` for detailed coding standards including:
-
-- SRP (Single Responsibility Principle)
-- DRY (Don't Repeat Yourself)
-- Error handling guidelines
-- State management patterns
-- And more...
-
----
-
-## 🎨 Design System
-
-### Professional Color Palette (v1.0.0)
-
-```css
-/* Core Colors */
---background: #000000; /* Dark */
---foreground: #ffffff;
---accent: #ff6a3d; /* Orange */
---muted: #aaaaaa;
---muted-strong: #888888;
-
-/* Scenario Colors (Saturated) */
---chart-pessimistic: #64748b; /* Slate Gray */
---chart-realistic: #3b82f6; /* Royal Blue */
---chart-optimistic: #10b981; /* Emerald Green */
-
-/* Slider System */
---slider-track-bg: #e5e7eb; /* Light gray track */
---slider-track-fill: #ff6a3d; /* Orange fill */
-```
-
-### Typography
-
-- **Headings:** Space Grotesk (600-700 weight)
-- **Body:** Source Serif 4 (300-400 weight)
-- **Hero Values:** 3xl font-black with tight tracking
-- **Labels:** 10px uppercase with wide tracking
-
----
-
-## 🌍 Localization
-
-The app supports English and Spanish with full translation coverage:
-
-- All UI text localized
-- Language-aware currency formatting (MXN/USD)
-- Toast notifications in both languages
-- Instant switching without page reload
-
-Translation files: `lib/i18n/translations.ts`
-
----
-
-## 💾 State Management
-
-**Zustand** with localStorage persistence:
-
-- User inputs automatically saved
-- Scenario configurations persisted
-- Language/currency preferences stored
-- State restored on page reload
-
-**What's persisted:**
-
-- Hourly rate, hours/week, weeks worked per year
-- Business and personal expenses
-- Tax rate and tax mode (simple/progressive)
-- Billing and spending currencies with exchange rate
-- Language preference (EN/ES)
-- Theme preference (light/dark)
-
----
-
-## 📊 Implementation Status
-
-### ✅ Phase 1: Core Calculator (Complete - v1.0.0)
-
-**Snapshot View:**
-
-- Transparent cash flow calculations
-- Currency conversion (USD/MXN/EUR)
-- Tax calculations (simple & progressive)
-- Reality Check stats with formula tooltips
-- Lifestyle Feasibility indicator
-- What-If scenario planning
-
-**Forecast View:**
-
-- Professional UI with saturated color palette
-- Scenario Builder with visible slider tracks and fill states
-- Strategic Insights with conditional coaching logic
-  - Safety Net Test (20% client loss scenario)
-  - Burnout Check (capacity warning at >45 hrs/week)
-  - Golden Lever (10% rate increase impact)
-- Monthly Income Equalizer with color-coded bars
-- Range Visualization as distinct outcome cards
-
-**System:**
-
-- Full EN/ES localization
-- Dark/light themes
-- Responsive design
-- State persistence
-
-### 🚧 Phase 2: AI Features (Planned - Q2 2026)
-
-- Market rate recommendations
-- Natural language queries
-- Enhanced forecast view
-
-### 💡 Phase 3: Advanced Features (Future)
-
-- Smart forecasting with pattern recognition
-- Expense intelligence
-- Multi-currency portfolio tracking
-
-See [docs/ROADMAP.md](./docs/ROADMAP.md) for detailed roadmap.
-
----
-
-## 🚢 Deployment
-
-### Build for Production
-
-```bash
-npm run build
-npm start
-```
-
-### Recommended Platform
-
-**Vercel** (optimized for Next.js)
-
-Alternative platforms: Netlify, AWS Amplify, Cloudflare Pages
-
-### Environment Variables
-
-See `.env.sample` for configuration options.
-
-Notes:
-
-- `EXCHANGE_RATE_API_KEY` is optional. Without it, the app can still run; currency formatting still works, but live FX conversion may be unavailable.
-
----
-
-## 📝 License
-
-**Freelance Income Planner Educational License v1.0**
-
-- ✅ Personal, academic, non-commercial use
-- ✅ Modification and redistribution (with attribution)
-- ❌ Commercial use without permission
-- ❌ Trademark use
+- Personal, academic, non-commercial use permitted
+- Modification and redistribution with attribution
+- Commercial use requires separate permission
 
 See [LICENSE](./LICENSE) for full terms.
 
 ---
 
-## 🤝 Contributing
-
-This is a portfolio project by Robert Cushman / CushLabs.ai.
-
-**For suggestions or feedback:**
-
-- Email: robert@cushlabs.ai
-- GitHub: Open an issue
-- Website: https://cushlabs.ai
-
----
-
-## 👤 Author
-
-**Robert Cushman**  
-Solo AI Engineer & Full-Stack Developer  
-[CushLabs.ai](https://cushlabs.ai)
-
----
-
-## 🙏 Acknowledgments
-
-Built with modern web technologies and best practices:
-
-- Next.js team for the amazing framework
-- Vercel for hosting and deployment tools
-- Tailwind CSS for the utility-first approach
-- Open source community for excellent libraries
-
----
-
-**Last Updated:** January 6, 2026  
-**Version:** 1.0.0  
-**Status:** Production Ready - Fully Translated & Documented
+*Last Updated: 2026-02-22*
