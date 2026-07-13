@@ -166,7 +166,7 @@ Business Solution Architect & Full-Stack Developer
 Guadalajara, Mexico
 
 :email: info@cushlabs.ai
-:link: [GitHub](https://github.com/RCushmaniii) | [LinkedIn](https://linkedin.com/in/robertcushman) | [Portfolio](https://cushlabs.ai)
+:link: [GitHub](https://github.com/RCushmaniii) | [LinkedIn](https://linkedin.com/in/robert-cushman3) | [Portfolio](https://cushlabs.ai)
 
 ## License
 
