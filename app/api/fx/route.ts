@@ -1,7 +1,30 @@
 import { NextResponse } from 'next/server'
 
+/**
+ * Currencies this app actually supports (see lib/calculations.ts).
+ *
+ * This is the rate limit for this route, and it is a better one than a
+ * per-caller cap would be.
+ *
+ * The route is public and spends EXCHANGE_RATE_API_KEY against a metered
+ * third-party quota. The previous check was /^[A-Z]{3}$/, which accepts 17,576
+ * strings. Each distinct `base` is its own Next fetch-cache key, so each one
+ * reached upstream — meaning a single client walking AAA..ZZZ could burn 17,576
+ * upstream calls despite the hour-long cache doing exactly what it was meant to.
+ *
+ * Bounding the input instead bounds the fan-out: at most one upstream call per
+ * supported base per hour, no matter how much traffic arrives or from how many
+ * addresses. A per-IP limiter would not have achieved that — it caps each
+ * caller, not the total number of distinct upstream requests, and it would have
+ * needed a shared datastore this app does not have.
+ *
+ * Adding a currency here means adding it to the planner too; keep the two in
+ * step.
+ */
+const SUPPORTED_CURRENCIES = new Set(['USD', 'MXN', 'EUR'])
+
 function isCurrencyCode(value: string): boolean {
-  return /^[A-Z]{3}$/.test(value)
+  return SUPPORTED_CURRENCIES.has(value)
 }
 
 export async function GET(request: Request) {
@@ -15,7 +38,10 @@ export async function GET(request: Request) {
 
     if (!isCurrencyCode(base) || !isCurrencyCode(target)) {
       return NextResponse.json(
-        { success: false, error: 'Invalid currency code' },
+        {
+          success: false,
+          error: `Unsupported currency. Supported: ${[...SUPPORTED_CURRENCIES].join(', ')}`,
+        },
         { status: 400 }
       )
     }
@@ -74,7 +100,8 @@ export async function GET(request: Request) {
       },
       {
         headers: {
-          'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+          'Cache-Control':
+            'public, s-maxage=3600, stale-while-revalidate=86400',
         },
       }
     )
