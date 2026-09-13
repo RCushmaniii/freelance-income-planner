@@ -3,6 +3,7 @@
 portfolio_enabled: true
 portfolio_priority: 17
 portfolio_featured: false
+portfolio_last_reviewed: "2026-09-13"
 
 # === CARD DISPLAY ===
 title: "Freelance Income Planner"
@@ -103,19 +104,6 @@ health_status:
   health_endpoint: "Y"
   security_headers: "Y"
   rate_limiting: "Y"
-  env_validation: "-"
-  analytics: "DEFERRED"
-  structured_logging: "-"
-  dependabot: "Y"
-  secret_scanning: "Y"
-  db_backup: "-"
-health_status:
-  sentry: "-"
-  testing: "-"
-  ci_cd: "Y"
-  health_endpoint: "Y"
-  security_headers: "-"
-  rate_limiting: "-"
   env_validation: "-"
   analytics: "DEFERRED"
   structured_logging: "-"
