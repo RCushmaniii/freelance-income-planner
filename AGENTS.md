@@ -96,3 +96,4 @@ cp .env.sample .env.local
 - Animations must be subtle, optional, and respect `prefers-reduced-motion`.
 - Before final output: audit imports for client-only dependencies, confirm `'use client'` placement.
 - Code must compile under Next.js 14 App Router. No deprecated patterns. No mixing Pages Router conventions.
+
